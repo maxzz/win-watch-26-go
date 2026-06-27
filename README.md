@@ -10,6 +10,16 @@ UI Automation layer was rewritten in **pure Go** (no cgo) and the result is a
 single Windows executable that is dramatically smaller than the Electron build
 (~12 MB vs ~150+ MB).
 
+## Table of contents
+
+- [Requirements](#requirements)
+- [Getting started](#getting-started)
+- [Project structure](#project-structure)
+  - [Architecture](#architecture)
+  - [Native layer (pure Go)](#native-layer-pure-go)
+- [Migration notes / known differences](#migration-notes--known-differences)
+- [License](#license)
+
 ## Requirements
 
 - Windows 10/11 (x64). This app is Windows-only by design.
@@ -30,10 +40,10 @@ implemented with `golang.org/x/sys/windows` and direct COM vtable calls.
 pnpm install
 
 # run in development (hot-reloading frontend + Go backend)
-wails dev
+pnpm dev
 
 # build a production executable -> build/bin/WinWatch.exe
-wails build
+pnpm build
 ```
 
 ## Project structure

@@ -1,12 +1,18 @@
 {
     "name": "frontend",
+    "description": "A Windows UI Automation Monitor (Wails + Go)",
     "private": true,
     "version": "1.0.0",
     "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "tsc --noEmit && vite build",
-        "preview": "vite preview"
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.2.0",
+        "@types/node": "^22.15.3",
+        "@types/react": "^19.2.13",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^5.1.3",
+        "tailwindcss": "^4.2.0",
+        "typescript": "^5.3.3",
+        "vite": "^7.3.1"
     },
     "dependencies": {
         "@radix-ui/react-checkbox": "^1.3.3",
@@ -38,14 +44,10 @@
         "tailwindcss-animate": "^1.0.7",
         "valtio": "^2.3.0"
     },
-    "devDependencies": {
-        "@tailwindcss/vite": "^4.2.0",
-        "@types/node": "^22.15.3",
-        "@types/react": "^19.2.13",
-        "@types/react-dom": "^19.2.3",
-        "@vitejs/plugin-react": "^5.1.3",
-        "tailwindcss": "^4.2.0",
-        "typescript": "^5.3.3",
-        "vite": "^7.3.1"
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "to-npm": "pnpm run build && gh-pages -d dist"
     }
 }
