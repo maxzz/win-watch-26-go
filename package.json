@@ -8,6 +8,7 @@
         "build": "wails build",
         "frontend:dev": "pnpm --filter frontend dev",
         "frontend:build": "pnpm --filter frontend build",
-        "frontend:preview": "pnpm --filter frontend preview"
+        "frontend:preview": "pnpm --filter frontend preview",
+        "frontend:to-npm": "pnpm --filter frontend to-npm"
     }
 }
