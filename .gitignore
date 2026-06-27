@@ -1,0 +1,18 @@
+# Go
+/build/bin/
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+!frontend/dist/.gitkeep
+
+# Wails generated bindings (regenerated on build)
+frontend/wailsjs/
+
+# Editor / OS
+.DS_Store
+*.log
+.vscode/
+.idea/
+frontend/package.json.md5

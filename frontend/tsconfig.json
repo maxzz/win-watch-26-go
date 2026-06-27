@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "skipLibCheck": true,
+        "useDefineForClassFields": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "strict": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noFallthroughCasesInSwitch": true,
+        "checkJs": false,
+        "baseUrl": ".",
+        "paths": {
+            "@renderer/*": ["./src/*"]
+        }
+    },
+    "include": ["src"]
+}

@@ -1,0 +1,52 @@
+import { type HTMLAttributes } from "react";
+import { classNames } from "@renderer/utils";
+
+export function IconControlScrollbar({ className, title, ...rest }: HTMLAttributes<SVGSVGElement>) {
+    return (
+        <svg className={classNames("fill-none stroke-current", className)} viewBox="0 0 24 24" {...rest}>
+            {title && <title>{title}</title>}
+            <rect
+                x="2.39"
+                y="7.38"
+                width="19.21"
+                height="9.24"
+                rx="1.62"
+                ry="1.62"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeMiterlimit="10"
+            />
+
+            <path
+                d="M4.33,12.48l2.59,1.5c.37.21.83-.05.83-.48v-3c0-.43-.46-.69-.83-.48l-2.59,1.5c-.37.21-.37.75,0,.96Z"
+                fill="currentColor"
+            />
+            <path
+                d="M19.55,11.52l-2.59-1.5c-.37-.21-.83.05-.83.48v3c0,.43.46.69.83.48l2.59-1.5c.37-.21.37-.75,0-.96Z"
+                fill="currentColor"
+            />
+
+            <line
+                x1="9.58"
+                y1="7.38"
+                x2="9.58"
+                y2="16.62"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeMiterlimit="10"
+                opacity="0.6"
+            />
+            <line
+                x1="14.35"
+                y1="7.38"
+                x2="14.35"
+                y2="16.62"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeMiterlimit="10"
+                opacity="0.6"
+            />
+        </svg>
+    );
+}
