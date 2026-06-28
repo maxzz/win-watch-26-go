@@ -13,8 +13,8 @@
     },
     "scripts": {
         "dev": "wails dev",
-        "build": "wails build -devtools",
-        "build:debug": "wails build -debug -devtools",
+        "build": "wails build -debug -devtools",
+        "build:prod": "wails build -devtools",
         "frontend:dev": "pnpm --filter frontend dev",
         "frontend:build": "pnpm --filter frontend build",
         "frontend:preview": "pnpm --filter frontend preview",

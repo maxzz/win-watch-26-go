@@ -52,7 +52,6 @@ function installShortcuts(): void {
 
         if (ctrlOrCmd && shift && (event.code === "F12" || event.code === "KeyI")) {
             ToggleDevTools().catch(console.error);
-            event.preventDefault();
             return;
         }
 

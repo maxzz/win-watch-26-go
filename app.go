@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -14,14 +15,19 @@ import (
 // bounds and stops native background work on shutdown. It also owns the Wails
 // runtime context and exposes it to the bound API via Context().
 type App struct {
-	ctx     context.Context
-	service *winwatch.Service
-	store   *appstate.Store
+	ctx                  context.Context
+	service              *winwatch.Service
+	store                *appstate.Store
+	openDevToolsOnStartup bool
 }
 
 // NewApp constructs the application controller.
-func NewApp(service *winwatch.Service, store *appstate.Store) *App {
-	return &App{service: service, store: store}
+func NewApp(service *winwatch.Service, store *appstate.Store, openDevToolsOnStartup bool) *App {
+	return &App{
+		service:               service,
+		store:                 store,
+		openDevToolsOnStartup: openDevToolsOnStartup,
+	}
 }
 
 // Context returns the current Wails runtime context (nil before startup).
@@ -39,17 +45,21 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
-// domReady runs after the frontend has loaded. If DevTools were requested in
-// init.json but are not open yet (e.g. production build without -debug), open
-// them now using the same Ctrl+Shift+F12 path Wails registers.
+// domReady runs after the frontend has loaded. Wails only honours
+// OpenInspectorOnStartup in dev/debug builds; in production -devtools builds
+// we open DevTools here once the WebView2 surface is ready.
 func (a *App) domReady(ctx context.Context) {
-	if !a.store.DevTools() {
+	if !a.openDevToolsOnStartup || platform.IsDevToolsOpen() {
 		return
 	}
-	if platform.IsDevToolsOpen() {
-		return
-	}
-	platform.OpenDevTools()
+	go func() {
+		// WebView2 may not accept accelerator keys until shortly after DomReady.
+		time.Sleep(300 * time.Millisecond)
+		if platform.IsDevToolsOpen() {
+			return
+		}
+		platform.OpenDevTools()
+	}()
 }
 
 // beforeClose persists window bounds and the DevTools-on-startup flag.
@@ -82,13 +92,14 @@ func (a *App) SetDevToolsState(open bool) {
 }
 
 // ToggleDevTools flips DevTools visibility and persists the new state.
+// Opening is handled by Wails/WebView2 (Ctrl+Shift+F12); closing uses WM_CLOSE
+// on the app-owned DevTools window (same approach as traytools-26 / to-diag-trace-go).
 func (a *App) ToggleDevTools() {
 	if platform.IsDevToolsOpen() {
 		platform.CloseDevTools()
 		a.SetDevToolsState(false)
 		return
 	}
-	platform.OpenDevTools()
 	a.SetDevToolsState(true)
 }
 

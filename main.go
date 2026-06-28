@@ -19,8 +19,6 @@ var assets embed.FS
 func main() {
 	service := winwatch.New()
 	store := appstate.NewStore("WinWatch")
-	app := NewApp(service, store)
-	api := bindings.NewApi(service, app.Context)
 
 	width, height := appstate.DefaultWidth, appstate.DefaultHeight
 
@@ -33,6 +31,9 @@ func main() {
 	if ok {
 		openInspector = settings.DevTools
 	}
+
+	app := NewApp(service, store, openInspector)
+	api := bindings.NewApi(service, app.Context)
 
 	err := wails.Run(&options.App{
 		Title:  "UI Automation Monitor",

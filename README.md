@@ -42,13 +42,13 @@ pnpm install
 # run in development (hot-reloading frontend + Go backend)
 pnpm dev
 
-# build a production executable -> build/bin/wwatch26.exe
-# (devtools enabled so they can be opened with Ctrl+Shift+F12)
+# build a release executable -> build/bin/wwatch26.exe
+# (devtools enabled; honours the saved "open on startup" preference)
 pnpm build
 
-# build a debug executable in which the developer tools can also be
-# opened automatically on startup (honours the saved preference)
-pnpm build:debug
+# build an optimised production executable without -debug
+# (devtools can still be toggled with Ctrl+Shift+F12, but won't auto-open on startup)
+pnpm build:prod
 ```
 
 ### Developer tools
@@ -61,12 +61,15 @@ toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
 
 On startup the host reads `devTools` and:
 
-1. Sets Wails `OpenInspectorOnStartup` (honoured in `pnpm dev` and
-   `pnpm build:debug`, which uses `-debug -devtools`).
-2. Runs a **DomReady fallback** that opens DevTools when the flag is set but the
-   inspector is not open yet (covers production builds built with `-devtools`).
+1. Sets Wails `OpenInspectorOnStartup` (requires a `-debug` build or `pnpm dev`).
+2. Runs a **DomReady fallback** that tries to open DevTools when the flag is set but
+   the inspector is not open yet (best-effort for `pnpm build:prod`).
 
-Build with `-devtools` (`pnpm build` or `pnpm build:debug`) so DevTools can be
+Use `pnpm build` (includes `-debug -devtools`) or `pnpm dev` when you want the saved
+"open on startup" preference to take effect. `pnpm build:prod` keeps a smaller binary
+but Wails cannot programmatically open DevTools on startup without `-debug`.
+
+Build with `-devtools` (`pnpm build`, `pnpm build:prod`, or `pnpm dev`) so DevTools can be
 opened at all in release executables.
 
 ## Project structure

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -25,21 +26,36 @@ func CloseDevTools() {
 	}
 }
 
-// OpenDevTools focuses this app's main window and sends Ctrl+Shift+F12, which
-// Wails/WebView2 handles when devtools are enabled. This is used as a fallback
+// OpenDevTools focuses this app's WebView2 surface and sends Ctrl+Shift+F12,
+// which Wails handles when devtools are enabled. This is used as a fallback
 // when OpenInspectorOnStartup did not run (production builds without -debug).
 func OpenDevTools() {
+	mainHwnd := findAppMainWindow()
+	if mainHwnd == 0 {
+		return
+	}
+
 	user32 := syscall.NewLazyDLL("user32.dll")
 	setForegroundWindow := user32.NewProc("SetForegroundWindow")
 	showWindow := user32.NewProc("ShowWindow")
+	setFocus := user32.NewProc("SetFocus")
+	allowSetForegroundWindow := user32.NewProc("AllowSetForegroundWindow")
 
-	const swRestore = 9
+	const (
+		swRestore = 9
+		asfwAny   = ^uintptr(0) // ASFW_ANY
+	)
 
-	if hwnd := findAppMainWindow(); hwnd != 0 {
-		showWindow.Call(uintptr(hwnd), swRestore, 0)
-		setForegroundWindow.Call(uintptr(hwnd))
+	allowSetForegroundWindow.Call(asfwAny)
+	showWindow.Call(uintptr(mainHwnd), swRestore, 0)
+	setForegroundWindow.Call(uintptr(mainHwnd))
+
+	if renderHwnd := findWebViewRenderWidget(mainHwnd); renderHwnd != 0 {
+		setFocus.Call(uintptr(renderHwnd))
 	}
 
+	// Give focus changes time to settle before synthesizing the accelerator.
+	time.Sleep(50 * time.Millisecond)
 	sendCtrlShiftF12()
 }
 
@@ -48,6 +64,7 @@ func findAppMainWindow() syscall.Handle {
 	enumWindows := user32.NewProc("EnumWindows")
 	isWindowVisible := user32.NewProc("IsWindowVisible")
 	getWindowTextW := user32.NewProc("GetWindowTextW")
+	getClassNameW := user32.NewProc("GetClassNameW")
 	getWindowThreadProcessId := user32.NewProc("GetWindowThreadProcessId")
 
 	myPid := uint32(os.Getpid())
@@ -66,6 +83,12 @@ func findAppMainWindow() syscall.Handle {
 		if windowPid != myPid {
 			return 1
 		}
+		classBuf := make([]uint16, 256)
+		getClassNameW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&classBuf[0])), 256)
+		className := syscall.UTF16ToString(classBuf)
+		if className != "wailsWindow" {
+			return 1
+		}
 		titleBuf := make([]uint16, 512)
 		getWindowTextW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&titleBuf[0])), 512)
 		title := syscall.UTF16ToString(titleBuf)
@@ -77,6 +100,26 @@ func findAppMainWindow() syscall.Handle {
 	})
 
 	enumWindows.Call(cb, 0)
+	return found
+}
+
+func findWebViewRenderWidget(parent syscall.Handle) syscall.Handle {
+	user32 := syscall.NewLazyDLL("user32.dll")
+	enumChildWindows := user32.NewProc("EnumChildWindows")
+	getClassNameW := user32.NewProc("GetClassNameW")
+
+	var found syscall.Handle
+	cb := syscall.NewCallback(func(hwnd syscall.Handle, _ uintptr) uintptr {
+		classBuf := make([]uint16, 256)
+		getClassNameW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&classBuf[0])), 256)
+		if syscall.UTF16ToString(classBuf) == "Chrome_RenderWidgetHostHWND" {
+			found = hwnd
+			return 0
+		}
+		return 1
+	})
+
+	enumChildWindows.Call(uintptr(parent), cb, 0)
 	return found
 }
 
