@@ -18,6 +18,8 @@ import {
     GetWindowRect,
     GetControlCurrentBounds,
     IsWindowHandleValid,
+    GetDevTools,
+    SetDevTools,
     QuitApp,
 } from "../../wailsjs/go/bindings/Api";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
@@ -109,6 +111,9 @@ const shim: WinWatchApi = {
         openOptionsListeners.add(callback);
         return () => openOptionsListeners.delete(callback);
     },
+
+    getDevTools: () => GetDevTools(),
+    setDevTools: (enabled) => SetDevTools(enabled),
 
     quitApp: () => QuitApp(),
 };

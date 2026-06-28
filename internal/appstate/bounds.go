@@ -1,6 +1,6 @@
 // Package appstate handles host-level persistence that used to live in the
-// Electron main process - currently the main window bounds, stored as JSON in
-// the user's config directory.
+// Electron main process - the main window bounds plus a few app-level flags,
+// stored as JSON in the user's config directory (%AppData%/<appName>/init.json).
 package appstate
 
 import (
@@ -15,56 +15,82 @@ const (
 	DefaultHeight = 800
 )
 
-// Bounds is the persisted window geometry.
-type Bounds struct {
-	X      int `json:"x"`
-	Y      int `json:"y"`
-	Width  int `json:"width"`
-	Height int `json:"height"`
+// Settings is the persisted host-level state. It keeps the window geometry
+// (restored on the next launch) together with app-level flags such as whether
+// the WebView2 developer tools should be opened automatically on startup.
+type Settings struct {
+	X        int  `json:"x"`
+	Y        int  `json:"y"`
+	Width    int  `json:"width"`
+	Height   int  `json:"height"`
+	DevTools bool `json:"devTools"`
 }
 
-// BoundsStore reads/writes window bounds to a JSON file.
-type BoundsStore struct {
+// BoundsValid reports whether the saved geometry is usable.
+func (s Settings) BoundsValid() bool {
+	return s.Width > 0 && s.Height > 0
+}
+
+// Store reads/writes the settings to a JSON file.
+type Store struct {
 	path string
 }
 
-// NewBoundsStore returns a store for the given app folder name (e.g. a file at
+// NewStore returns a store for the given app folder name (a file at
 // %AppData%/<appName>/init.json).
-func NewBoundsStore(appName string) *BoundsStore {
+func NewStore(appName string) *Store {
 	dir, err := os.UserConfigDir()
 	if err != nil {
 		dir = os.TempDir()
 	}
-	return &BoundsStore{path: filepath.Join(dir, appName, "init.json")}
+	return &Store{path: filepath.Join(dir, appName, "init.json")}
 }
 
-// Load returns the saved bounds and whether they were found and valid.
-func (s *BoundsStore) Load() (Bounds, bool) {
+// Load returns the saved settings and whether the file was found and parsed.
+func (s *Store) Load() (Settings, bool) {
 	data, err := os.ReadFile(s.path)
 	if err != nil {
-		return Bounds{}, false
+		return Settings{}, false
 	}
-	var b Bounds
-	if err := json.Unmarshal(data, &b); err != nil {
-		return Bounds{}, false
+	var v Settings
+	if err := json.Unmarshal(data, &v); err != nil {
+		return Settings{}, false
 	}
-	if b.Width <= 0 || b.Height <= 0 {
-		return Bounds{}, false
-	}
-	return b, true
+	return v, true
 }
 
-// Save writes the bounds, creating the directory if needed.
-func (s *BoundsStore) Save(b Bounds) {
-	if b.Width <= 0 || b.Height <= 0 {
-		return
-	}
+// Save writes the settings, creating the directory if needed.
+func (s *Store) Save(v Settings) {
 	if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil {
 		return
 	}
-	data, err := json.Marshal(b)
+	data, err := json.Marshal(v)
 	if err != nil {
 		return
 	}
 	_ = os.WriteFile(s.path, data, 0o644)
+}
+
+// SaveBounds updates only the window geometry, preserving the other settings.
+func (s *Store) SaveBounds(x, y, width, height int) {
+	if width <= 0 || height <= 0 {
+		return
+	}
+	v, _ := s.Load()
+	v.X, v.Y, v.Width, v.Height = x, y, width, height
+	s.Save(v)
+}
+
+// DevTools returns the persisted developer-tools-on-startup flag.
+func (s *Store) DevTools() bool {
+	v, _ := s.Load()
+	return v.DevTools
+}
+
+// SetDevTools updates only the developer-tools flag, preserving the other
+// settings. The new value takes effect on the next application startup.
+func (s *Store) SetDevTools(enabled bool) {
+	v, _ := s.Load()
+	v.DevTools = enabled
+	s.Save(v)
 }

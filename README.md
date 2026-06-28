@@ -43,8 +43,26 @@ pnpm install
 pnpm dev
 
 # build a production executable -> build/bin/wwatch26.exe
+# (devtools enabled so they can be opened with Ctrl+Shift+F12)
 pnpm build
+
+# build a debug executable in which the developer tools can also be
+# opened automatically on startup (honours the saved preference)
+pnpm build:debug
 ```
+
+### Developer tools
+
+The WebView2 developer tools can be toggled from **Options... → Developer →
+"Open developer tools on startup"**. The preference is stored host-side in
+`%AppData%/WinWatch/init.json` (read before the webview loads) so the inspector
+reopens automatically on the next launch according to the saved value.
+
+- In `pnpm dev` and the debug build (`pnpm build:debug`) the saved preference
+  opens the inspector automatically on startup, and `Ctrl+Shift+F12` toggles it.
+- In the production build (`pnpm build`, which passes `-devtools`) the inspector
+  is available via `Ctrl+Shift+F12`; Wails only honours auto-open-on-startup in
+  dev/debug builds, so use `pnpm build:debug` if you need it to open on launch.
 
 ## Project structure
 

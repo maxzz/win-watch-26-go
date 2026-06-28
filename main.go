@@ -18,13 +18,14 @@ var assets embed.FS
 
 func main() {
 	service := winwatch.New()
-	store := appstate.NewBoundsStore("WinWatch")
+	store := appstate.NewStore("WinWatch")
 	app := NewApp(service, store)
-	api := bindings.NewApi(service, app.Context)
+	api := bindings.NewApi(service, app.Context, store)
 
 	width, height := appstate.DefaultWidth, appstate.DefaultHeight
-	if b, ok := store.Load(); ok {
-		width, height = b.Width, b.Height
+	settings, _ := store.Load()
+	if settings.BoundsValid() {
+		width, height = settings.Width, settings.Height
 	}
 
 	err := wails.Run(&options.App{
@@ -39,6 +40,12 @@ func main() {
 		OnShutdown:    app.shutdown,
 		Bind: []interface{}{
 			api,
+		},
+		// OpenInspectorOnStartup is honoured in `wails dev` and debug builds
+		// (`wails build -debug`). The flag itself is read from init.json so the
+		// inspector reopens automatically according to the saved preference.
+		Debug: options.Debug{
+			OpenInspectorOnStartup: settings.DevTools,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,

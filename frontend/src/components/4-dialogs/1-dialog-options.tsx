@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
@@ -82,9 +83,41 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                         label="Show empty bounds notification"
                         title="Show a notification when selected control bounds are empty"
                     />
+
+                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Developer</div>
+                    <OptionDevTools />
                 </div>
             </DialogContent>
         </Dialog>
+    );
+}
+
+// Whether the WebView2 developer tools open automatically on startup. This flag
+// is persisted by the Go host in init.json (not in the renderer's localStorage)
+// because it is read before the webview loads. The change applies on next launch.
+function OptionDevTools() {
+    const [enabled, setEnabled] = useState(false);
+
+    useEffect(() => {
+        let active = true;
+        tmApi.getDevTools().then((value) => {
+            if (active) {
+                setEnabled(value);
+            }
+        });
+        return () => { active = false; };
+    }, []);
+
+    return (
+        <OptionCheckbox
+            checked={enabled}
+            onCheckedChange={(checked) => {
+                setEnabled(checked);
+                void tmApi.setDevTools(checked);
+            }}
+            label="Open developer tools on startup"
+            title="Open the WebView2 developer tools automatically on startup (applies on next launch). You can also toggle them anytime with Ctrl+Shift+F12."
+        />
     );
 }
 

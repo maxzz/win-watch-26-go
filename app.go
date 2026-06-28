@@ -15,11 +15,11 @@ import (
 type App struct {
 	ctx     context.Context
 	service *winwatch.Service
-	store   *appstate.BoundsStore
+	store   *appstate.Store
 }
 
 // NewApp constructs the application controller.
-func NewApp(service *winwatch.Service, store *appstate.BoundsStore) *App {
+func NewApp(service *winwatch.Service, store *appstate.Store) *App {
 	return &App{service: service, store: store}
 }
 
@@ -32,18 +32,18 @@ func (a *App) Context() context.Context {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	if b, ok := a.store.Load(); ok {
-		wruntime.WindowSetSize(ctx, b.Width, b.Height)
-		wruntime.WindowSetPosition(ctx, b.X, b.Y)
+	if s, ok := a.store.Load(); ok && s.BoundsValid() {
+		wruntime.WindowSetSize(ctx, s.Width, s.Height)
+		wruntime.WindowSetPosition(ctx, s.X, s.Y)
 	}
 }
 
-// beforeClose persists the current window bounds. Returning false allows the
-// window to close.
+// beforeClose persists the current window bounds (preserving other settings).
+// Returning false allows the window to close.
 func (a *App) beforeClose(ctx context.Context) bool {
 	w, h := wruntime.WindowGetSize(ctx)
 	x, y := wruntime.WindowGetPosition(ctx)
-	a.store.Save(appstate.Bounds{X: x, Y: y, Width: w, Height: h})
+	a.store.SaveBounds(x, y, w, h)
 	return false
 }
 
