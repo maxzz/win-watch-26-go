@@ -42,7 +42,7 @@ pnpm install
 # run in development (hot-reloading frontend + Go backend)
 pnpm dev
 
-# build a production executable -> build/bin/WinWatch.exe
+# build a production executable -> build/bin/wwatch26.exe
 pnpm build
 ```
 
