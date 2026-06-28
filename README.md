@@ -42,32 +42,23 @@ pnpm install
 # run in development (hot-reloading frontend + Go backend)
 pnpm dev
 
-# build a production executable -> build/bin/wwatch26.exe
-# (devtools enabled so they can be opened with Ctrl+Shift+F12)
+# build executable -> build/bin/wwatch26.exe (-debug -devtools so DevTools
+# state from init.json is restored on startup)
 pnpm build
 
-# build a debug executable in which the developer tools can also be
-# opened automatically on startup (honours the saved preference)
-pnpm build:debug
+# release build without -debug (smaller; DevTools restore relies on DomReady fallback)
+pnpm build:release
 ```
 
 ### Developer tools
 
-The WebView2 developer tools can be toggled from **Options... → Developer →
-"Open developer tools on startup"**. The preference is stored host-side in
-`%AppData%/WinWatch/init.json` (field `devTools`) and is kept in sync when you
-toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
-`traytools-26` / `to-diag-trace-go`).
+DevTools visibility is remembered in `%AppData%/WinWatch/init.json` (`devTools`).
+The flag is written **when you toggle DevTools** with **Ctrl+Shift+F12** or
+**Ctrl+Shift+I** — not when the app exits. If DevTools were open when you last
+toggled them on, they reopen on the next launch.
 
-On startup the host reads `devTools` and:
-
-1. Sets Wails `OpenInspectorOnStartup` (honoured in `pnpm dev` and
-   `pnpm build:debug`, which uses `-debug -devtools`).
-2. Runs a **DomReady fallback** that opens DevTools when the flag is set but the
-   inspector is not open yet (covers production builds built with `-devtools`).
-
-Build with `-devtools` (`pnpm build` or `pnpm build:debug`) so DevTools can be
-opened at all in release executables.
+There is no Options-dialog setting for this; use the keyboard shortcut to show
+or hide DevTools and the host persists that state immediately.
 
 ## Project structure
 

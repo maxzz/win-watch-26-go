@@ -17,7 +17,8 @@ const (
 
 // Settings is the persisted host-level state. It keeps the window geometry
 // (restored on the next launch) together with app-level flags such as whether
-// the WebView2 developer tools should be opened automatically on startup.
+// the WebView2 developer tools should be reopened on the next launch after the
+// user left them open (toggled via Ctrl+Shift+F12).
 type Settings struct {
 	X        int  `json:"x"`
 	Y        int  `json:"y"`
@@ -81,14 +82,13 @@ func (s *Store) SaveBounds(x, y, width, height int) {
 	s.Save(v)
 }
 
-// DevTools returns the persisted developer-tools-on-startup flag.
+// DevTools returns whether DevTools were left open (init.json devTools).
 func (s *Store) DevTools() bool {
 	v, _ := s.Load()
 	return v.DevTools
 }
 
-// SetDevTools updates only the developer-tools flag, preserving the other
-// settings. The new value takes effect on the next application startup.
+// SetDevTools updates the persisted DevTools visibility flag.
 func (s *Store) SetDevTools(enabled bool) {
 	v, _ := s.Load()
 	v.DevTools = enabled

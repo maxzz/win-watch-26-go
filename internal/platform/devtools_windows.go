@@ -25,22 +25,67 @@ func CloseDevTools() {
 	}
 }
 
-// OpenDevTools focuses this app's main window and sends Ctrl+Shift+F12, which
-// Wails/WebView2 handles when devtools are enabled. This is used as a fallback
-// when OpenInspectorOnStartup did not run (production builds without -debug).
+// OpenDevTools focuses this app's WebView2 surface and sends Ctrl+Shift+F12,
+// which Wails handles when built with -devtools. Used when OpenInspectorOnStartup
+// did not run (production builds without -debug) and from ToggleDevTools.
 func OpenDevTools() {
 	user32 := syscall.NewLazyDLL("user32.dll")
 	setForegroundWindow := user32.NewProc("SetForegroundWindow")
 	showWindow := user32.NewProc("ShowWindow")
+	setFocus := user32.NewProc("SetFocus")
 
 	const swRestore = 9
 
-	if hwnd := findAppMainWindow(); hwnd != 0 {
-		showWindow.Call(uintptr(hwnd), swRestore, 0)
-		setForegroundWindow.Call(uintptr(hwnd))
+	mainHwnd := findAppMainWindow()
+	if mainHwnd != 0 {
+		showWindow.Call(uintptr(mainHwnd), swRestore, 0)
+		setForegroundWindow.Call(uintptr(mainHwnd))
+	}
+
+	webviewHwnd := findAppWebViewWindow()
+	if webviewHwnd != 0 {
+		setFocus.Call(uintptr(webviewHwnd))
+	} else if mainHwnd != 0 {
+		setFocus.Call(uintptr(mainHwnd))
 	}
 
 	sendCtrlShiftF12()
+	sendF12()
+}
+
+func sendF12() {
+	user32 := syscall.NewLazyDLL("user32.dll")
+	sendInput := user32.NewProc("SendInput")
+
+	const (
+		inputKeyboard  = 1
+		keyeventfKeyUp = 0x0002
+		vkF12          = 0x7B
+	)
+
+	type keyboardInput struct {
+		wVk         uint16
+		wScan       uint16
+		dwFlags     uint32
+		time        uint32
+		dwExtraInfo uintptr
+	}
+
+	type input struct {
+		inputType uint32
+		ki        keyboardInput
+		padding   [8]byte
+	}
+
+	down := input{inputType: inputKeyboard, ki: keyboardInput{wVk: vkF12}}
+	up := input{inputType: inputKeyboard, ki: keyboardInput{wVk: vkF12, dwFlags: keyeventfKeyUp}}
+
+	seq := []input{down, up}
+	sendInput.Call(
+		uintptr(len(seq)),
+		uintptr(unsafe.Pointer(&seq[0])),
+		uintptr(unsafe.Sizeof(input{})),
+	)
 }
 
 func findAppMainWindow() syscall.Handle {
@@ -74,6 +119,48 @@ func findAppMainWindow() syscall.Handle {
 		}
 		found = hwnd
 		return 0
+	})
+
+	enumWindows.Call(cb, 0)
+	return found
+}
+
+func findAppWebViewWindow() syscall.Handle {
+	user32 := syscall.NewLazyDLL("user32.dll")
+	enumWindows := user32.NewProc("EnumWindows")
+	getWindowTextW := user32.NewProc("GetWindowTextW")
+	getClassNameW := user32.NewProc("GetClassNameW")
+	getWindowThreadProcessId := user32.NewProc("GetWindowThreadProcessId")
+
+	myPid := uint32(os.Getpid())
+	parentMap, err := getProcessParentMap()
+	if err != nil {
+		parentMap = make(map[uint32]uint32)
+	}
+
+	var found syscall.Handle
+
+	cb := syscall.NewCallback(func(hwnd syscall.Handle, _ uintptr) uintptr {
+		if found != 0 {
+			return 1
+		}
+		classBuf := make([]uint16, 256)
+		getClassNameW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&classBuf[0])), 256)
+		if syscall.UTF16ToString(classBuf) != "Chrome_WidgetWin_1" {
+			return 1
+		}
+		titleBuf := make([]uint16, 512)
+		getWindowTextW.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&titleBuf[0])), 512)
+		if strings.Contains(syscall.UTF16ToString(titleBuf), "DevTools") {
+			return 1
+		}
+		var windowPid uint32
+		getWindowThreadProcessId.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&windowPid)))
+		if !isDescendant(windowPid, myPid, parentMap) {
+			return 1
+		}
+		found = hwnd
+		return 1
 	})
 
 	enumWindows.Call(cb, 0)
