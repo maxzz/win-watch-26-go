@@ -10,7 +10,6 @@ import (
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/maxzz/win-watch-26/internal/appstate"
 	"github.com/maxzz/win-watch-26/internal/winwatch"
 )
 
@@ -23,14 +22,12 @@ const EventActiveWindowChanged = "active-window-changed"
 type Api struct {
 	ctxFn   func() context.Context
 	service *winwatch.Service
-	store   *appstate.Store
 }
 
 // NewApi creates the bound API around a winwatch service. ctxFn must return the
-// current Wails runtime context (available after startup) or nil. store is used
-// to persist host-level preferences (e.g. the developer-tools flag).
-func NewApi(service *winwatch.Service, ctxFn func() context.Context, store *appstate.Store) *Api {
-	return &Api{service: service, ctxFn: ctxFn, store: store}
+// current Wails runtime context (available after startup) or nil.
+func NewApi(service *winwatch.Service, ctxFn func() context.Context) *Api {
+	return &Api{service: service, ctxFn: ctxFn}
 }
 
 func (a *Api) ctx() context.Context {
@@ -93,24 +90,6 @@ func (a *Api) GetControlCurrentBounds(handle, runtimeId string) string {
 // IsWindowHandleValid reports whether a window handle is valid.
 func (a *Api) IsWindowHandleValid(handle string) bool {
 	return a.service.IsWindowHandleValid(handle)
-}
-
-// GetDevTools reports whether the developer tools are configured to open on
-// startup (persisted in init.json).
-func (a *Api) GetDevTools() bool {
-	if a.store == nil {
-		return false
-	}
-	return a.store.DevTools()
-}
-
-// SetDevTools persists whether the developer tools should open automatically on
-// startup. The change takes effect on the next application launch.
-func (a *Api) SetDevTools(enabled bool) {
-	if a.store == nil {
-		return
-	}
-	a.store.SetDevTools(enabled)
 }
 
 // QuitApp quits the application.

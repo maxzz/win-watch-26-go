@@ -116,7 +116,7 @@ function OptionDevTools() {
                 void tmApi.setDevTools(checked);
             }}
             label="Open developer tools on startup"
-            title="Open the WebView2 developer tools automatically on startup (applies on next launch). You can also toggle them anytime with Ctrl+Shift+F12."
+            title="Open the WebView2 developer tools automatically on startup (applies on next launch). Toggle anytime with Ctrl+Shift+F12."
         />
     );
 }

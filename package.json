@@ -14,7 +14,7 @@
     "scripts": {
         "dev": "wails dev",
         "build": "wails build -devtools",
-        "build:debug": "wails build -debug",
+        "build:debug": "wails build -debug -devtools",
         "frontend:dev": "pnpm --filter frontend dev",
         "frontend:build": "pnpm --filter frontend build",
         "frontend:preview": "pnpm --filter frontend preview",

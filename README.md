@@ -55,14 +55,19 @@ pnpm build:debug
 
 The WebView2 developer tools can be toggled from **Options... → Developer →
 "Open developer tools on startup"**. The preference is stored host-side in
-`%AppData%/WinWatch/init.json` (read before the webview loads) so the inspector
-reopens automatically on the next launch according to the saved value.
+`%AppData%/WinWatch/init.json` (field `devTools`) and is kept in sync when you
+toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
+`traytools-26` / `to-diag-trace-go`).
 
-- In `pnpm dev` and the debug build (`pnpm build:debug`) the saved preference
-  opens the inspector automatically on startup, and `Ctrl+Shift+F12` toggles it.
-- In the production build (`pnpm build`, which passes `-devtools`) the inspector
-  is available via `Ctrl+Shift+F12`; Wails only honours auto-open-on-startup in
-  dev/debug builds, so use `pnpm build:debug` if you need it to open on launch.
+On startup the host reads `devTools` and:
+
+1. Sets Wails `OpenInspectorOnStartup` (honoured in `pnpm dev` and
+   `pnpm build:debug`, which uses `-debug -devtools`).
+2. Runs a **DomReady fallback** that opens DevTools when the flag is set but the
+   inspector is not open yet (covers production builds built with `-devtools`).
+
+Build with `-devtools` (`pnpm build` or `pnpm build:debug`) so DevTools can be
+opened at all in release executables.
 
 ## Project structure
 

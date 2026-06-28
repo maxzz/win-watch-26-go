@@ -18,10 +18,9 @@ import {
     GetWindowRect,
     GetControlCurrentBounds,
     IsWindowHandleValid,
-    GetDevTools,
-    SetDevTools,
     QuitApp,
 } from "../../wailsjs/go/bindings/Api";
+import { GetDevTools, SetDevToolsState, ToggleDevTools } from "../../wailsjs/go/main/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 
 const ZOOM_STEP = 0.5;
@@ -49,6 +48,14 @@ function handleZoom(action: "in" | "out" | "reset"): number {
 function installShortcuts(): void {
     window.addEventListener("keydown", (event) => {
         const ctrlOrCmd = event.ctrlKey || event.metaKey;
+        const shift = event.shiftKey;
+
+        if (ctrlOrCmd && shift && (event.code === "F12" || event.code === "KeyI")) {
+            ToggleDevTools().catch(console.error);
+            event.preventDefault();
+            return;
+        }
+
         if (!ctrlOrCmd) return;
 
         const key = event.key;
@@ -113,7 +120,8 @@ const shim: WinWatchApi = {
     },
 
     getDevTools: () => GetDevTools(),
-    setDevTools: (enabled) => SetDevTools(enabled),
+    setDevTools: (enabled) => SetDevToolsState(enabled),
+    toggleDevTools: () => ToggleDevTools(),
 
     quitApp: () => QuitApp(),
 };

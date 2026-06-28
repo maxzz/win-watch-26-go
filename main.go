@@ -20,12 +20,18 @@ func main() {
 	service := winwatch.New()
 	store := appstate.NewStore("WinWatch")
 	app := NewApp(service, store)
-	api := bindings.NewApi(service, app.Context, store)
+	api := bindings.NewApi(service, app.Context)
 
 	width, height := appstate.DefaultWidth, appstate.DefaultHeight
-	settings, _ := store.Load()
-	if settings.BoundsValid() {
+
+	settings, ok := store.Load()
+	if ok && settings.BoundsValid() {
 		width, height = settings.Width, settings.Height
+	}
+
+	openInspector := false
+	if ok {
+		openInspector = settings.DevTools
 	}
 
 	err := wails.Run(&options.App{
@@ -36,16 +42,15 @@ func main() {
 			Assets: assets,
 		},
 		OnStartup:     app.startup,
+		OnDomReady:    app.domReady,
 		OnBeforeClose: app.beforeClose,
 		OnShutdown:    app.shutdown,
 		Bind: []interface{}{
 			api,
+			app,
 		},
-		// OpenInspectorOnStartup is honoured in `wails dev` and debug builds
-		// (`wails build -debug`). The flag itself is read from init.json so the
-		// inspector reopens automatically according to the saved preference.
 		Debug: options.Debug{
-			OpenInspectorOnStartup: settings.DevTools,
+			OpenInspectorOnStartup: openInspector,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,

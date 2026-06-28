@@ -48,8 +48,9 @@ interface WinWatchApi {
     getZoomLevel: () => Promise<number>;
     onZoomChanged: (callback: (level: number) => void) => () => void;
     onOpenOptionsShortcut: (callback: () => void) => () => void;
-    getDevTools: () => Promise<boolean>;       // Whether the developer tools open automatically on startup (persisted in init.json)
-    setDevTools: (enabled: boolean) => Promise<void>; // Persist the developer-tools-on-startup flag; takes effect on next launch
+    getDevTools: () => Promise<boolean>;
+    setDevTools: (enabled: boolean) => Promise<void>;
+    toggleDevTools: () => Promise<void>;
     quitApp: () => Promise<void>;
 }
 
