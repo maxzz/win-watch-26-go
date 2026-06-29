@@ -39,28 +39,29 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
-// beforeClose persists window bounds. Returning false allows the window to close.
+// beforeClose persists window bounds and the actual DevTools visibility.
+// Querying the OS here is the source of truth: it captures the real state no
+// matter how DevTools were closed (the DevTools window's own close button, F12
+// inside it, the native Wails hotkey, etc.), which the frontend toggle cannot
+// observe. Returning false allows the window to close.
+// (Same approach as traytools-26 / to-diag-trace-go.)
 func (a *App) beforeClose(ctx context.Context) bool {
 	w, h := wruntime.WindowGetSize(ctx)
 	x, y := wruntime.WindowGetPosition(ctx)
 	a.store.SaveBounds(x, y, w, h)
+	a.store.SetDevTools(platform.IsDevToolsOpen())
 	return false
 }
 
-// ToggleDevTools flips DevTools visibility and persists the new state immediately.
-// Opening is handled by Wails/WebView2 (Ctrl+Shift+F12); closing uses WM_CLOSE
-// on the app-owned DevTools window (same approach as traytools-26 / to-diag-trace-go).
+// ToggleDevTools lets the Ctrl+Shift+F12 / Ctrl+Shift+I shortcuts also *close*
+// DevTools: WebView2 only opens the inspector via its native accelerator, so
+// when it is already open we close the app-owned DevTools window with WM_CLOSE.
+// The persisted state is captured authoritatively in beforeClose (same approach
+// as traytools-26 / to-diag-trace-go).
 func (a *App) ToggleDevTools() {
 	if platform.IsDevToolsOpen() {
 		platform.CloseDevTools()
-		a.saveDevToolsState(false)
-		return
 	}
-	a.saveDevToolsState(true)
-}
-
-func (a *App) saveDevToolsState(open bool) {
-	a.store.SetDevTools(open)
 }
 
 // shutdown stops native monitoring on exit.
