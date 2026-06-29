@@ -1,4 +1,5 @@
 import { useSetAtom } from "jotai";
+import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger, } from "../ui/shadcn/menubar";
 import { dialogAboutOpenAtom, dialogOptionsOpenAtom } from "@renderer/store/2-ui-atoms";
 import { IconMenuHamburger3 } from "../ui/icons";
@@ -26,11 +27,15 @@ export function TopMenu() {
                         About
                     </MenubarItem>
 
-                    <MenubarSeparator />
+                    {isBackgroundAvailable() && (
+                        <>
+                            <MenubarSeparator />
 
-                    <MenubarItem variant="destructive" onClick={() => tmApi.quitApp()}>
-                        Exit
-                    </MenubarItem>
+                            <MenubarItem variant="destructive" onClick={() => tmApi.quitApp()}>
+                                Exit
+                            </MenubarItem>
+                        </>
+                    )}
                 </MenubarContent>
             </MenubarMenu>
         </Menubar>

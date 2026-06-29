@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useSetAtom } from "jotai";
+import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 import { activeHwndAtom, applyActiveWindowChangedAtom, doOnAppStartRefreshWindowInfosAtom } from "../2-1-atoms-windows-list";
 import { useSnapshot } from "valtio";
 import { appSettings } from "../8-ui-settings";
@@ -13,7 +14,7 @@ export function useActiveWindow() {
 
     useEffect(
         () => {
-            if (!activeWindowMonitoringEnabled) {
+            if (!isBackgroundAvailable() || !activeWindowMonitoringEnabled) {
                 setActiveHwnd(null);
                 return;
             }
@@ -36,13 +37,15 @@ export function useMonitorActiveWindow() {
 
     useEffect(
         () => {
-            if (!activeWindowMonitoringEnabled) {
+            if (!isBackgroundAvailable() || !activeWindowMonitoringEnabled) {
                 setActiveHwnd(null);
-                try {
-                    tmApi.stopMonitoring();
-                } catch (e) {
-                    console.error("Error stopping monitoring", e);
-                    // ignore - stopMonitoring may throw if not running
+                if (isBackgroundAvailable()) {
+                    try {
+                        tmApi.stopMonitoring();
+                    } catch (e) {
+                        console.error("Error stopping monitoring", e);
+                        // ignore - stopMonitoring may throw if not running
+                    }
                 }
                 return;
             }
@@ -74,7 +77,10 @@ export function useAppStartInitialize() {
 
     useEffect(
         () => {
-            refreshWindowInfosOnStart();
+            if (isBackgroundAvailable()) {
+                refreshWindowInfosOnStart();
+            }
+
             tmApi.getZoomLevel().then(setZoomLevel).catch(() => undefined);
 
             const unsubscribeZoom = tmApi.onZoomChanged((level) => {

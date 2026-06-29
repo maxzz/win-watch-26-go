@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
+import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 import { classNames } from "@renderer/utils";
 import { appSettings } from "@renderer/store/8-ui-settings";
 import { dialogOptionsOpenAtom } from "@renderer/store/2-ui-atoms";
@@ -13,6 +14,11 @@ export function AppHeader({ className }: { className?: string; }) {
         <div className={classNames("px-3 py-1 border-b bg-muted/30 flex items-center justify-between", className)}>
             <div className="flex items-center gap-4">
                 <TopMenu />
+                {!isBackgroundAvailable() && (
+                    <span className="text-[10px] uppercase tracking-wide text-muted-foreground border rounded px-1.5 py-0.5">
+                        Browser preview
+                    </span>
+                )}
             </div>
             <div className="flex items-center gap-1">
                 <ButtonOpenOptionsDialog />
