@@ -24,6 +24,7 @@ import { ToggleDevTools } from "../../wailsjs/go/main/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 
 const ZOOM_STEP = 0.5;
+const ZOOM_STORAGE_KEY = "winwatch.zoomLevel";
 
 let currentZoomLevel = 0;
 const zoomListeners = new Set<(level: number) => void>();
@@ -32,10 +33,35 @@ const openOptionsListeners = new Set<() => void>();
 function applyZoom(level: number): number {
     currentZoomLevel = level;
     const factor = Math.pow(1.2, level);
+    // Apply `zoom` to `<body>`, matching how Google Chrome applies page zoom.
     // `zoom` is supported by the Chromium-based WebView2 runtime.
-    (document.documentElement.style as unknown as { zoom: string }).zoom = String(factor);
+    (document.body.style as unknown as { zoom: string }).zoom = String(factor);
+    saveZoomLevel(level);
     zoomListeners.forEach((listener) => listener(currentZoomLevel));
     return currentZoomLevel;
+}
+
+function saveZoomLevel(level: number): void {
+    try {
+        localStorage.setItem(ZOOM_STORAGE_KEY, String(level));
+    } catch {
+        // localStorage may be unavailable; persistence is best-effort.
+    }
+}
+
+// Restore the persisted zoom level so the app launches at the factor the user
+// last chose. Runs before React renders; the renderer later reads the current
+// level via `getZoomLevel()`.
+function restoreZoom(): void {
+    let level = 0;
+    try {
+        const raw = localStorage.getItem(ZOOM_STORAGE_KEY);
+        const parsed = raw === null ? NaN : Number(raw);
+        if (Number.isFinite(parsed)) level = parsed;
+    } catch {
+        // Ignore and fall back to the default zoom level.
+    }
+    applyZoom(level);
 }
 
 function handleZoom(action: "in" | "out" | "reset"): number {
@@ -127,5 +153,6 @@ const shim: WinWatchApi = {
 // before rendering the React tree.
 export function installTmApi(): void {
     (globalThis as unknown as { tmApi: WinWatchApi }).tmApi = shim;
+    restoreZoom();
     installShortcuts();
 }
