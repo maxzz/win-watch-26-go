@@ -32,17 +32,9 @@ const openOptionsListeners = new Set<() => void>();
 function applyZoom(level: number): number {
     currentZoomLevel = level;
     const factor = Math.pow(1.2, level);
-    // `zoom` is supported by the Chromium-based WebView2 runtime. Apply it to
-    // the app root (whose parent `body` is never zoomed) and counter-scale the
-    // root's logical size by `1 / factor` so the rendered result always fills
-    // the window exactly — both when zooming out (< 100%) and in (> 100%).
-    const root = document.getElementById("root");
-    if (root) {
-        const style = root.style as unknown as { zoom: string };
-        style.zoom = String(factor);
-        root.style.width = `calc(100% / ${factor})`;
-        root.style.height = `calc(100% / ${factor})`;
-    }
+    // Apply `zoom` to `<body>`, matching how Google Chrome applies page zoom.
+    // `zoom` is supported by the Chromium-based WebView2 runtime.
+    (document.body.style as unknown as { zoom: string }).zoom = String(factor);
     zoomListeners.forEach((listener) => listener(currentZoomLevel));
     return currentZoomLevel;
 }
