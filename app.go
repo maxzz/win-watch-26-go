@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"math"
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -62,6 +63,20 @@ func (a *App) ToggleDevTools() {
 	if platform.IsDevToolsOpen() {
 		platform.CloseDevTools()
 	}
+}
+
+// SetZoomLevel applies a zoom level (in 1.2^level steps; 0 == 100%) to the
+// WebView2 using its native page zoom, and persists it for the next launch.
+// This is the runtime counterpart to the windows.ZoomFactor startup option.
+func (a *App) SetZoomLevel(level float64) {
+	setWebviewZoom(a.ctx, math.Pow(1.2, level))
+	a.store.SetZoom(level)
+}
+
+// GetZoomLevel returns the persisted zoom level so the frontend can display the
+// correct percentage on startup (the factor itself is already applied natively).
+func (a *App) GetZoomLevel() float64 {
+	return a.store.Zoom()
 }
 
 // shutdown stops native monitoring on exit.

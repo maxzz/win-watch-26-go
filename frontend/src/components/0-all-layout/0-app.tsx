@@ -22,7 +22,7 @@ function AppContents() {
     useMonitorActiveWindow();
 
     return (
-        <div className="h-full w-full text-foreground bg-background flex flex-col overflow-hidden">
+        <div className="h-screen text-foreground bg-background flex flex-col overflow-hidden">
             <AppHeader />
             {/* <SpyAllIcons includeSvgSymbols /> */}
             <MainContent className="flex-1" />

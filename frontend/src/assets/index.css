@@ -143,19 +143,6 @@
   * {
     @apply border-border outline-ring/50;
     }
-  /*
-    Full-height chain so the app content can size with percentages (`h-full`).
-    The `zoom` page-scaling (applied to `<body>`) does NOT compensate viewport
-    units (`vh`/`vw`), so percentage heights — which resolve through the zoomed
-    box chain — are required for the content to fill the window at any zoom.
-  */
-  html,
-  body,
-  #root {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    }
   body {
     @apply bg-background text-foreground;
     }

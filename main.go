@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"math"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -28,8 +29,12 @@ func main() {
 	}
 
 	openInspector := false
+	zoomFactor := 1.0
 	if ok {
 		openInspector = settings.DevTools
+		if settings.ZoomLevel != 0 {
+			zoomFactor = math.Pow(1.2, settings.ZoomLevel)
+		}
 	}
 
 	app := NewApp(service, store)
@@ -55,6 +60,12 @@ func main() {
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
+			// Native page zoom (Chrome-style), applied by the WebView2 engine.
+			// User wheel/keyboard zoom is disabled so the in-app zoom controls
+			// remain the single source of truth for the displayed percentage;
+			// the buttons drive it at runtime via App.SetZoomLevel.
+			IsZoomControlEnabled: false,
+			ZoomFactor:           zoomFactor,
 		},
 	})
 	if err != nil {
