@@ -20,7 +20,7 @@ import {
     IsWindowHandleValid,
     QuitApp,
 } from "../../wailsjs/go/bindings/Api";
-import { GetDevTools, SetDevToolsState, ToggleDevTools } from "../../wailsjs/go/main/App";
+import { ToggleDevTools } from "../../wailsjs/go/main/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 
 const ZOOM_STEP = 0.5;
@@ -52,7 +52,6 @@ function installShortcuts(): void {
 
         if (ctrlOrCmd && shift && (event.code === "F12" || event.code === "KeyI")) {
             ToggleDevTools().catch(console.error);
-            event.preventDefault();
             return;
         }
 
@@ -119,8 +118,6 @@ const shim: WinWatchApi = {
         return () => openOptionsListeners.delete(callback);
     },
 
-    getDevTools: () => GetDevTools(),
-    setDevTools: (enabled) => SetDevToolsState(enabled),
     toggleDevTools: () => ToggleDevTools(),
 
     quitApp: () => QuitApp(),
