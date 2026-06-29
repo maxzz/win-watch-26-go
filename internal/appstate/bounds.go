@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 // Default window size used when no saved bounds exist.
@@ -32,8 +33,11 @@ func (s Settings) BoundsValid() bool {
 	return s.Width > 0 && s.Height > 0
 }
 
-// Store reads/writes the settings to a JSON file.
+// Store reads/writes the settings to a JSON file. A mutex guards the
+// read-modify-write helpers so concurrent writers (bounds, devtools, zoom)
+// don't clobber each other.
 type Store struct {
+	mu   sync.Mutex
 	path string
 }
 
@@ -77,6 +81,8 @@ func (s *Store) SaveBounds(x, y, width, height int) {
 	if width <= 0 || height <= 0 {
 		return
 	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	v, _ := s.Load()
 	v.X, v.Y, v.Width, v.Height = x, y, width, height
 	s.Save(v)
@@ -96,6 +102,8 @@ func (s *Store) Zoom() float64 {
 
 // SetZoom updates only the zoom level, preserving the other settings.
 func (s *Store) SetZoom(level float64) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	v, _ := s.Load()
 	v.ZoomLevel = level
 	s.Save(v)
@@ -104,6 +112,8 @@ func (s *Store) SetZoom(level float64) {
 // SetDevTools updates only the developer-tools flag, preserving the other
 // settings.
 func (s *Store) SetDevTools(enabled bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	v, _ := s.Load()
 	v.DevTools = enabled
 	s.Save(v)

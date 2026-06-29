@@ -30,11 +30,17 @@ let currentZoomLevel = 0;
 const zoomListeners = new Set<(level: number) => void>();
 const openOptionsListeners = new Set<() => void>();
 
+// Serialize the Go calls: each `SetZoomLevel` both applies the native zoom and
+// persists it, so chaining guarantees rapid changes are delivered, applied, and
+// saved in order (otherwise concurrent calls can complete out of order and
+// leave a stale factor applied/persisted).
+let zoomChain: Promise<unknown> = Promise.resolve();
+
 function applyZoom(level: number): number {
     currentZoomLevel = level;
     // Zoom is performed natively by the WebView2 engine (Chrome-style page
     // zoom) via the Go side, which also persists the level for next launch.
-    void SetZoomLevel(level);
+    zoomChain = zoomChain.then(() => SetZoomLevel(level)).catch(() => undefined);
     zoomListeners.forEach((listener) => listener(currentZoomLevel));
     return currentZoomLevel;
 }
