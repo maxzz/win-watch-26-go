@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"reflect"
 	"unsafe"
 
@@ -24,40 +25,49 @@ import (
 // This relies on Wails internals (verified against wails v2.12.0 /
 // go-webview2 v1.0.22) and may need revisiting on a dependency upgrade.
 func setWebviewZoom(ctx context.Context, factor float64) {
+	log.Printf("[zoom] setWebviewZoom(%v) called", factor)
 	if ctx == nil {
+		log.Printf("[zoom] ABORT: ctx is nil")
 		return
 	}
 	fe := ctx.Value("frontend")
 	if fe == nil {
+		log.Printf("[zoom] ABORT: ctx.Value(\"frontend\") is nil")
 		return
 	}
+	log.Printf("[zoom] frontend type = %T", fe)
 	feVal := reflect.ValueOf(fe)
 	if feVal.Kind() != reflect.Ptr || feVal.IsNil() {
+		log.Printf("[zoom] ABORT: frontend not a non-nil ptr (kind=%v)", feVal.Kind())
 		return
 	}
 	feStruct := feVal.Elem()
 	if feStruct.Kind() != reflect.Struct {
+		log.Printf("[zoom] ABORT: frontend elem not a struct (kind=%v)", feStruct.Kind())
 		return
 	}
 
 	chromium, ok := unexportedField[*edge.Chromium](feStruct, "chromium")
 	if !ok || chromium == nil {
+		log.Printf("[zoom] ABORT: chromium not found (ok=%v, nil=%v)", ok, chromium == nil)
 		return
 	}
 
 	mainWindow, ok := unexportedValue(feStruct, "mainWindow")
 	if !ok || mainWindow.IsNil() {
-		// Fall back to a direct call; may be a no-op if off the UI thread.
+		log.Printf("[zoom] mainWindow not found (ok=%v); calling PutZoomFactor directly", ok)
 		chromium.PutZoomFactor(factor)
 		return
 	}
 
 	invoke := mainWindow.MethodByName("Invoke")
 	if !invoke.IsValid() {
+		log.Printf("[zoom] Invoke method not found; calling PutZoomFactor directly")
 		chromium.PutZoomFactor(factor)
 		return
 	}
 
+	log.Printf("[zoom] dispatching PutZoomFactor(%v) via mainWindow.Invoke", factor)
 	invoke.Call([]reflect.Value{reflect.ValueOf(func() {
 		chromium.PutZoomFactor(factor)
 	})})
