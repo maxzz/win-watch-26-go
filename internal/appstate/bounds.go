@@ -19,11 +19,12 @@ const (
 // (restored on the next launch) together with whether the WebView2 developer
 // tools were left open when the user last toggled them.
 type Settings struct {
-	X        int  `json:"x"`
-	Y        int  `json:"y"`
-	Width    int  `json:"width"`
-	Height   int  `json:"height"`
-	DevTools bool `json:"devTools"`
+	X         int     `json:"x"`
+	Y         int     `json:"y"`
+	Width     int     `json:"width"`
+	Height    int     `json:"height"`
+	DevTools  bool    `json:"devTools"`
+	ZoomLevel float64 `json:"zoomLevel"`
 }
 
 // BoundsValid reports whether the saved geometry is usable.
@@ -85,6 +86,19 @@ func (s *Store) SaveBounds(x, y, width, height int) {
 func (s *Store) DevTools() bool {
 	v, _ := s.Load()
 	return v.DevTools
+}
+
+// Zoom returns the persisted zoom level (in 1.2^level steps; 0 == 100%).
+func (s *Store) Zoom() float64 {
+	v, _ := s.Load()
+	return v.ZoomLevel
+}
+
+// SetZoom updates only the zoom level, preserving the other settings.
+func (s *Store) SetZoom(level float64) {
+	v, _ := s.Load()
+	v.ZoomLevel = level
+	s.Save(v)
 }
 
 // SetDevTools updates only the developer-tools flag, preserving the other
