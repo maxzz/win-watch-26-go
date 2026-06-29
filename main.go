@@ -32,7 +32,7 @@ func main() {
 		openInspector = settings.DevTools
 	}
 
-	app := NewApp(service, store, openInspector)
+	app := NewApp(service, store)
 	api := bindings.NewApi(service, app.Context)
 
 	err := wails.Run(&options.App{
@@ -43,7 +43,6 @@ func main() {
 			Assets: assets,
 		},
 		OnStartup:     app.startup,
-		OnDomReady:    app.domReady,
 		OnBeforeClose: app.beforeClose,
 		OnShutdown:    app.shutdown,
 		Bind: []interface{}{

@@ -43,34 +43,18 @@ pnpm install
 pnpm dev
 
 # build a release executable -> build/bin/wwatch26.exe
-# (devtools enabled; honours the saved "open on startup" preference)
 pnpm build
-
-# build an optimised production executable without -debug
-# (devtools can still be toggled with Ctrl+Shift+F12, but won't auto-open on startup)
-pnpm build:prod
 ```
 
 ### Developer tools
 
-The WebView2 developer tools can be toggled from **Options... → Developer →
-"Open developer tools on startup"**. The preference is stored host-side in
-`%AppData%/WinWatch/init.json` (field `devTools`) and is kept in sync when you
-toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
-`traytools-26` / `to-diag-trace-go`).
+Toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
+`traytools-26` / `to-diag-trace-go`). Each toggle saves whether DevTools are open
+to `%AppData%/WinWatch/init.json` (`devTools`). On the next launch, Wails
+`OpenInspectorOnStartup` restores that state.
 
-On startup the host reads `devTools` and:
-
-1. Sets Wails `OpenInspectorOnStartup` (requires a `-debug` build or `pnpm dev`).
-2. Runs a **DomReady fallback** that tries to open DevTools when the flag is set but
-   the inspector is not open yet (best-effort for `pnpm build:prod`).
-
-Use `pnpm build` (includes `-debug -devtools`) or `pnpm dev` when you want the saved
-"open on startup" preference to take effect. `pnpm build:prod` keeps a smaller binary
-but Wails cannot programmatically open DevTools on startup without `-debug`.
-
-Build with `-devtools` (`pnpm build`, `pnpm build:prod`, or `pnpm dev`) so DevTools can be
-opened at all in release executables.
+The `pnpm build` script uses `-debug -devtools` with a GUI subsystem linker flag
+so DevTools can reopen on startup without attaching a console window.
 
 ## Project structure
 

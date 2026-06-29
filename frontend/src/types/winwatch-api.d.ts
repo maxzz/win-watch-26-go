@@ -48,8 +48,6 @@ interface WinWatchApi {
     getZoomLevel: () => Promise<number>;
     onZoomChanged: (callback: (level: number) => void) => () => void;
     onOpenOptionsShortcut: (callback: () => void) => () => void;
-    getDevTools: () => Promise<boolean>;
-    setDevTools: (enabled: boolean) => Promise<void>;
     toggleDevTools: () => Promise<void>;
     quitApp: () => Promise<void>;
 }
