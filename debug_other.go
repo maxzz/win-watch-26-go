@@ -1,4 +1,4 @@
-//go:build !windows || (!debug && !dev)
+//go:build !windows
 
 package main
 

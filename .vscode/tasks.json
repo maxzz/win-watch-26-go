@@ -26,7 +26,10 @@
             "command": "wails",
             "args": ["dev", "-nocolour"],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "WW_DEBUG": "1"
+                }
             },
             "isBackground": true,
             "presentation": {
@@ -51,10 +54,11 @@
             "type": "shell",
             "command": "powershell",
             "args": [
+                "-NoProfile",
                 "-ExecutionPolicy",
                 "Bypass",
-                "-File",
-                "${workspaceFolder}/.vscode/wait-for-vite.ps1"
+                "-Command",
+                "$deadline=(Get-Date).AddMinutes(2); while((Get-Date) -lt $deadline){ try{ $c=New-Object System.Net.Sockets.TcpClient; $c.Connect('localhost',5173); $c.Close(); Write-Host 'Vite ready on http://localhost:5173'; exit 0 }catch{ Start-Sleep -Milliseconds 300 } }; Write-Error 'Timed out waiting for Vite on http://localhost:5173'; exit 1"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -71,10 +75,11 @@
             "type": "shell",
             "command": "powershell",
             "args": [
+                "-NoProfile",
                 "-ExecutionPolicy",
                 "Bypass",
-                "-File",
-                "${workspaceFolder}/.vscode/wails-dlv-attach.ps1"
+                "-Command",
+                "$ErrorActionPreference='Stop'; $deadline=(Get-Date).AddMinutes(2); $proc=$null; while((Get-Date) -lt $deadline){ $proc=Get-Process -Name wwatch26 -ErrorAction SilentlyContinue | Sort-Object StartTime -Descending | Select-Object -First 1; if($proc){ break }; Start-Sleep -Milliseconds 500 }; if(-not $proc){ Write-Error 'Timed out waiting for wwatch26.exe (is wails dev running?)'; exit 1 }; Get-Process -Name dlv -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Write-Host ('Attaching Delve to wwatch26.exe PID ' + $proc.Id + ' on :2345'); $ErrorActionPreference='Continue'; dlv attach $proc.Id --headless --listen=:2345 --api-version=2 --accept-multiclient --check-go-version=false --only-same-user=false --continue"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

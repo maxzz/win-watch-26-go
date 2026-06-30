@@ -9,7 +9,10 @@
             "program": "${workspaceFolder}/build/bin/wwatch26.exe",
             "preLaunchTask": "wails: build (debug)",
             "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "WW_DEBUG": "1"
+            }
         },
         {
             "name": "Wails: Dev + Attach (Go)",
