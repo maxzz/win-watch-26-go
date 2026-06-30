@@ -27,7 +27,7 @@ export function TopMenu() {
                         About
                     </MenubarItem>
 
-                    {isBackgroundAvailable() && (
+                    {isBackgroundAvailable && (
                         <>
                             <MenubarSeparator />
 

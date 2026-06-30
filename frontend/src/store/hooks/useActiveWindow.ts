@@ -14,7 +14,7 @@ export function useActiveWindow() {
 
     useEffect(
         () => {
-            if (!isBackgroundAvailable() || !activeWindowMonitoringEnabled) {
+            if (!isBackgroundAvailable || !activeWindowMonitoringEnabled) {
                 setActiveHwnd(null);
                 return;
             }
@@ -37,9 +37,9 @@ export function useMonitorActiveWindow() {
 
     useEffect(
         () => {
-            if (!isBackgroundAvailable() || !activeWindowMonitoringEnabled) {
+            if (!isBackgroundAvailable || !activeWindowMonitoringEnabled) {
                 setActiveHwnd(null);
-                if (isBackgroundAvailable()) {
+                if (isBackgroundAvailable) {
                     try {
                         tmApi.stopMonitoring();
                     } catch (e) {
@@ -77,7 +77,7 @@ export function useAppStartInitialize() {
 
     useEffect(
         () => {
-            if (isBackgroundAvailable()) {
+            if (isBackgroundAvailable) {
                 refreshWindowInfosOnStart();
             }
 

@@ -8,7 +8,7 @@ export { isBackgroundAvailable } from "./isBackgroundAvailable";
 export async function installTmApi(): Promise<void> {
     const target = globalThis as unknown as { tmApi: WinWatchApi };
 
-    if (isBackgroundAvailable()) {
+    if (isBackgroundAvailable) {
         const { createWailsTmApi, installWailsTmApiExtras } = await import("./tmApi.wails");
         target.tmApi = createWailsTmApi();
         installWailsTmApiExtras();

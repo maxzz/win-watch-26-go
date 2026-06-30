@@ -14,7 +14,7 @@ export function AppHeader({ className }: { className?: string; }) {
         <div className={classNames("px-3 py-1 border-b bg-muted/30 flex items-center justify-between", className)}>
             <div className="flex items-center gap-4">
                 <TopMenu />
-                {!isBackgroundAvailable() && (
+                {!isBackgroundAvailable && (
                     <span className="text-[10px] uppercase tracking-wide text-muted-foreground border rounded px-1.5 py-0.5">
                         Browser preview
                     </span>
