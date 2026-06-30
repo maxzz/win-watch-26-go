@@ -40,6 +40,18 @@ func main() {
 	app := NewApp(service, store)
 	api := bindings.NewApi(service, app.Context)
 
+	winOpts := &windows.Options{
+		WebviewIsTransparent: false,
+		WindowIsTranslucent:  false,
+		// Native page zoom (Chrome-style), applied by the WebView2 engine.
+		// User wheel/keyboard zoom is disabled so the in-app zoom controls
+		// remain the single source of truth for the displayed percentage;
+		// the buttons drive it at runtime via App.SetZoomLevel.
+		IsZoomControlEnabled: false,
+		ZoomFactor:           zoomFactor,
+	}
+	patchWindowsOptionsForDebug(winOpts)
+
 	err := wails.Run(&options.App{
 		Title:  "UI Automation Monitor",
 		Width:  width,
@@ -57,16 +69,7 @@ func main() {
 		Debug: options.Debug{
 			OpenInspectorOnStartup: openInspector,
 		},
-		Windows: &windows.Options{
-			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
-			// Native page zoom (Chrome-style), applied by the WebView2 engine.
-			// User wheel/keyboard zoom is disabled so the in-app zoom controls
-			// remain the single source of truth for the displayed percentage;
-			// the buttons drive it at runtime via App.SetZoomLevel.
-			IsZoomControlEnabled: false,
-			ZoomFactor:           zoomFactor,
-		},
+		Windows: winOpts,
 	})
 	if err != nil {
 		println("Error:", err.Error())

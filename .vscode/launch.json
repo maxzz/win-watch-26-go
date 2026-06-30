@@ -2,21 +2,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Wails: Debug",
+            "name": "Wails: Debug (Go)",
             "type": "go",
             "request": "launch",
             "mode": "exec",
             "program": "${workspaceFolder}/build/bin/wwatch26.exe",
             "preLaunchTask": "wails: build (debug)",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
         },
         {
-            "name": "Wails: Dev + Attach",
+            "name": "Wails: Dev + Attach (Go)",
             "type": "go",
             "request": "attach",
-            "mode": "local",
-            "processId": "${command:pickProcess}",
-            "preLaunchTask": "wails: dev"
+            "mode": "remote",
+            "host": "127.0.0.1",
+            "port": 2345,
+            "preLaunchTask": "wails: dlv attach",
+            "showLog": true
+        },
+        {
+            "name": "Frontend: Vite (Chrome)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "pathMapping": {
+                "/@renderer": "${workspaceFolder}/frontend/src"
+            },
+            "preLaunchTask": "wait-for-vite"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Wails: Dev (Go + Frontend)",
+            "configurations": [
+                "Wails: Dev + Attach (Go)",
+                "Frontend: Vite (Chrome)"
+            ],
+            "stopAll": true
         }
     ]
 }

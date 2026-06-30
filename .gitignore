@@ -17,5 +17,8 @@ frontend/wailsjs/
 !.vscode/launch.json
 !.vscode/tasks.json
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/wails-dlv-attach.ps1
+!.vscode/wait-for-vite.ps1
 .idea/
 frontend/package.json.md5

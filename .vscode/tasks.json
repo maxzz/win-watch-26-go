@@ -2,38 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "frontend: build",
-            "type": "shell",
-            "command": "pnpm",
-            "args": ["--filter", "frontend", "build"],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "presentation": {
-                "clear": true,
-                "panel": "shared",
-                "showReuseMessage": false
-            },
-            "problemMatcher": ["$tsc"]
-        },
-        {
             "label": "wails: build (debug)",
             "type": "shell",
-            "command": "go",
-            "args": [
-                "build",
-                "-tags",
-                "dev",
-                "-gcflags",
-                "all=-N -l",
-                "-o",
-                "build/bin/wwatch26.exe",
-                "."
-            ],
+            "command": "wails",
+            "args": ["build", "-debug", "-devtools", "-nocolour"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": ["frontend: build"],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -49,7 +24,7 @@
             "label": "wails: dev",
             "type": "shell",
             "command": "wails",
-            "args": ["dev"],
+            "args": ["dev", "-nocolour"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -62,15 +37,64 @@
             "problemMatcher": {
                 "owner": "wails",
                 "pattern": {
-                    "regexp": "^(.*)$",
-                    "file": 1,
-                    "location": 1,
-                    "message": 1
+                    "regexp": "^$"
                 },
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "Building application for development",
                     "endsPattern": "Watching \\(sub\\)/directory"
+                }
+            }
+        },
+        {
+            "label": "wait-for-vite",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/.vscode/wait-for-vite.ps1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "wails: dlv attach",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/.vscode/wails-dlv-attach.ps1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": ["wails: dev"],
+            "isBackground": true,
+            "presentation": {
+                "clear": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": {
+                "owner": "dlv",
+                "pattern": {
+                    "regexp": "^$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Attaching Delve",
+                    "endsPattern": "API server listening"
                 }
             }
         }
