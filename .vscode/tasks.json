@@ -1,0 +1,78 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "frontend: build",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["--filter", "frontend", "build"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "clear": true,
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": ["$tsc"]
+        },
+        {
+            "label": "wails: build (debug)",
+            "type": "shell",
+            "command": "go",
+            "args": [
+                "build",
+                "-tags",
+                "dev",
+                "-gcflags",
+                "all=-N -l",
+                "-o",
+                "build/bin/wwatch26.exe",
+                "."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": ["frontend: build"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true,
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "wails: dev",
+            "type": "shell",
+            "command": "wails",
+            "args": ["dev"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "isBackground": true,
+            "presentation": {
+                "clear": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": {
+                "owner": "wails",
+                "pattern": {
+                    "regexp": "^(.*)$",
+                    "file": 1,
+                    "location": 1,
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Building application for development",
+                    "endsPattern": "Watching \\(sub\\)/directory"
+                }
+            }
+        }
+    ]
+}

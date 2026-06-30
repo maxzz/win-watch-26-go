@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Wails: Debug",
+            "type": "go",
+            "request": "launch",
+            "mode": "exec",
+            "program": "${workspaceFolder}/build/bin/wwatch26.exe",
+            "preLaunchTask": "wails: build (debug)",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Wails: Dev + Attach",
+            "type": "go",
+            "request": "attach",
+            "mode": "local",
+            "processId": "${command:pickProcess}",
+            "preLaunchTask": "wails: dev"
+        }
+    ]
+}
