@@ -1,5 +1,12 @@
 {
+    "go.toolsEnvVars": {
+        "GOOS": "windows",
+        "GOARCH": "amd64"
+    },
     "gopls": {
-        "build.buildFlags": ["-tags=native_webview2loader"]
+        "build.env": {
+            "GOOS": "windows",
+            "GOARCH": "amd64"
+        }
     }
 }

@@ -2,55 +2,33 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "wails: build (debug)",
+            "label": "frontend: vite",
             "type": "shell",
-            "command": "wails",
-            "args": ["build", "-debug", "-devtools", "-nocolour"],
+            "command": "pnpm",
+            "args": ["--filter", "frontend", "dev"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "clear": true,
-                "panel": "shared",
-                "showReuseMessage": false
-            },
-            "problemMatcher": ["$go"]
-        },
-        {
-            "label": "wails: dev",
-            "type": "shell",
-            "command": "wails",
-            "args": ["dev", "-nocolour"],
-            "options": {
-                "cwd": "${workspaceFolder}",
-                "env": {
-                    "WW_DEBUG": "1"
-                }
-            },
             "isBackground": true,
             "presentation": {
-                "clear": true,
+                "reveal": "always",
                 "panel": "dedicated",
                 "showReuseMessage": false
             },
             "problemMatcher": {
-                "owner": "wails",
+                "owner": "vite",
                 "pattern": {
                     "regexp": "^$"
                 },
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": "Building application for development",
-                    "endsPattern": "Watching \\(sub\\)/directory"
+                    "beginsPattern": "VITE",
+                    "endsPattern": "Local:"
                 }
             }
         },
         {
-            "label": "wait-for-vite",
+            "label": "wait: devserver",
             "type": "shell",
             "command": "powershell",
             "args": [
@@ -58,7 +36,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "$deadline=(Get-Date).AddMinutes(2); while((Get-Date) -lt $deadline){ try{ $c=New-Object System.Net.Sockets.TcpClient; $c.Connect('localhost',5173); $c.Close(); Write-Host 'Vite ready on http://localhost:5173'; exit 0 }catch{ Start-Sleep -Milliseconds 300 } }; Write-Error 'Timed out waiting for Vite on http://localhost:5173'; exit 1"
+                "for ($i = 0; $i -lt 400; $i++) { if (Get-NetTCPConnection -LocalPort 34115 -State Listen -ErrorAction SilentlyContinue) { exit 0 }; Start-Sleep -Milliseconds 300 }; exit 1"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -69,39 +47,6 @@
                 "showReuseMessage": false
             },
             "problemMatcher": []
-        },
-        {
-            "label": "wails: dlv attach",
-            "type": "shell",
-            "command": "powershell",
-            "args": [
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
-                "-Command",
-                "$ErrorActionPreference='Stop'; $deadline=(Get-Date).AddMinutes(2); $proc=$null; while((Get-Date) -lt $deadline){ $proc=Get-Process -Name wwatch26 -ErrorAction SilentlyContinue | Sort-Object StartTime -Descending | Select-Object -First 1; if($proc){ break }; Start-Sleep -Milliseconds 500 }; if(-not $proc){ Write-Error 'Timed out waiting for wwatch26.exe (is wails dev running?)'; exit 1 }; Get-Process -Name dlv -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Write-Host ('Attaching Delve to wwatch26.exe PID ' + $proc.Id + ' on :2345'); $ErrorActionPreference='Continue'; dlv attach $proc.Id --headless --listen=:2345 --api-version=2 --accept-multiclient --check-go-version=false --only-same-user=false --continue"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "dependsOn": ["wails: dev"],
-            "isBackground": true,
-            "presentation": {
-                "clear": true,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            },
-            "problemMatcher": {
-                "owner": "dlv",
-                "pattern": {
-                    "regexp": "^$"
-                },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "Attaching Delve",
-                    "endsPattern": "API server listening"
-                }
-            }
         }
     ]
 }
