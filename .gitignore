@@ -1,5 +1,6 @@
 # Go
 /build/bin/
+*.exe
 
 # Node / frontend
 node_modules/

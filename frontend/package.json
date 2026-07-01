@@ -3,15 +3,6 @@
     "description": "A Windows UI Automation Monitor (Wails + Go)",
     "private": true,
     "version": "1.0.0",
-    "homepage": "https://maxzz.github.io/win-watch-26-go/",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/maxzz/win-watch-26-go.git",
-        "directory": "frontend"
-    },
-    "bugs": {
-        "url": "https://github.com/maxzz/win-watch-26-go/issues"
-    },
     "type": "module",
     "devDependencies": {
         "@tailwindcss/vite": "^4.2.0",
