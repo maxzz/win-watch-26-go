@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/maxzz/win-watch-26/internal/appstate"
-	"github.com/maxzz/win-watch-26/internal/platform"
-	"github.com/maxzz/win-watch-26/internal/winwatch"
+	"github.com/maxzz/win-watch-26/backend/appstate"
+	"github.com/maxzz/win-watch-26/backend/platform"
+	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
 // App wires together application lifecycle: it restores/saves the window
@@ -30,8 +30,8 @@ func (a *App) Context() context.Context {
 	return a.ctx
 }
 
-// startup is invoked by Wails once the runtime context is available.
-func (a *App) startup(ctx context.Context) {
+// Startup is invoked by Wails once the runtime context is available.
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 
 	if s, ok := a.store.Load(); ok && s.BoundsValid() {
@@ -40,13 +40,13 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
-// beforeClose persists window bounds and the actual DevTools visibility.
+// BeforeClose persists window bounds and the actual DevTools visibility.
 // Querying the OS here is the source of truth: it captures the real state no
 // matter how DevTools were closed (the DevTools window's own close button, F12
 // inside it, the native Wails hotkey, etc.), which the frontend toggle cannot
 // observe. Returning false allows the window to close.
 // (Same approach as traytools-26 / to-diag-trace-go.)
-func (a *App) beforeClose(ctx context.Context) bool {
+func (a *App) BeforeClose(ctx context.Context) bool {
 	w, h := wruntime.WindowGetSize(ctx)
 	x, y := wruntime.WindowGetPosition(ctx)
 	a.store.SaveBounds(x, y, w, h)
@@ -57,7 +57,7 @@ func (a *App) beforeClose(ctx context.Context) bool {
 // ToggleDevTools lets the Ctrl+Shift+F12 / Ctrl+Shift+I shortcuts also *close*
 // DevTools: WebView2 only opens the inspector via its native accelerator, so
 // when it is already open we close the app-owned DevTools window with WM_CLOSE.
-// The persisted state is captured authoritatively in beforeClose (same approach
+// The persisted state is captured authoritatively in BeforeClose (same approach
 // as traytools-26 / to-diag-trace-go).
 func (a *App) ToggleDevTools() {
 	if platform.IsDevToolsOpen() {
@@ -79,7 +79,7 @@ func (a *App) GetZoomLevel() float64 {
 	return a.store.Zoom()
 }
 
-// shutdown stops native monitoring on exit.
-func (a *App) shutdown(ctx context.Context) {
+// Shutdown stops native monitoring on exit.
+func (a *App) Shutdown(ctx context.Context) {
 	a.service.Shutdown()
 }

@@ -13,7 +13,7 @@ import {
     IsWindowHandleValid,
     QuitApp,
 } from "../../wailsjs/go/bindings/Api";
-import { ToggleDevTools, SetZoomLevel, GetZoomLevel } from "../../wailsjs/go/main/App";
+import { ToggleDevTools, SetZoomLevel, GetZoomLevel } from "../../wailsjs/go/backend/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 
 const ZOOM_STEP = 0.5;

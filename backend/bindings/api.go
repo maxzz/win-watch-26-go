@@ -10,7 +10,7 @@ import (
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/maxzz/win-watch-26/internal/winwatch"
+	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
 // EventActiveWindowChanged is the event name the frontend subscribes to.

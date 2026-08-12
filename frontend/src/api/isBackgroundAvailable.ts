@@ -7,12 +7,12 @@ function detectBackgroundAvailable(): boolean {
         return false;
     }
     const w = window as Window & {
-        go?: { bindings?: { Api?: unknown }; main?: { App?: unknown } };
+        go?: { bindings?: { Api?: unknown }; backend?: { App?: unknown } };
         runtime?: { EventsOnMultiple?: unknown };
     };
     return !!(
         w.go?.bindings?.Api &&
-        w.go?.main?.App &&
+        w.go?.backend?.App &&
         w.runtime?.EventsOnMultiple
     );
 }

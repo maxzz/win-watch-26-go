@@ -1,7 +1,7 @@
 //go:build !windows
 
-package main
+package backend
 
 import "github.com/wailsapp/wails/v2/pkg/options/windows"
 
-func patchWindowsOptionsForDebug(o *windows.Options) {}
+func PatchWindowsOptionsForDebug(o *windows.Options) {}

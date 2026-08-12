@@ -9,9 +9,10 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 
-	"github.com/maxzz/win-watch-26/internal/appstate"
-	"github.com/maxzz/win-watch-26/internal/bindings"
-	"github.com/maxzz/win-watch-26/internal/winwatch"
+	"github.com/maxzz/win-watch-26/backend"
+	"github.com/maxzz/win-watch-26/backend/appstate"
+	"github.com/maxzz/win-watch-26/backend/bindings"
+	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
 //go:embed all:frontend/dist
@@ -37,7 +38,7 @@ func main() {
 		}
 	}
 
-	app := NewApp(service, store)
+	app := backend.NewApp(service, store)
 	api := bindings.NewApi(service, app.Context)
 
 	winOpts := &windows.Options{
@@ -50,7 +51,7 @@ func main() {
 		IsZoomControlEnabled: false,
 		ZoomFactor:           zoomFactor,
 	}
-	patchWindowsOptionsForDebug(winOpts)
+	backend.PatchWindowsOptionsForDebug(winOpts)
 
 	err := wails.Run(&options.App{
 		Title:  "UI Automation Monitor",
@@ -59,9 +60,9 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		OnStartup:     app.startup,
-		OnBeforeClose: app.beforeClose,
-		OnShutdown:    app.shutdown,
+		OnStartup:     app.Startup,
+		OnBeforeClose: app.BeforeClose,
+		OnShutdown:    app.Shutdown,
 		Bind: []interface{}{
 			api,
 			app,

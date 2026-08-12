@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/maxzz/win-watch-26/internal/winwatch/win32"
+	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
 )
 
 var (

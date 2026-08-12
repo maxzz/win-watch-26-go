@@ -11,8 +11,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/maxzz/win-watch-26/internal/winwatch/uia"
-	"github.com/maxzz/win-watch-26/internal/winwatch/win32"
+	"github.com/maxzz/win-watch-26/backend/winwatch/uia"
+	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
 )
 
 // Service is the entry point to the native functionality.

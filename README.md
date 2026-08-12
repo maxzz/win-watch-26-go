@@ -61,9 +61,9 @@ so DevTools can reopen on startup without attaching a console window.
 ```
 win-watch-26-go/
 ├─ main.go                  Wails bootstrap (embeds frontend/dist, window options, Bind)
-├─ app.go                   App lifecycle: window-bounds restore/save, shutdown
 ├─ wails.json               Wails config (frontend commands use pnpm)
-├─ internal/
+├─ backend/                 Go application code (same layout as traytools-26)
+│  ├─ app.go                App lifecycle: window-bounds restore/save, shutdown
 │  ├─ winwatch/             The native "plugin" - framework-independent
 │  │  ├─ service.go         Public Go API (returns the same JSON as the old C++ addon)
 │  │  ├─ win32/             Win32 syscalls: window enumeration, foreground monitor, highlight overlay
@@ -101,7 +101,7 @@ React UI ──window.tmApi.*──► tmApi shim ──► wailsjs bindings ─
 
 ### Native layer (pure Go)
 
-`internal/winwatch` reimplements the original C++ DLL + NAPI addon:
+`backend/winwatch` reimplements the original C++ DLL + NAPI addon:
 
 | Capability               | Implementation                                             |
 | ------------------------ | ---------------------------------------------------------- |
