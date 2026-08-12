@@ -1,9 +1,10 @@
 import { atom } from "jotai";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
+import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 import { appSettings } from "./8-ui-settings";
 import { type ControlNode } from "./9-types-tmapi";
 import { selectedHwndAtom } from "./2-1-atoms-windows-list";
-import { selectedControlAtom } from "./2-2-1-atoms-controls-list";
+import { selectedControlAtom, windowControlsTreeAtom } from "./2-2-1-atoms-controls-list";
 import { getCurrentHighlightBounds } from "./2-4-atoms-bounds";
 
 //#region Highlight blink count
@@ -120,6 +121,30 @@ export const setSelectedControlAtom = atom(
         } catch (e) {
             console.warn("Failed to highlight selected control", e);
         }
+    }
+);
+
+/** Select a window from the Windows panel. Re-clicking the same window re-triggers auto-highlight. */
+export const selectWindowAtom = atom(
+    null,
+    async (get, set, handle: string): Promise<void> => {
+        const previous = get(selectedHwndAtom);
+        const sameSelection = previous !== null && areWindowHandlesEqual(previous, handle);
+
+        set(selectedHwndAtom, handle);
+
+        // New window selection is highlighted when the control tree auto-selects its root.
+        // Same-window re-click must re-run highlight explicitly (hwnd value does not change).
+        if (!sameSelection || !appSettings.controls_AutoHighlight) {
+            return;
+        }
+
+        const control = get(selectedControlAtom) ?? get(windowControlsTreeAtom);
+        if (!control) {
+            return;
+        }
+
+        await set(setSelectedControlAtom, control);
     }
 );
 
