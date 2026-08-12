@@ -1,4 +1,3 @@
-import { classNames } from "@renderer/utils";
 import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 
 /**
@@ -8,15 +7,24 @@ import type { ComponentPropsWithoutRef, MouseEvent } from "react";
  *
  * Uses outline (not ring), matching traytools intent while keeping this app's left bar.
  */
-export const treeRowSelectedClasses = classNames(
-    "text-tree-select-foreground bg-tree-select",
-    "group-focus-within/tree:bg-tree-select-focused group-focus-within/tree:text-tree-select-focused-foreground",
-    "group-focus-within/tree:outline group-focus-within/tree:outline-1 group-focus-within/tree:-outline-offset-1 group-focus-within/tree:outline-tree-select-border",
-    "group-focus-within/tree:font-medium",
-    "before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px]",
-    "before:bg-muted-foreground/40",
-    "group-focus-within/tree:before:bg-tree-select-border",
-);
+export const treeRowSelectedClasses = "\
+text-tree-select-foreground bg-tree-select \
+\
+group-focus-within/tree:bg-tree-select-focused \
+group-focus-within/tree:text-tree-select-focused-foreground \
+group-focus-within/tree:outline \
+group-focus-within/tree:outline-1 \
+group-focus-within/tree:-outline-offset-1 \
+group-focus-within/tree:outline-tree-select-border \
+group-focus-within/tree:font-normal \
+group-focus-within/tree:before:bg-tree-select-border \
+before:absolute \
+before:left-0 \
+before:top-0 \
+before:bottom-0 \
+before:w-[3px] \
+before:bg-muted-foreground/40 \
+";
 
 export const treeScrollViewportProps = {
     tabIndex: 0,
