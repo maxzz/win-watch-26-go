@@ -7,6 +7,8 @@ import { cachedWindowControlsTreeFamily } from "./2-2-3-atoms-controls-cache";
 
 export type RawControlNode = Omit<ControlNode, "nodeUuid" | "expandedAtom" | "children"> & {
     children?: RawControlNode[];
+    /** Legacy JSON key from older backends; mapped onto isLegacyAccAvailable. */
+    isLegacyIAccessiblePatternAvailable?: boolean;
 };
 
 export const initializeControlTreeForHwndAtom = atom(
@@ -66,8 +68,11 @@ function getControlNodeUniqueId(node: ControlNode): number {
 function withExpandedAtom(node: RawControlNode, expandedStateByUniqueId?: Map<number, boolean>, nodeUuidByPath?: Map<string, number>, path: string = "0"): ControlNode {
     const nodeUuid = nodeUuidByPath?.get(path) ?? uuid.asRelativeNumber();
     const restoredExpanded = expandedStateByUniqueId?.get(nodeUuid);
+    const isLegacyAccAvailable = node.isLegacyAccAvailable ?? node.isLegacyIAccessiblePatternAvailable ?? false;
+    const { isLegacyIAccessiblePatternAvailable: _legacyKey, ...rest } = node;
     return {
-        ...node,
+        ...rest,
+        isLegacyAccAvailable,
         nodeUuid,
         expandedAtom: atom(restoredExpanded ?? getDefaultExpandedState(node)),
         children: node.children?.map((child, index) => withExpandedAtom(child, expandedStateByUniqueId, nodeUuidByPath, `${path}.${index}`)),

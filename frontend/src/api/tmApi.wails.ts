@@ -9,6 +9,7 @@ import {
     HighlightRect,
     HideHighlight,
     GetWindowRect,
+    GetWindowDetailInfo,
     GetControlCurrentBounds,
     IsWindowHandleValid,
     QuitApp,
@@ -108,6 +109,7 @@ export function createWailsTmApi(): WinWatchApi {
         hideHighlight: () => HideHighlight(),
 
         getWindowRect: (handle) => GetWindowRect(handle),
+        getWindowDetailInfo: (handle) => GetWindowDetailInfo(handle),
         getControlCurrentBounds: (handle, runtimeId) => GetControlCurrentBounds(handle, runtimeId),
         isWindowHandleValid: (handle) => IsWindowHandleValid(handle),
 

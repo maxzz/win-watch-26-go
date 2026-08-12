@@ -97,6 +97,7 @@ export function createBrowserTmApi(): WinWatchApi {
         hideHighlight: async () => undefined,
 
         getWindowRect: async () => "null",
+        getWindowDetailInfo: async () => JSON.stringify({ valid: false }),
         getControlCurrentBounds: async () => "null",
         isWindowHandleValid: async () => false,
 

@@ -70,6 +70,15 @@ export function hexAccRuntimeId(runtimeId: string | undefined): string {
  * @param b - The second handle to compare
  * @returns True if the handles are equal, false otherwise
  */
+/** True when hwnd is a non-zero window handle (usable for Win32 detail queries). */
+export function hasNativeWindowHandle(hwnd: string | null | undefined): boolean {
+    if (!hwnd) {
+        return false;
+    }
+    const parsed = parseHwnd(hwnd);
+    return parsed !== null && parsed !== 0n;
+}
+
 export function areWindowHandlesEqual(a: string, b: string): boolean {
     if (a === b) {
         return true;

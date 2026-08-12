@@ -92,6 +92,11 @@ func (a *Api) IsWindowHandleValid(handle string) bool {
 	return a.service.IsWindowHandleValid(handle)
 }
 
+// GetWindowDetailInfo returns JSON with detailed Win32 window properties.
+func (a *Api) GetWindowDetailInfo(handle string) string {
+	return a.service.GetWindowDetailInfo(handle)
+}
+
 // QuitApp quits the application.
 func (a *Api) QuitApp() {
 	if ctx := a.ctx(); ctx != nil {

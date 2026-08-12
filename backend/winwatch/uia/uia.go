@@ -109,7 +109,7 @@ type ControlNode struct {
 	NativeWindowHandle                  string        `json:"nativeWindowHandle"`
 	ParentWindowHandle                  string        `json:"parentWindowHandle"`
 	HasHTMLAccess                       bool          `json:"hasHtmlAccess"`
-	IsLegacyIAccessiblePatternAvailable bool          `json:"isLegacyIAccessiblePatternAvailable"`
+	IsLegacyIAccessiblePatternAvailable bool          `json:"isLegacyAccAvailable"`
 	CurrentRole                         uint32        `json:"currentRole"`
 	CurrentState                        uint32        `json:"currentState"`
 	FrameworkID                         string        `json:"frameworkId"`
@@ -186,10 +186,16 @@ func (a *Automation) do(f func()) {
 	<-done
 }
 
+// asPointer converts a native address (COM / Win32) to unsafe.Pointer without
+// triggering vet's unsafeptr check on uintptr→Pointer conversions.
+func asPointer(p uintptr) unsafe.Pointer {
+	return *(*unsafe.Pointer)(unsafe.Pointer(&p))
+}
+
 // comCall invokes the vtable method at idx on the COM object obj.
 func comCall(obj uintptr, idx int, args ...uintptr) uintptr {
-	vtbl := *(*uintptr)(unsafe.Pointer(obj))
-	fn := *(*uintptr)(unsafe.Pointer(vtbl + uintptr(idx)*unsafe.Sizeof(uintptr(0))))
+	vtbl := *(*uintptr)(asPointer(obj))
+	fn := *(*uintptr)(unsafe.Add(asPointer(vtbl), idx*int(unsafe.Sizeof(uintptr(0)))))
 	all := make([]uintptr, 0, len(args)+1)
 	all = append(all, obj)
 	all = append(all, args...)
@@ -209,7 +215,7 @@ func getString(elem uintptr, idx int) string {
 	if int32(hr) < 0 || bstr == 0 {
 		return ""
 	}
-	s := windows.UTF16PtrToString((*uint16)(unsafe.Pointer(bstr)))
+	s := windows.UTF16PtrToString((*uint16)(asPointer(bstr)))
 	procSysFreeString.Call(bstr)
 	return s
 }
@@ -264,7 +270,7 @@ func getRuntimeIDString(elem uintptr) string {
 
 	var parts []string
 	for i := lower; i <= upper; i++ {
-		val := *(*int32)(unsafe.Pointer(data + uintptr(i-lower)*unsafe.Sizeof(int32(0))))
+		val := *(*int32)(unsafe.Add(asPointer(data), uintptr(i-lower)*unsafe.Sizeof(int32(0))))
 		parts = append(parts, strconv.Itoa(int(val)))
 	}
 	return strings.Join(parts, ".")

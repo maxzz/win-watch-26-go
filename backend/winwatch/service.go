@@ -13,6 +13,7 @@ import (
 
 	"github.com/maxzz/win-watch-26/backend/winwatch/uia"
 	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
+	"github.com/maxzz/win-watch-26/backend/winwatch/windowdetail"
 )
 
 // Service is the entry point to the native functionality.
@@ -155,6 +156,17 @@ func (s *Service) IsWindowHandleValid(handle string) bool {
 		return false
 	}
 	return win32.IsWindow(hwnd)
+}
+
+// GetWindowDetailInfo returns JSON with detailed Win32 window properties
+// (General + Window Extra tabs), or a payload with valid=false.
+func (s *Service) GetWindowDetailInfo(handle string) string {
+	info := windowdetail.GetWindowDetailInfo(handle)
+	data, err := json.Marshal(info)
+	if err != nil {
+		return `{"valid":false}`
+	}
+	return string(data)
 }
 
 // Shutdown stops background activity (monitoring) on app exit.

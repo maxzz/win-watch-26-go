@@ -42,6 +42,7 @@ interface WinWatchApi {
     highlightRect: (bounds: Rect4, options?: HighlightOptions) => Promise<void>;
     hideHighlight: () => Promise<void>;
     getWindowRect: (handle: string) => Promise<string>;
+    getWindowDetailInfo: (handle: string) => Promise<string>;
     getControlCurrentBounds: (handle: string, runtimeId: string) => Promise<string>;
     isWindowHandleValid: (handle: string) => Promise<boolean>;
     zoomAction: (action: "in" | "out" | "reset") => Promise<number>;
