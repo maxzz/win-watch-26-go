@@ -51,4 +51,4 @@ export function FooterWindowInfo() {
     );
 }
 
-const panelClasses = "px-1 py-2 text-[.65rem] bg-muted/20 border-t border-foreground/20 flex items-center gap-2";
+const panelClasses = "shrink-0 px-1 py-2 text-[.65rem] bg-muted/20 border-t border-foreground/20 flex items-center gap-2";

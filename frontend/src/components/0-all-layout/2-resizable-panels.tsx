@@ -23,8 +23,10 @@ export function MainContent({ className }: { className?: string; }) {
         <ResizablePanelGroup className={className} orientation="horizontal" onLayoutChanged={setPanelLayout}>
             {/* Left panel - Window Tree */}
             <ResizablePanel id="left-panel" minSize="15px" maxSize="75%" defaultSize={mainPanelSize}>
-                <div className="flex flex-col h-full">
-                    <WindowTreePanel />
+                <div className="h-full min-h-0 flex flex-col">
+                    <div className="flex-1 min-h-0">
+                        <WindowTreePanel />
+                    </div>
                     <FooterWindowInfo />
                 </div>
             </ResizablePanel>

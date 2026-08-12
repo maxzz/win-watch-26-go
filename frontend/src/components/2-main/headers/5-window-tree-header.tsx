@@ -11,7 +11,7 @@ import { doHighlightSelectedWindowAtom } from "@renderer/store/2-3-atoms-highlig
 
 export function WindowTreeHeader() {
     return (
-        <div className="px-2 pr-0 h-7 bg-muted/20 border-b flex justify-between items-center select-none">
+        <div className="shrink-0 px-2 pr-0 h-7 bg-muted/20 border-b flex justify-between items-center select-none">
             <span className="text-xs font-semibold">
                 Windows
             </span>

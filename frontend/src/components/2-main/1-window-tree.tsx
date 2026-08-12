@@ -2,25 +2,31 @@ import { useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { classNames, normalizeHwnd } from "@renderer/utils";
 import { type WindowInfo } from "@renderer/store/9-types-tmapi";
-import { WindowTreeHeader } from "./headers/5-window-tree-header";
-import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight, IconL_Layout } from "../ui/icons";
 import { selectedHwndAtom, windowInfosAtom } from "@renderer/store/2-1-atoms-windows-list";
+import { ScrollArea } from "../ui/shadcn/scroll-area";
+import { WindowTreeHeader } from "./headers/5-window-tree-header";
+import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight } from "../ui/icons";
 
 export function WindowTreePanel() {
     const windowInfos: WindowInfo[] = useAtomValue(windowInfosAtom);
     const [selectedHwnd, setSelectedHwnd] = useAtom(selectedHwndAtom);
 
     return (
-        <div className="h-full bg-card border-r flex flex-col">
+        <div className="h-full min-h-0 bg-card border-r flex flex-col">
             <WindowTreeHeader />
 
-            <div className="group/windowtree flex-1 overflow-auto" tabIndex={0}>
+            <ScrollArea
+                className="group/windowtree flex-1 min-h-0"
+                fixedWidth
+                parentContentWidth
+                viewportProps={{ tabIndex: 0 }}
+            >
                 {windowInfos.map(
                     (windowInfo, i) => (
                         <WindowNode key={i} windowInfo={windowInfo} selectedHandle={selectedHwnd} onSelect={setSelectedHwnd} depth={0} />
                     )
                 )}
-            </div>
+            </ScrollArea>
         </div>
     );
 }
