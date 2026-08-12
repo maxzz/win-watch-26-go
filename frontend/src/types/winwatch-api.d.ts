@@ -46,6 +46,8 @@ interface WinWatchApi {
     getControlCurrentBounds: (handle: string, runtimeId: string) => Promise<string>;
     isWindowHandleValid: (handle: string) => Promise<boolean>;
     revealInExplorer: (path: string) => Promise<void>;
+    /** pathsJSON: JSON string array of file paths; returns JSON array of {path, dataUrl, error?}. */
+    getFileIcons: (pathsJSON: string) => Promise<string>;
     zoomAction: (action: "in" | "out" | "reset") => Promise<number>;
     getZoomLevel: () => Promise<number>;
     onZoomChanged: (callback: (level: number) => void) => () => void;

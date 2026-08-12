@@ -3,6 +3,7 @@ import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 import { type WindowInfo } from "./9-types-tmapi";
 import { appSettings } from "./8-ui-settings";
+import { ensureFileIcons } from "./4-file-icons";
 
 //#region Window list
 
@@ -18,7 +19,10 @@ export const doRefreshWindowInfosAtom = atom(
                 excludeOwnAppWindows: appSettings.winlist_ExcludeUs,
             });
             const data = JSON.parse(json) as WindowInfo[];
-            set(windowInfosAtom, getWindowInfosWithAppliedSort(data));
+            const sorted = getWindowInfosWithAppliedSort(data);
+            set(windowInfosAtom, sorted);
+            // Background: prefetch exe/dll icons for list rows (deduped in the cache).
+            ensureFileIcons(collectProcessPaths(sorted));
         } catch (e) {
             notice.error("Failed to fetch windows");
             console.error("Failed to fetch windows", e);
@@ -41,6 +45,7 @@ export const ensureWindowInListAtom = atom(
             handle: window.handle,
             title: window.title ?? "",
             processName: window.processName ?? "",
+            processPath: window.processPath ?? "",
             processId: window.processId ?? 0,
             className: window.className ?? "",
             rect: window.rect ?? { left: 0, top: 0, right: 0, bottom: 0 },
@@ -210,5 +215,17 @@ function sortWindowInfosByProcessName(windowInfos: WindowInfo[]): WindowInfo[] {
 }
 
 //#endregion sort windows list
+
+function collectProcessPaths(windowInfos: WindowInfo[]): string[] {
+    const paths: string[] = [];
+    const walk = (nodes: WindowInfo[]) => {
+        for (const n of nodes) {
+            if (n.processPath) paths.push(n.processPath);
+            if (n.children?.length) walk(n.children);
+        }
+    };
+    walk(windowInfos);
+    return paths;
+}
 
 //#endregion Window list

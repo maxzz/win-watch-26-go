@@ -6,6 +6,7 @@ package win32
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"unsafe"
@@ -58,6 +59,7 @@ type WindowInfo struct {
 	Handle      string `json:"handle"`
 	Title       string `json:"title"`
 	ProcessName string `json:"processName"`
+	ProcessPath string `json:"processPath"`
 	ProcessID   uint32 `json:"processId"`
 	ClassName   string `json:"className"`
 	Rect        Rect   `json:"rect"`
@@ -84,10 +86,17 @@ func EnumerateTopLevelWindows(excludeProcessID uint32) []WindowInfo {
 			return 1
 		}
 
+		processPath := GetProcessPath(pid)
+		processName := GetProcessName(pid)
+		if processName == "" && processPath != "" {
+			processName = filepath.Base(processPath)
+		}
+
 		windowsList = append(windowsList, WindowInfo{
 			Handle:      HwndToHexString(HWND(hwnd)),
 			Title:       title,
-			ProcessName: GetProcessName(pid),
+			ProcessName: processName,
+			ProcessPath: processPath,
 			ProcessID:   pid,
 			ClassName:   GetWindowClassName(HWND(hwnd)),
 			Rect:        GetWindowRectValue(HWND(hwnd)),
@@ -160,6 +169,25 @@ func GetProcessName(pid uint32) string {
 		return ""
 	}
 	return windows.UTF16ToString(buf[:copied])
+}
+
+// GetProcessPath returns the full image path for a pid, or "" on failure.
+func GetProcessPath(pid uint32) string {
+	if pid == 0 {
+		return ""
+	}
+	handle, err := windows.OpenProcess(windows.PROCESS_QUERY_LIMITED_INFORMATION, false, pid)
+	if err != nil {
+		return ""
+	}
+	defer windows.CloseHandle(handle)
+
+	buf := make([]uint16, windows.MAX_PATH)
+	size := uint32(len(buf))
+	if err := windows.QueryFullProcessImageName(handle, 0, &buf[0], &size); err != nil {
+		return ""
+	}
+	return windows.UTF16ToString(buf[:size])
 }
 
 // GetWindowRectValue returns the window rectangle in screen coordinates.

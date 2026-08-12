@@ -9,6 +9,7 @@ export interface WindowInfo {       // Top level window info (obtained from C++ 
     handle: string;                 // from EnumWindowsProc
     title: string;                  // from GetWindowTitle
     processName: string;            // from GetWindowProcessName
+    processPath?: string;           // from QueryFullProcessImageName
     processId: number;              // from GetWindowThreadProcessId
     className: string;              // from GetWindowClassNameStr
     rect: NativeBounds;             // from GetWindowRect

@@ -101,6 +101,7 @@ export function createBrowserTmApi(): WinWatchApi {
         getControlCurrentBounds: async () => "null",
         isWindowHandleValid: async () => false,
         revealInExplorer: async () => undefined,
+        getFileIcons: async () => "[]",
 
         zoomAction: (action) => Promise.resolve(handleZoom(action)),
         getZoomLevel: () => Promise.resolve(currentZoomLevel),

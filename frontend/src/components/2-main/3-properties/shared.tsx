@@ -4,6 +4,7 @@ import { classNames } from "@renderer/utils";
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster";
 import { type RectInfo } from "@renderer/store/3-window-detail";
+import { FileIcon } from "../5-file-icons";
 
 export function Section({ title, children, grid = true }: PropsWithChildren<{ title: string; grid?: boolean; }>) {
     return (
@@ -50,6 +51,7 @@ export function PathWithCopy({ path }: { path: string; }) {
     }
     return (
         <span className="min-w-0 w-full inline-flex items-center gap-1.5">
+            <FileIcon path={path} className="shrink-0" />
             <span className="flex-1 min-w-0 truncate" title={path}>{path}</span>
             <span className="shrink-0 inline-flex items-center gap-0.5">
                 <Button

@@ -10,6 +10,7 @@ import (
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/maxzz/win-watch-26/backend/fileicon"
 	"github.com/maxzz/win-watch-26/backend/winlaunch"
 	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
@@ -101,6 +102,12 @@ func (a *Api) GetWindowDetailInfo(handle string) string {
 // RevealInExplorer opens File Explorer with path selected (highlighted).
 func (a *Api) RevealInExplorer(path string) error {
 	return winlaunch.RevealInExplorer(path)
+}
+
+// GetFileIcons accepts a JSON string array of file paths and returns a JSON
+// array of {path, dataUrl, error?} entries (PNG data URLs with transparency).
+func (a *Api) GetFileIcons(pathsJSON string) string {
+	return fileicon.ExtractManyJSON(pathsJSON)
 }
 
 // QuitApp quits the application.
