@@ -2,6 +2,20 @@
 @plugin "tailwindcss-animate";
 @import "./tree-selection.css";
 
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono"; /* https://fontsource.org/fonts/geist-mono/install */
+@import "@fontsource-variable/yanone-kaffeesatz"; /* https://fontsource.org/fonts/yanone-kaffeesatz/install */
+@import "@fontsource-variable/roboto-condensed"; /* https://fontsource.org/fonts/roboto-condensed/install */
+
+/* Custom fonts */
+
+@theme inline {
+    --font-ui: "Yanone Kaffeesatz Variable", sans-serif;
+    --font-condensed: "Roboto Condensed Variable", sans-serif;
+    --font-code: "Geist Mono Variable", monospace;
+    --font-serif: "Geist Variable", sans-serif;
+}
+
 /*
   ---break---
 */
@@ -28,6 +42,9 @@
   ---break---
 */
 @theme inline {
+    --font-heading: var(--font-sans);
+    /* --font-sans: 'Geist Variable', sans-serif; */
+    --font-sans: "Roboto Condensed Variable", sans-serif;
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
@@ -146,5 +163,8 @@
     }
   body {
     @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
     }
 }
