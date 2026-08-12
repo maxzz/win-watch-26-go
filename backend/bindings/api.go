@@ -10,6 +10,7 @@ import (
 
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/maxzz/win-watch-26/backend/winlaunch"
 	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
@@ -95,6 +96,11 @@ func (a *Api) IsWindowHandleValid(handle string) bool {
 // GetWindowDetailInfo returns JSON with detailed Win32 window properties.
 func (a *Api) GetWindowDetailInfo(handle string) string {
 	return a.service.GetWindowDetailInfo(handle)
+}
+
+// RevealInExplorer opens File Explorer with path selected (highlighted).
+func (a *Api) RevealInExplorer(path string) error {
+	return winlaunch.RevealInExplorer(path)
 }
 
 // QuitApp quits the application.

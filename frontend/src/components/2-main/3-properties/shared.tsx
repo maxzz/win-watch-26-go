@@ -1,7 +1,8 @@
 import { type PropsWithChildren, type ReactNode } from "react";
-import { Copy } from "lucide-react";
+import { Copy, FolderOpen } from "lucide-react";
 import { classNames } from "@renderer/utils";
 import { Button } from "@renderer/components/ui/shadcn/button";
+import { notice } from "@renderer/components/ui/local-ui/7-toaster";
 import { type RectInfo } from "@renderer/store/3-window-detail";
 
 export function Section({ title, children, grid = true }: PropsWithChildren<{ title: string; grid?: boolean; }>) {
@@ -50,17 +51,34 @@ export function PathWithCopy({ path }: { path: string; }) {
     return (
         <span className="min-w-0 w-full inline-flex items-center gap-1.5">
             <span className="flex-1 min-w-0 truncate" title={path}>{path}</span>
-            <Button
-                type="button"
-                size="icon-sm"
-                variant="outline"
-                className="size-5 rounded shrink-0"
-                title="Copy path"
-                aria-label="Copy path"
-                onClick={() => void navigator.clipboard.writeText(path).catch(() => undefined)}
-            >
-                <Copy className="size-3 text-muted-foreground stroke-[1.5px]" />
-            </Button>
+            <span className="shrink-0 inline-flex items-center gap-0.5">
+                <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="outline"
+                    className="size-5 rounded shrink-0"
+                    title="Open folder in File Explorer and highlight this file"
+                    aria-label="Reveal in File Explorer"
+                    onClick={() => {
+                        void tmApi.revealInExplorer(path).catch((e) => {
+                            notice.error(`Failed to reveal in File Explorer:<br/>${String(e)}`);
+                        });
+                    }}
+                >
+                    <FolderOpen className="size-3 text-muted-foreground stroke-[1.5px]" />
+                </Button>
+                <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="outline"
+                    className="size-5 rounded shrink-0"
+                    title="Copy path"
+                    aria-label="Copy path"
+                    onClick={() => void navigator.clipboard.writeText(path).catch(() => undefined)}
+                >
+                    <Copy className="size-3 text-muted-foreground stroke-[1.5px]" />
+                </Button>
+            </span>
         </span>
     );
 }

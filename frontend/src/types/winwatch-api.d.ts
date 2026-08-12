@@ -45,6 +45,7 @@ interface WinWatchApi {
     getWindowDetailInfo: (handle: string) => Promise<string>;
     getControlCurrentBounds: (handle: string, runtimeId: string) => Promise<string>;
     isWindowHandleValid: (handle: string) => Promise<boolean>;
+    revealInExplorer: (path: string) => Promise<void>;
     zoomAction: (action: "in" | "out" | "reset") => Promise<number>;
     getZoomLevel: () => Promise<number>;
     onZoomChanged: (callback: (level: number) => void) => () => void;

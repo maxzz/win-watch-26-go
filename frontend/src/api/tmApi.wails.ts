@@ -12,6 +12,7 @@ import {
     GetWindowDetailInfo,
     GetControlCurrentBounds,
     IsWindowHandleValid,
+    RevealInExplorer,
     QuitApp,
 } from "../../wailsjs/go/bindings/Api";
 import { ToggleDevTools, SetZoomLevel, GetZoomLevel } from "../../wailsjs/go/backend/App";
@@ -112,6 +113,7 @@ export function createWailsTmApi(): WinWatchApi {
         getWindowDetailInfo: (handle) => GetWindowDetailInfo(handle),
         getControlCurrentBounds: (handle, runtimeId) => GetControlCurrentBounds(handle, runtimeId),
         isWindowHandleValid: (handle) => IsWindowHandleValid(handle),
+        revealInExplorer: (path) => RevealInExplorer(path),
 
         zoomAction: (action) => Promise.resolve(handleZoom(action)),
         getZoomLevel: () => Promise.resolve(currentZoomLevel),
