@@ -26,39 +26,28 @@ export function PropertiesPanel() {
     const isPropertiesOnRight = propertiesPanelPosition === "right";
 
     const hwnd = control?.nativeWindowHandle;
-    const showWindowTabs = hasNativeWindowHandle(hwnd);
+    const windowTabsEnabled = hasNativeWindowHandle(hwnd);
 
     useEffect(() => {
-        if (showWindowTabs && hwnd) {
+        if (windowTabsEnabled && hwnd) {
             void loadWindowDetailInfo(hwnd);
             return;
         }
         void loadWindowDetailInfo(null);
-    }, [hwnd, showWindowTabs]);
+    }, [hwnd, windowTabsEnabled]);
 
     useEffect(() => {
-        if (!showWindowTabs && (tab === "general" || tab === "windowExtra")) {
+        if (!windowTabsEnabled && (tab === "general" || tab === "windowExtra")) {
             setTab("accessibility");
         }
-    }, [showWindowTabs, tab, setTab]);
+    }, [windowTabsEnabled, tab, setTab]);
 
     const activeTab: PropsTab =
-        tab === "windowExtra" || tab === "general" || tab === "accessibility"
-            ? tab
-            : "accessibility";
-
-    if (!control) {
-        return (
-            <div className="h-full text-xs text-muted-foreground bg-muted/10">
-                <div className="flex flex-col">
-                    <PropertiesPanelHeader />
-                    <div className="px-2 flex-1 text-muted-foreground">
-                        Select a control to view properties
-                    </div>
-                </div>
-            </div>
-        );
-    }
+        !windowTabsEnabled
+            ? "accessibility"
+            : tab === "windowExtra" || tab === "general" || tab === "accessibility"
+                ? tab
+                : "accessibility";
 
     const info = detailSnap.info as WindowDetailInfo | null;
 
@@ -66,62 +55,75 @@ export function PropertiesPanel() {
         <div className={classNames("h-full bg-card flex flex-col min-h-0", isPropertiesOnRight ? "" : "border-t")}>
             <PropertiesPanelHeader />
 
-            {showWindowTabs
-                ? (
-                    <Tabs
-                        value={activeTab}
-                        onValueChange={(v) => setTab(v as PropsTab)}
-                        className="flex-1 min-h-0 flex flex-col gap-1 p-1"
-                    >
-                        <TabsList className="h-7">
-                            <TabsTrigger value="accessibility" className="text-xs px-2">Accessibility</TabsTrigger>
-                            <TabsTrigger value="general" className="text-xs px-2">General</TabsTrigger>
-                            <TabsTrigger value="windowExtra" className="text-xs px-2">Window Extra</TabsTrigger>
-                        </TabsList>
+            <Tabs
+                value={activeTab}
+                onValueChange={(v) => setTab(v as PropsTab)}
+                className="flex-1 min-h-0 flex flex-col gap-1 p-1"
+            >
+                <TabsList className="h-7">
+                    <TabsTrigger value="accessibility" className="text-xs px-2">Accessibility</TabsTrigger>
+                    <TabsTrigger value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</TabsTrigger>
+                    <TabsTrigger value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</TabsTrigger>
+                </TabsList>
 
-                        <ScrollArea className="flex-1 min-h-0" fullHeight fixedWidth>
-                            <TabsContent value="accessibility" className="mt-0">
-                                <TabAccessibility control={control} />
-                            </TabsContent>
-                            <TabsContent value="general" className="mt-0">
-                                <WindowDetailBody
-                                    loading={detailSnap.loading}
-                                    error={detailSnap.error}
-                                    info={info}
-                                    tab="general"
-                                />
-                            </TabsContent>
-                            <TabsContent value="windowExtra" className="mt-0">
-                                <WindowDetailBody
-                                    loading={detailSnap.loading}
-                                    error={detailSnap.error}
-                                    info={info}
-                                    tab="windowExtra"
-                                />
-                            </TabsContent>
-                        </ScrollArea>
-                    </Tabs>
-                )
-                : (
-                    <div className="flex-1 overflow-auto">
-                        <TabAccessibility control={control} />
-                    </div>
-                )}
+                <ScrollArea className="flex-1 min-h-0" fullHeight fixedWidth>
+                    <TabsContent value="accessibility" className="mt-0">
+                        {control
+                            ? <TabAccessibility control={control} />
+                            : <EmptyHint />}
+                    </TabsContent>
+                    <TabsContent value="general" className="mt-0">
+                        <WindowDetailBody
+                            enabled={windowTabsEnabled}
+                            loading={detailSnap.loading}
+                            error={detailSnap.error}
+                            info={info}
+                            tab="general"
+                        />
+                    </TabsContent>
+                    <TabsContent value="windowExtra" className="mt-0">
+                        <WindowDetailBody
+                            enabled={windowTabsEnabled}
+                            loading={detailSnap.loading}
+                            error={detailSnap.error}
+                            info={info}
+                            tab="windowExtra"
+                        />
+                    </TabsContent>
+                </ScrollArea>
+            </Tabs>
+        </div>
+    );
+}
+
+function EmptyHint() {
+    return (
+        <div className="px-2 py-1 text-xs text-muted-foreground">
+            Select a control to view properties
         </div>
     );
 }
 
 function WindowDetailBody({
+    enabled,
     loading,
     error,
     info,
     tab,
 }: {
+    enabled: boolean;
     loading: boolean;
     error: string | null;
     info: WindowDetailInfo | null;
     tab: "general" | "windowExtra";
 }) {
+    if (!enabled) {
+        return (
+            <div className="p-3 text-xs text-muted-foreground">
+                Select a control with a native window handle to view window properties.
+            </div>
+        );
+    }
     if (error) {
         return (
             <div className="p-3 text-xs text-destructive">
