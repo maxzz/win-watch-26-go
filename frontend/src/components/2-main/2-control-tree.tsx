@@ -11,6 +11,7 @@ import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
 import { ScrollArea } from "../ui/shadcn/scroll-area";
 import { ControlTreeHeader } from "./headers/6-control-tree-header";
+import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "./shared/tree-selection";
 
 export function ControlTreeLoader() {
     const selectedHwnd = useAtomValue(selectedHwndAtom);
@@ -120,10 +121,11 @@ function ControlTree({ windowControlsTree, refreshing, error }: { windowControls
         <div className="relative flex-1 min-h-0">
             <ControlTreeInlineStatus refreshing={refreshing} error={error} />
             <ScrollArea
-                className="group/controltree size-full"
+                className="group/tree size-full"
                 fixedWidth
                 parentContentWidth
-                viewportProps={{ tabIndex: 0 }}
+                viewportClassName="outline-none"
+                viewportProps={treeScrollViewportProps}
             >
                 <ControlTreeNode node={windowControlsTree} depth={0} />
             </ScrollArea>
@@ -148,7 +150,10 @@ function ControlTreeNode({ node, depth }: { node: ControlNode; depth: number; })
         <div
             className={getRowClasses(isSelected)}
             style={{ paddingLeft: `${depth * 15 + 4}px` }}
-            onClick={() => setSelectedControl(node)}
+            onClick={(e) => {
+                focusTreeViewFromEvent(e);
+                setSelectedControl(node);
+            }}
         >
             <span className="shrink-0 mr-1 size-4 flex items-center justify-center" onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}>
                 {hasChildren && (
@@ -218,24 +223,11 @@ function NodeText({ node }: { node: ControlNode; }): ReactNode {
 }
 
 function getRowClasses(isSelected: boolean): string {
-    return classNames("group relative px-2 h-5 cursor-pointer select-none flex items-center", isSelected ? rowSelected : "hover:bg-accent/50");
+    return classNames(
+        "group relative px-2 h-5 cursor-pointer select-none flex items-center rounded-none",
+        isSelected ? treeRowSelectedClasses : "hover:bg-accent/50",
+    );
 }
-
-const rowSelected = "\
-bg-muted-foreground/20 \
-border-primary \
-\
-outline -outline-offset-1 \
-outline-primary dark:outline-primary/50 \
-\
-group-focus/controltree:bg-blue-100 dark:group-focus/controltree:bg-blue-900 \
-group-focus/controltree:outline-blue-500 dark:group-focus/controltree:outline-blue-500 \
-\
-before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[3px] \
-\
-before:bg-primary dark:before:bg-primary/70 \
-group-focus/controltree:before:bg-blue-500 group-focus/controltree:dark:before:bg-blue-500 \
-";
 
 //TODO: when "Folow focus" but the new window not in the list then refresh the tree for the new window.
 //TODO: ControlTreeStatus should be an overlay on the control tree, not a separate component.
