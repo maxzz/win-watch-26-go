@@ -42,7 +42,7 @@ export function MainContent({ className }: { className?: string; }) {
                     >
                         {/* Control Tree */}
                         <ResizablePanel id="controls-panel" minSize="20px" defaultSize={controlPanelSize}>
-                            <div className="h-full overflow-auto">
+                            <div className="h-full min-h-0">
                                 <ControlTreeLoader />
                             </div>
                         </ResizablePanel>

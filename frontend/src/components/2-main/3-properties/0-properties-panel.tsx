@@ -66,7 +66,7 @@ export function PropertiesPanel() {
                     <TabsTrigger value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</TabsTrigger>
                 </TabsList>
 
-                <ScrollArea className="flex-1 min-h-0" fullHeight fixedWidth>
+                <ScrollArea className="flex-1 min-h-0" fixedWidth parentContentWidth>
                     <TabsContent value="accessibility" className="mt-0">
                         {control
                             ? <TabAccessibility control={control} />

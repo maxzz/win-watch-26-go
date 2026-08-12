@@ -9,6 +9,7 @@ import { selectedHwndAtom } from "@renderer/store/2-1-atoms-windows-list";
 import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom, windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom } from "@renderer/store/2-2-1-atoms-controls-list";
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
+import { ScrollArea } from "../ui/shadcn/scroll-area";
 import { ControlTreeHeader } from "./headers/6-control-tree-header";
 
 export function ControlTreeLoader() {
@@ -49,15 +50,18 @@ export function ControlTreeLoader() {
     );
 
     return (
-        <div className="h-full bg-card flex flex-col">
+        <div className="h-full min-h-0 bg-card flex flex-col">
             <ControlTreeHeader />
             {hasTreeForSelectedWindow && windowControlsTree
-                ? (<>
+                ? (
                     <ControlTree windowControlsTree={windowControlsTree} refreshing={refreshing} error={error} />
-                </>)
-                : <ControlTreeStatus hwnd={selectedHwnd} loading={loading || refreshing} error={error} hasTree={false} />
-            }
-        </div >
+                )
+                : (
+                    <ScrollArea className="flex-1 min-h-0" fixedWidth parentContentWidth>
+                        <ControlTreeStatus hwnd={selectedHwnd} loading={loading || refreshing} error={error} hasTree={false} />
+                    </ScrollArea>
+                )}
+        </div>
     );
 }
 
@@ -113,11 +117,16 @@ function ControlTreeInlineStatus({ refreshing, error }: { refreshing: boolean; e
 
 function ControlTree({ windowControlsTree, refreshing, error }: { windowControlsTree: ControlNode; refreshing: boolean; error: string | null; }) {
     return (
-        <div className="relative flex-1">
+        <div className="relative flex-1 min-h-0">
             <ControlTreeInlineStatus refreshing={refreshing} error={error} />
-            <div className="group/controltree h-full overflow-auto" tabIndex={0}>
+            <ScrollArea
+                className="group/controltree size-full"
+                fixedWidth
+                parentContentWidth
+                viewportProps={{ tabIndex: 0 }}
+            >
                 <ControlTreeNode node={windowControlsTree} depth={0} />
-            </div>
+            </ScrollArea>
         </div>
     );
 }
