@@ -14,8 +14,8 @@ import {
 export function TabGeneral({ info }: { info: WindowDetailInfo; }) {
     return (
         <PropertyGrid>
-            <PropertySeparator />
             <PropertyHeader>Window</PropertyHeader>
+            <PropertySeparator />
             <PropertyRow label="Caption">{info.caption || <span className="text-muted-foreground/60">(empty)</span>}</PropertyRow>
             <PropertyRow label="Class">{info.className + (info.unicode ? "  (unicode)" : "")}</PropertyRow>
             <PropertyRow label="Handle"><Mono>{info.handle}</Mono></PropertyRow>
@@ -38,9 +38,10 @@ export function TabGeneral({ info }: { info: WindowDetailInfo; }) {
             <PropertyRow label="Owner">
                 <Mono>{info.owner.handle}</Mono>{info.owner.className ? ` — ${info.owner.className}` : ""}
             </PropertyRow>
-
             <PropertySeparator />
+
             <PropertyHeader>Process</PropertyHeader>
+            <PropertySeparator />
             <PropertyRow label="Process ID">
                 <Mono>{hex8(info.processId)}</Mono>  (<Mono>{info.processId}</Mono>)
             </PropertyRow>

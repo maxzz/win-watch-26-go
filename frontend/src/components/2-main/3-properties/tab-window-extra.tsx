@@ -13,8 +13,8 @@ import {
 export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
     return (
         <PropertyGrid>
-            <PropertySeparator />
             <PropertyHeader>Class</PropertyHeader>
+            <PropertySeparator />
             <PropertyRow label="Class Name">{info.className}</PropertyRow>
             <PropertyRow label="Atom"><Mono>{info.classAtom}</Mono></PropertyRow>
             <PropertySeparator />
