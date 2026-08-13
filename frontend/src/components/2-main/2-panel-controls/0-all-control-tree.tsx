@@ -10,7 +10,7 @@ import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeA
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
 import { ScrollArea } from "../../ui/shadcn/scroll-area";
-import { ControlTreeHeader } from "./6-control-tree-header";
+import { ControlTreeHeader } from "./1-control-tree-header";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
 
 export function ControlTreeLoader() {
