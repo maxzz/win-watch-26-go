@@ -3,9 +3,9 @@ import { useSetAtom } from "jotai";
 import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 import { activeHwndAtom, applyActiveWindowChangedAtom, doOnAppStartRefreshWindowInfosAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { useSnapshot } from "valtio";
-import { appSettings } from "../8-ui-settings";
+import { appSettings } from "../1-ui-settings";
 import { zoomLevelAtom } from "../2-6-atoms-zoom";
-import { dialogOptionsOpenAtom } from "../2-ui-atoms";
+import { dialogOptionsOpenAtom } from "../2-0-ui-atoms";
 
 export function useActiveWindow() {
     const { winlist_ActiveWinMonEnabled: activeWindowMonitoringEnabled } = useSnapshot(appSettings);

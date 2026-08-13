@@ -1,4 +1,4 @@
-import { appSettings } from "@renderer/store/8-ui-settings";
+import { appSettings } from "@renderer/store/1-ui-settings";
 
 export function isThemeDark(theme: string) {
     if (theme === 'light') return false;

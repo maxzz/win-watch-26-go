@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { atomFamily } from "jotai-family";
-import { type ControlNode } from "./9-types-tmapi";
+import { type ControlNode } from "@renderer/store/9-types-tmapi";
 
 const CONTROLS_TREE_CACHE_TTL_MS = 60_000; // TTL stands for "Time To Live". 60 seconds.
 const CONTROLS_TREE_CACHE_MAX_ENTRIES = 20;

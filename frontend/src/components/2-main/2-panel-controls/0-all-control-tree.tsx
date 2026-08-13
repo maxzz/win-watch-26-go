@@ -6,7 +6,7 @@ import { getControlTypeName } from "@renderer/utils/uia/0-uia-control-type-names
 import { getControlTypeIcon } from "@renderer/utils/uia/1-uia-control-type-icons-svg";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { selectedHwndAtom } from "../1-panel-windows/state-atoms/2-1-atoms-windows-list";
-import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom, windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom } from "@renderer/store/2-2-1-atoms-controls-list";
+import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom, windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
 import { ScrollArea } from "../../ui/shadcn/scroll-area";

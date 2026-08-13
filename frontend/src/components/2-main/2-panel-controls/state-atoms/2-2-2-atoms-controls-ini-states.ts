@@ -1,7 +1,7 @@
 import { atom, type PrimitiveAtom } from "jotai";
 import { ControlId, getControlTypeName } from "@renderer/utils/uia/0-uia-control-type-names";
-import { uuid } from "../utils/uuid";
-import { type ControlNode } from "./9-types-tmapi";
+import { uuid } from "../../../../utils/uuid";
+import { type ControlNode } from "../../../../store/9-types-tmapi";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { cachedWindowControlsTreeFamily } from "./2-2-3-atoms-controls-cache";
 

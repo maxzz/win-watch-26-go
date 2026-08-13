@@ -1,7 +1,7 @@
 import { useSetAtom } from "jotai";
 import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger, } from "../ui/shadcn/menubar";
-import { dialogAboutOpenAtom, dialogOptionsOpenAtom } from "@renderer/store/2-ui-atoms";
+import { dialogAboutOpenAtom, dialogOptionsOpenAtom } from "@renderer/store/2-0-ui-atoms";
 import { IconMenuHamburger3 } from "../ui/icons";
 import { ZoomControls } from "./2-zoom-controls";
 
