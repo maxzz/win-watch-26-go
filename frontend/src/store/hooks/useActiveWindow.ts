@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSetAtom } from "jotai";
 import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
-import { activeHwndAtom, applyActiveWindowChangedAtom, doOnAppStartRefreshWindowInfosAtom } from "../2-1-atoms-windows-list";
+import { activeHwndAtom, applyActiveWindowChangedAtom, doOnAppStartRefreshWindowInfosAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { useSnapshot } from "valtio";
 import { appSettings } from "../8-ui-settings";
 import { zoomLevelAtom } from "../2-6-atoms-zoom";

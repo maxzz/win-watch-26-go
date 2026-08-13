@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } 
 import { Label } from "../ui/shadcn/label";
 import { Switch } from "../ui/shadcn/switch";
 import { setAutoHighlightSelectedControlAtom, setHighlightBlinkCountAtom, setHighlightBorderColorAtom, setHighlightBorderWidthAtom, setShowEmptyBoundsNotificationAtom } from "@renderer/store/2-3-atoms-highlight";
-import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/store/2-1-atoms-windows-list";
+import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);

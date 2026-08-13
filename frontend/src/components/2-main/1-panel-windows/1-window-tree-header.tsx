@@ -6,7 +6,7 @@ import { Button } from "../../ui/shadcn/button";
 import { Label } from "../../ui/shadcn/label";
 import { Switch } from "../../ui/shadcn/switch";
 import { IconRefresh, Symbol_uia_Toolbar, Symbol_uia_Tooltip, Symbol_uia_Tooltip2 } from "../../ui/icons";
-import { doRefreshWindowInfosAtom, selectedHwndAtom } from "@renderer/store/2-1-atoms-windows-list";
+import { doRefreshWindowInfosAtom, selectedHwndAtom } from "./state-atoms/2-1-atoms-windows-list";
 import { doHighlightSelectedWindowAtom } from "@renderer/store/2-3-atoms-highlight";
 
 export function WindowTreeHeader() {

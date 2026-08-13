@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { type ControlNode } from "./9-types-tmapi";
-import { selectedHwndAtom } from "./2-1-atoms-windows-list";
+import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 
 export const doInvokeControlAtom = atom(
     null,

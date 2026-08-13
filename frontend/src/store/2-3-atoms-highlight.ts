@@ -3,7 +3,7 @@ import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 import { appSettings } from "./8-ui-settings";
 import { type ControlNode } from "./9-types-tmapi";
-import { selectedHwndAtom } from "./2-1-atoms-windows-list";
+import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { selectedControlAtom, windowControlsTreeAtom } from "./2-2-1-atoms-controls-list";
 import { getCurrentHighlightBounds } from "./2-4-atoms-bounds";
 

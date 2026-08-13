@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
 import { useSnapshot } from "valtio/react";
 import { appSettings } from "@renderer/store/8-ui-settings";
-import { selectedHwndAtom } from "@renderer/store/2-1-atoms-windows-list";
+import { selectedHwndAtom } from "../1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { refreshWindowControlsTreeAtom } from "@renderer/store/2-2-1-atoms-controls-list";
 import { setAutoHighlightSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { emptyBoundsFlashTokenAtom } from "@renderer/store/2-4-atoms-bounds";
