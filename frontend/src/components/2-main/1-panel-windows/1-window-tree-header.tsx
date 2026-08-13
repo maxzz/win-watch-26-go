@@ -14,7 +14,7 @@ export function WindowTreeHeader() {
     return (
         <div className="shrink-0 px-2 pr-0 h-7 bg-muted/20 border-b flex justify-between items-center select-none">
             <span className="text-xs font-semibold">
-                Windows
+                Top Windows
             </span>
             <div className="flex items-center gap-0">
                 <Button_FollowFocus />
@@ -36,7 +36,7 @@ function Button_FollowFocus() {
         <Label className="text-xs font-normal text-muted-foreground cursor-pointer gap-0" title={enabled ? "Stop following the focused window" : "Follow the focused window"}>
             <span className="pb-0.5">Follow focus:</span>
             <Switch
-                className="scale-75"
+                className="scale-65"
                 checked={enabled}
                 onCheckedChange={(checked) => appSettings.winlist_ActiveWinMonEnabled = checked}
             />

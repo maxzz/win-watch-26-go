@@ -29,11 +29,48 @@ export function ControlTreeHeader() {
                 </div>
             </div>
 
+            {/* <motion.div className="px-2 text-[0.6rem] text-white bg-red-500 rounded">
+                empty bounds
+            </motion.div> */}
+
             <div className="flex items-center gap-0">
                 <ControlTreeAutoHighlightToggle />
                 <Button_RefreshControlsTree />
             </div>
         </div>
+    );
+}
+
+function ControlTreeAutoHighlightToggle() {
+    const { controls_AutoHighlight: autoHighlightSelectedControl } = useSnapshot(appSettings);
+    const setAutoHighlightSelectedControl = useSetAtom(setAutoHighlightSelectedControlAtom);
+
+    return (
+        <Label className="text-xs font-normal text-muted-foreground cursor-pointer gap-0" title="Auto highlight the selected control">
+            <span className="pb-0.5">Auto-highlight:</span>
+            <Switch
+                className="scale-65"
+                checked={autoHighlightSelectedControl}
+                onCheckedChange={(checked) => setAutoHighlightSelectedControl(checked)}
+            />
+        </Label>
+    );
+}
+
+function Button_RefreshControlsTree() {
+    const selectedHwnd = useAtomValue(selectedHwndAtom);
+    const refreshControlsTree = useSetAtom(refreshWindowControlsTreeAtom);
+
+    return (
+        <Button
+            variant="ghost"
+            size="xs"
+            onClick={() => void refreshControlsTree({ force: true })}
+            title="Refresh controls tree"
+            disabled={!selectedHwnd}
+        >
+            <IconRefresh className="size-3" />
+        </Button>
     );
 }
 
@@ -61,49 +98,16 @@ function EmptyBoundsFlashBadge() {
         <AnimatePresence initial={false}>
             {activeToken !== null && (
                 <motion.div
-                    key={activeToken}
-                    className="px-2 pb-0.5 text-[0.6rem] text-white bg-red-500 rounded"
+                    className="px-2 text-[0.6rem] text-white bg-red-500 rounded"
                     initial={{ opacity: 0, scale: 0.92 }}
                     animate={{ opacity: [0, 1, 1, 0], scale: [0.92, 1.06, 1.0, 0.98] }}
                     transition={{ duration: 1.55, times: [0, 0.2, 0.45, 1], ease: "easeOut" }}
                     exit={{ opacity: 0, transition: { duration: 0.08 } }}
+                    key={activeToken}
                 >
                     empty bounds
                 </motion.div>
             )}
         </AnimatePresence>
-    );
-}
-
-function Button_RefreshControlsTree() {
-    const selectedHwnd = useAtomValue(selectedHwndAtom);
-    const refreshControlsTree = useSetAtom(refreshWindowControlsTreeAtom);
-
-    return (
-        <Button
-            variant="ghost"
-            size="xs"
-            onClick={() => void refreshControlsTree({ force: true })}
-            title="Refresh controls tree"
-            disabled={!selectedHwnd}
-        >
-            <IconRefresh className="size-3" />
-        </Button>
-    );
-}
-
-function ControlTreeAutoHighlightToggle() {
-    const { controls_AutoHighlight: autoHighlightSelectedControl } = useSnapshot(appSettings);
-    const setAutoHighlightSelectedControl = useSetAtom(setAutoHighlightSelectedControlAtom);
-
-    return (
-        <Label className="text-xs font-normal text-muted-foreground cursor-pointer gap-0" title="Auto highlight the selected control">
-            <span className="pb-0.5">Auto-highlight:</span>
-            <Switch
-                className="scale-75"
-                checked={autoHighlightSelectedControl}
-                onCheckedChange={(checked) => setAutoHighlightSelectedControl(checked)}
-            />
-        </Label>
     );
 }

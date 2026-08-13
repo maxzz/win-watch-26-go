@@ -9,10 +9,7 @@ export function ZoomControls() {
     const zoomPercent = Math.round((1.2 ** zoomLevel) * 100);
 
     return (
-        <MenubarItem
-            className="justify-between focus:bg-transparent cursor-default"
-            onSelect={(event) => event.preventDefault()}
-        >
+        <MenubarItem className="justify-between focus:bg-transparent cursor-default" onSelect={(event) => event.preventDefault()}>
             <span className="text-xs font-normal">Zoom</span>
 
             <div className="flex items-center gap-1 border rounded-md p-0.5">
