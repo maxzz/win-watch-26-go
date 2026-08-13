@@ -9,7 +9,7 @@ import {
     PropertyRow,
     PropertySeparator,
     rectText,
-} from "./shared";
+} from "./8-shared-ui";
 
 export function TabGeneral({ info }: { info: WindowDetailInfo; }) {
     return (

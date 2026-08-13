@@ -3,7 +3,7 @@ import { asHex, hexAccRuntimeId, normalizeHwnd } from "@renderer/utils";
 import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-names";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
-import { PROP_SEP, PropertyGrid, PropertyRow, PropertySeparator, type PropertyEntry } from "./shared";
+import { PROP_SEP, PropertyGrid, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);

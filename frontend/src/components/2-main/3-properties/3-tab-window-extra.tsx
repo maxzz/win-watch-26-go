@@ -8,7 +8,7 @@ import {
     PropertyRow,
     PropertySeparator,
     StyleList,
-} from "./shared";
+} from "./8-shared-ui";
 
 export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
     return (
