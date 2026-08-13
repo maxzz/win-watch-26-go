@@ -3,13 +3,14 @@ import { asHex, hexAccRuntimeId, normalizeHwnd } from "@renderer/utils";
 import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-names";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
-import { PROP_SEP, PropertyGrid, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
+import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);
 
     return (
         <PropertyGrid>
+            <PropertyHeader>UI Accessibility</PropertyHeader>
             {properties.map((prop, idx) => {
                 if (prop.label === PROP_SEP) {
                     return <PropertySeparator key={idx} />;
@@ -40,6 +41,7 @@ function getControlProperties(control: ControlNode): PropertyEntry[] {
     }
 
     return [
+        { label: PROP_SEP, value: null },
         { label: "Process ID", value: asHex({ value: String(control.processId), prefix: true }), title: `dec: ${String(control.processId)}` },
         { label: "Framework ID", value: <span className="-ml-1 px-1 text-foreground bg-sky-100 dark:bg-sky-900 border border-sky-300 dark:border-sky-700 rounded">{control.frameworkId}</span> },
         { label: "Native Window Handle", value: normalizeHwnd(control.nativeWindowHandle) },

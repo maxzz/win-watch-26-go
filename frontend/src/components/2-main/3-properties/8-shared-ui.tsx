@@ -26,7 +26,7 @@ export function PropertyGrid({ children, className }: PropsWithChildren<{ classN
 /** Bold header spanning both columns (keeps label-column width consistent across groups). */
 export function PropertyHeader({ children }: PropsWithChildren) {
     return (
-        <div className="col-span-2 px-1.5 py-px font-semibold cursor-default select-none">
+        <div className="col-span-2 px-1.5 py-px mt-1.5 font-semibold cursor-default select-none">
             {children}
         </div>
     );
