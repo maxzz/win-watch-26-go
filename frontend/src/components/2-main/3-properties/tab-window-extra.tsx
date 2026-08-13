@@ -1,21 +1,37 @@
 import { type WindowDetailInfo } from "@renderer/store/3-window-detail";
-import { hex8, Mono, Row, Section, StyleList } from "./shared";
+import {
+    hex8,
+    Mono,
+    PropertyFullRow,
+    PropertyGrid,
+    PropertyHeader,
+    PropertyRow,
+    PropertySeparator,
+    StyleList,
+} from "./shared";
 
 export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
     return (
-        <div className="p-2 space-y-3">
-            <Section title="Class">
-                <Row label="Class Name">{info.className}</Row>
-                <Row label="Atom"><Mono>{info.classAtom}</Mono></Row>
-                <Row label="Class Style"><Mono>{hex8(info.classStyle)}</Mono></Row>
-                <Row label="Class Bytes"><Mono>{info.classExtraBytes}</Mono></Row>
-                <Row label="Window Bytes"><Mono>{info.windowExtraBytes}</Mono></Row>
-            </Section>
+        <PropertyGrid>
+            <PropertySeparator />
+            <PropertyHeader>Class</PropertyHeader>
+            <PropertyRow label="Class Name">{info.className}</PropertyRow>
+            <PropertyRow label="Atom"><Mono>{info.classAtom}</Mono></PropertyRow>
+            <PropertySeparator />
+            <PropertyRow label="Class Style"><Mono>{hex8(info.classStyle)}</Mono></PropertyRow>
+            <PropertyRow label="Class Bytes"><Mono>{info.classExtraBytes}</Mono></PropertyRow>
+            <PropertyRow label="Window Bytes"><Mono>{info.windowExtraBytes}</Mono></PropertyRow>
 
-            <Section title="Style" grid={false}>
+            <PropertySeparator />
+            <PropertyHeader>Style</PropertyHeader>
+            <PropertyFullRow>
                 <StyleList title="Window styles" hexValue={info.style} names={info.styleNames ?? []} />
+            </PropertyFullRow>
+            <PropertySeparator />
+            <PropertyFullRow>
                 <StyleList title="Extended styles" hexValue={info.exStyle} names={info.exStyleNames ?? []} />
-            </Section>
-        </div>
+            </PropertyFullRow>
+            <PropertySeparator />
+        </PropertyGrid>
     );
 }

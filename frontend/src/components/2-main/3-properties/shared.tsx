@@ -6,31 +6,81 @@ import { notice } from "@renderer/components/ui/local-ui/7-toaster";
 import { type RectInfo } from "@renderer/store/3-window-detail";
 import { FileIcon } from "../5-file-icons";
 
-export function Section({ title, children, grid = true }: PropsWithChildren<{ title: string; grid?: boolean; }>) {
-    return (
-        <div>
-            <div className="mb-1 text-xs font-semibold">{title}</div>
-            {grid ? <Grid>{children}</Grid> : children}
-        </div>
-    );
-}
+/** Marker label for a horizontal separator in data-driven property lists. */
+export const PROP_SEP = "-";
 
-export function Grid({ children }: PropsWithChildren) {
+export type PropertyEntry = {
+    label: string;
+    value: ReactNode;
+    title?: string;
+};
+
+export function PropertyGrid({ children, className }: PropsWithChildren<{ className?: string; }>) {
     return (
-        <div className="text-xs grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 items-center">
+        <div className={classNames("text-xs grid grid-cols-[auto_1fr]", className)}>
             {children}
         </div>
     );
 }
 
-export function Row({ label, children }: { label: string; children: ReactNode; }) {
-    const title = typeof children === "string" ? children : undefined;
+/** Bold header spanning both columns (keeps label-column width consistent across groups). */
+export function PropertyHeader({ children }: PropsWithChildren) {
     return (
-        <>
-            <span className="shrink-0 text-muted-foreground">{label}</span>
-            <span className="min-w-0 truncate" title={title}>{children}</span>
-        </>
+        <div className="col-span-2 px-1.5 py-px font-semibold cursor-default select-none">
+            {children}
+        </div>
     );
+}
+
+/** Full-width cell for non label/value content inside a PropertyGrid. */
+export function PropertyFullRow({ children, className }: PropsWithChildren<{ className?: string; }>) {
+    return (
+        <div className={classNames("col-span-2", className)}>
+            {children}
+        </div>
+    );
+}
+
+export function PropertyRow({ label, children, title }: { label: string; children: ReactNode; title?: string; }) {
+    const titleText = title ?? (typeof children === "string" ? children : undefined);
+    return (
+        <div className="contents">
+            <div className="px-1.5 py-px border-r border-foreground/20 dark:border-foreground/20 cursor-default select-none" title={label}>
+                {label}
+            </div>
+            <div className="px-1.5 py-px break-all truncate cursor-default" title={titleText}>
+                {children}
+            </div>
+        </div>
+    );
+}
+
+/** Drop-in horizontal separator spanning both label and value columns. */
+export function PropertySeparator() {
+    return (
+        <div className="contents">
+            <div className="h-1.25 border-r border-foreground/20 dark:border-foreground/20 flex items-center">
+                <div className="w-full border-b border-foreground/20 dark:border-foreground/20" />
+            </div>
+            <div className="h-1.25 flex items-center">
+                <div className="w-full border-b border-foreground/20 dark:border-foreground/20" />
+            </div>
+        </div>
+    );
+}
+
+/** Renders data-driven rows; use `{ label: PROP_SEP }` (or `"-"`) for a horizontal separator. */
+export function PropertyEntries({ entries }: { entries: PropertyEntry[]; }) {
+    return entries.map((prop, idx) => {
+        if (prop.label === PROP_SEP || prop.label === "-") {
+            return <PropertySeparator key={idx} />;
+        }
+        return (
+            <PropertyRow key={idx} label={prop.label} title={prop.title}>
+                {prop.value}
+            </PropertyRow>
+        );
+    });
 }
 
 export function Mono({ children, className }: PropsWithChildren<{ className?: string; }>) {
@@ -87,7 +137,7 @@ export function PathWithCopy({ path }: { path: string; }) {
 
 export function StyleList({ title, hexValue, names }: { title: string; hexValue: number; names: string[]; }) {
     return (
-        <div className="mb-2 last:mb-0">
+        <div className="mb-2 last:mb-0 px-1.5">
             <div className="mb-1 text-xs">
                 <span className="text-muted-foreground">{title}</span>
                 {": "}
