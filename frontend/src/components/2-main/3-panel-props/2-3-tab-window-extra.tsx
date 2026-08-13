@@ -1,4 +1,4 @@
-import { type WindowDetailInfo } from "./3-window-detail/9-types-window-info";
+import { type WindowDetailInfo } from "./state-atoms/9-types-window-info";
 import {
     hex8,
     Mono,

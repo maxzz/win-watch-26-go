@@ -20,7 +20,7 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-[360px]!">
+            <DialogContent className="max-w-90!">
 
                 <DialogHeader>
                     <DialogTitle>
@@ -137,7 +137,7 @@ function OptionColor({ value, onValueChange, label, disabled, title }: { value: 
             {label}
             {/* <div className="overflow-hidden"> */}
             <input
-                className="-mx-0.5 -my-1 h-8 w-[68px] rounded-xl"
+                className="-mx-0.5 -my-1 h-8 w-17 rounded-xl"
                 type="color"
                 value={value}
                 disabled={disabled}

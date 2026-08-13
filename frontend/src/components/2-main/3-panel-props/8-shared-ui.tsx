@@ -1,9 +1,9 @@
 import { type PropsWithChildren, type ReactNode } from "react";
-import { Copy, FolderOpen } from "lucide-react";
 import { classNames } from "@renderer/utils";
+import { Copy, FolderOpen } from "lucide-react";
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster";
-import { type RectInfo } from "./3-window-detail/9-types-window-info";
+import { type RectInfo } from "./state-atoms/9-types-window-info";
 import { FileIcon } from "../5-file-icons/0-file-icon";
 
 /** Marker label for a horizontal separator in data-driven property lists. */

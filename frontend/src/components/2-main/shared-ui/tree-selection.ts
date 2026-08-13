@@ -12,7 +12,6 @@ text-tree-select-foreground bg-tree-select \
 \
 group-focus-within/tree:bg-tree-select-focused \
 group-focus-within/tree:text-tree-select-focused-foreground \
-group-focus-within/tree:outline \
 group-focus-within/tree:outline-1 \
 group-focus-within/tree:-outline-offset-1 \
 group-focus-within/tree:outline-tree-select-border \
@@ -22,7 +21,7 @@ before:absolute \
 before:left-0 \
 before:top-0 \
 before:bottom-0 \
-before:w-[3px] \
+before:w-0.75 \
 before:bg-muted-foreground/40 \
 ";
 
