@@ -2,20 +2,14 @@ import { type ReactNode } from "react";
 import { classNames } from "@renderer/utils";
 import { useFileIcon } from "./use-file-icon";
 
-const SLOT = "size-3.5"; // matches Windows list row icons — reserved always to avoid layout jump
-
-type FileIconProps = {
-    path: string | null | undefined;
-    className?: string;
-    /** Shown inside the fixed slot while loading / when missing. */
-    fallback?: ReactNode;
-};
-
 /**
  * Fixed-size file icon slot. Space is reserved even before the PNG arrives so
  * list rows and property rows do not jump when icons load in the background.
+ * @param className - The class name to apply to the icon.
+ * @param path - The path to the file to get the icon for.
+ * @param fallback - The fallback to use if the icon is not found i.e. Shown inside the fixed slot while loading / when missing.
  */
-export function FileIcon({ path, className, fallback }: FileIconProps) {
+export function FileIcon({ path, className, fallback }: { className?: string; path: string | null | undefined; fallback?: ReactNode; }) {
     const entry = useFileIcon(path);
 
     return (
@@ -34,3 +28,5 @@ export function FileIcon({ path, className, fallback }: FileIconProps) {
         </span>
     );
 }
+
+const SLOT = "size-3.5"; // matches Windows list row icons — reserved always to avoid layout jump

@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { type WindowDetailInfo } from "./types";
+import { type WindowDetailInfo } from "./9-types-window-info";
 
 interface WindowDetailState {
     handle: string | null;

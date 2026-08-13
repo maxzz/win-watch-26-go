@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { type FileIconEntry } from "./types";
+import { type FileIconEntry } from "./9-types-icons";
 
 /** Path-keyed icon cache. Keys are normalized (lowercased, trimmed). */
 export const fileIconStore = proxy<{
