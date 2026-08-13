@@ -12,7 +12,8 @@ import {
     type WindowDetailInfo,
 } from "@renderer/store/3-window-detail";
 import { ScrollArea } from "@renderer/components/ui/shadcn/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@renderer/components/ui/shadcn/tabs";
+import { Tabs, TabsContent } from "@renderer/components/ui/shadcn/tabs";
+import { AnimatedTabsList, AnimatedTabsTrigger } from "@renderer/components/ui/local-ui";
 import { PropertiesPanelHeader } from "../headers/7-properties-panel-header";
 import { TabAccessibility } from "./tab-accessibility";
 import { TabGeneral } from "./tab-general";
@@ -60,11 +61,11 @@ export function PropertiesPanel() {
                 onValueChange={(v) => setTab(v as PropsTab)}
                 className="flex-1 min-h-0 flex flex-col gap-1 p-1"
             >
-                <TabsList className="h-7">
-                    <TabsTrigger value="accessibility" className="text-xs px-2">Accessibility</TabsTrigger>
-                    <TabsTrigger value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</TabsTrigger>
-                    <TabsTrigger value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</TabsTrigger>
-                </TabsList>
+                <AnimatedTabsList value={activeTab} layoutId="control-props-tabs" className="h-7">
+                    <AnimatedTabsTrigger value="accessibility" className="text-xs px-2">Accessibility</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</AnimatedTabsTrigger>
+                </AnimatedTabsList>
 
                 <ScrollArea className="flex-1 min-h-0" fixedWidth parentContentWidth>
                     <TabsContent value="accessibility" className="mt-0">
