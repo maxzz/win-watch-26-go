@@ -1,5 +1,5 @@
 import { useSnapshot } from "valtio";
-import { appSettings } from "@renderer/store/1-ui-settings";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { isThemeDark, toggleTheme } from "@renderer/utils/theme-utils";
 import { Button } from "../ui/shadcn/button";
 import { IconThemeMoon, IconThemeSun } from "../ui/icons/normal";

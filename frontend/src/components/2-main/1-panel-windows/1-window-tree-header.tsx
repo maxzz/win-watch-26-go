@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
-import { appSettings } from "@renderer/store/1-ui-settings";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { Crosshair } from "lucide-react";
 import { Button } from "../../ui/shadcn/button";
 import { Label } from "../../ui/shadcn/label";

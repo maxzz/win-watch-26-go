@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
-import { appSettings } from "./1-ui-settings";
+import { appSettings } from "./1-0-ui-settings";
 import { type ControlNode } from "./9-types-tmapi";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { selectedControlAtom, windowControlsTreeAtom } from "../components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";

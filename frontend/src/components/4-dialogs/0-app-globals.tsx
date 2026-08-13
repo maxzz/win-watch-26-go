@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
-import { dialogOptionsOpenAtom } from "@renderer/store/2-0-ui-atoms";
-import { dialogAboutOpenAtom } from "@renderer/store/2-0-ui-atoms";
+import { dialogOptionsOpenAtom } from "@renderer/store/1-1-ui-atoms";
+import { dialogAboutOpenAtom } from "@renderer/store/1-1-ui-atoms";
 import { DialogOptions } from "./1-dialog-options";
 import { DialogAbout } from "./3-dialog-about";
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames, hasNativeWindowHandle } from "@renderer/utils";
-import { appSettings } from "@renderer/store/1-ui-settings";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { selectedControlAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { propsTabAtom } from "./3-window-detail/a-atoms-win-info";
 import { loadWindowDetailInfo, windowDetailStore } from "./3-window-detail/c-store-win-info";
