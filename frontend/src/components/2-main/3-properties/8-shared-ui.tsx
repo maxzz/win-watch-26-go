@@ -55,17 +55,17 @@ export function PropertyRow({ label, children, title }: { label: string; childre
     );
 }
 
-/** Drop-in horizontal separator spanning both label and value columns. */
+/**
+ * Full-width horizontal rule (edge to edge of the grid).
+ * No vertical segment — the column divider lives only on PropertyRow labels,
+ * so it stops cleanly at each horizontal line (T-junction).
+ */
 export function PropertySeparator() {
     return (
-        <div className="contents">
-            <div className="h-1.25 border-r border-foreground/20 dark:border-foreground/20 flex items-center">
-                <div className="w-full border-b border-foreground/20 dark:border-foreground/20" />
-            </div>
-            <div className="h-1.25 flex items-center">
-                <div className="w-full border-b border-foreground/20 dark:border-foreground/20" />
-            </div>
-        </div>
+        <div
+            aria-hidden
+            className="col-span-2 h-px bg-foreground/20 dark:bg-foreground/20"
+        />
     );
 }
 
