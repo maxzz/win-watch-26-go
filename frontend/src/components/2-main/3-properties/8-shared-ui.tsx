@@ -26,7 +26,7 @@ export function PropertyGrid({ children, className }: PropsWithChildren<{ classN
 /** Bold header spanning both columns (keeps label-column width consistent across groups). */
 export function PropertyHeader({ children }: PropsWithChildren) {
     return (
-        <div className="col-span-2 px-1.5 py-px mt-1.5 font-semibold cursor-default select-none">
+        <div className="col-span-2 px-1.5 pl-2.5 py-px mt-1.5 font-semibold cursor-default select-none">
             {children}
         </div>
     );
@@ -45,7 +45,7 @@ export function PropertyRow({ label, children, title }: { label: string; childre
     const titleText = title ?? (typeof children === "string" ? children : undefined);
     return (
         <div className="contents">
-            <div className="relative px-1.5 py-px cursor-default select-none" title={label}>
+            <div className="relative px-1.5 pl-2.5 py-px cursor-default select-none" title={label}>
                 {/* Vertical divider painted inside the cell so it never crosses adjacent separators. */}
                 <div aria-hidden className="absolute inset-y-0 right-0 w-px bg-foreground/20 dark:bg-foreground/20" />
                 {label}
