@@ -2,6 +2,7 @@ import { proxy, subscribe } from "valtio";
 import { atom } from "jotai";
 import { type ThemeMode, themeApplyMode } from "../utils/theme-apply";
 import type { Layout } from "react-resizable-panels";
+import { type PropsTab } from "./3-window-detail/types";
 
 const STORE_KEY = "win-watch-25";
 const STORE_VER = "v1.0";
@@ -24,6 +25,7 @@ export interface AppSettings {
     ui_theme: ThemeMode;                        // The theme: 'light' or 'dark'
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
     ui_panels_PropPos: PropertiesPanelPosition; // The position of the properties panel: 'bottom' or 'right'
+    ui_panels_PropTab: PropsTab;                // The active properties panel tab
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -44,22 +46,51 @@ const DEFAULT_SETTINGS: AppSettings = {
         "control-props-panel": 30,
     },
     ui_panels_PropPos: 'right',
+    ui_panels_PropTab: 'accessibility',
 };
 
 // Load settings from localStorage
+
+const LEGACY_PROPS_TAB_KEY = "win-watch.propsTab";
+
+function normalizePropsTab(value: unknown): PropsTab {
+    if (value === "accessibility" || value === "general" || value === "windowExtra") {
+        return value;
+    }
+    if (value === "class" || value === "styles") {
+        return "windowExtra";
+    }
+    return "accessibility";
+}
+
+function takeLegacyPropsTab(): PropsTab | undefined {
+    try {
+        const stored = localStorage.getItem(LEGACY_PROPS_TAB_KEY);
+        if (stored == null) {
+            return undefined;
+        }
+        localStorage.removeItem(LEGACY_PROPS_TAB_KEY);
+        return normalizePropsTab(stored);
+    } catch {
+        return undefined;
+    }
+}
 
 function loadSettings(): AppSettings {
     try {
         const stored = localStorage.getItem(STORAGE_ID);
         if (stored) {
             // merge stored settings with defaults to ensure new fields are present
-            const rv =  { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+            const rv = { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+            rv.ui_panels_PropTab = takeLegacyPropsTab() ?? normalizePropsTab(rv.ui_panels_PropTab);
             return rv;
         }
     } catch (e) {
         console.error("Failed to load settings", e);
     }
-    return { ...DEFAULT_SETTINGS };
+    const settings = { ...DEFAULT_SETTINGS };
+    settings.ui_panels_PropTab = takeLegacyPropsTab() ?? settings.ui_panels_PropTab;
+    return settings;
 }
 
 export const appSettings = proxy<AppSettings>(loadSettings());
