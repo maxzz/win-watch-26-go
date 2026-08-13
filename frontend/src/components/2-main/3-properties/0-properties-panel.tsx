@@ -55,10 +55,10 @@ export function PropertiesPanel() {
             <PropertiesPanelHeader />
 
             <Tabs className="flex-1 min-h-0 flex flex-col gap-1 pt-1" value={activeTab} onValueChange={(v) => setTab(v as PropsTab)}>
-                <AnimatedTabsList value={activeTab} layoutId="control-props-tabs" className="mx-1 h-7">
-                    <AnimatedTabsTrigger value="accessibility" className="text-xs px-2">Accessibility</AnimatedTabsTrigger>
-                    <AnimatedTabsTrigger value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</AnimatedTabsTrigger>
-                    <AnimatedTabsTrigger value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</AnimatedTabsTrigger>
+                <AnimatedTabsList layoutId="control-props-tabs" className="mx-1 h-7">
+                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="accessibility" className="text-xs px-2">Accessibility</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</AnimatedTabsTrigger>
                 </AnimatedTabsList>
 
                 <ScrollArea className="flex-1 min-h-0" fixedWidth parentContentWidth>
@@ -123,6 +123,6 @@ function WindowDetailBody({ enabled, loading, error, info, tab }: { enabled: boo
             </div>
         );
     }
-    
+
     return tab === "general" ? <TabGeneral info={info} /> : <TabWindowExtra info={info} />;
 }
