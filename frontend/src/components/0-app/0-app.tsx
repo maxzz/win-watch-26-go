@@ -1,10 +1,10 @@
 import { useActiveWindow, useAppStartInitialize, useMonitorActiveWindow } from "@renderer/store/hooks/useActiveWindow";
 import { Toaster } from "sonner";
 import { UISymbolDefs } from "../ui/icons/symbols";
-import { AppHeader } from "./1-app-header";
-import { MainContent } from "./2-resizable-panels";
-import { SpyAllIcons } from "@renderer/utils/util-hooks/spy-icons";
+import { AppHeader } from "../1-header/1-app-header";
+import { MainContent } from "./1-resizable-panels";
 import { AppGlobals } from "../4-dialogs/0-app-globals";
+//import { SpyAllIcons } from "@renderer/utils/util-hooks/spy-icons";
 
 export function App() {
     return (<>

@@ -30,7 +30,9 @@ export function ZoomControls() {
                     <IconZoomMinus className="size-3" />
                 </Button>
 
-                <span className="w-10 text-center text-xs tabular-nums">{zoomPercent}%</span>
+                <span className="w-10 text-center text-xs tabular-nums">
+                    {zoomPercent}%
+                </span>
 
                 <Button
                     className="size-6 rounded-sm"
