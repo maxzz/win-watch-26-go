@@ -3,7 +3,7 @@ import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 import { type WindowInfo } from "./9-types-tmapi";
 import { appSettings } from "./8-ui-settings";
-import { ensureFileIcons } from "./4-file-icons";
+import { ensureFileIcons } from "../components/2-main/5-file-icons/4-file-icons/store";
 
 //#region Window list
 

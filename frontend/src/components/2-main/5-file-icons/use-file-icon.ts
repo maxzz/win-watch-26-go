@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSnapshot } from "valtio/react";
-import { ensureFileIcons, fileIconStore, normalizeFileIconPath, type FileIconEntry } from "@renderer/store/4-file-icons";
+import { ensureFileIcons, fileIconStore, normalizeFileIconPath } from "./4-file-icons/store";
+import { type FileIconEntry } from "./4-file-icons/types";
 
 const emptyEntry: FileIconEntry = { status: "idle", dataUrl: "" };
 

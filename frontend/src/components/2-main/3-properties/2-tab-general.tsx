@@ -1,4 +1,4 @@
-import { type WindowDetailInfo } from "@renderer/store/3-window-detail";
+import { type WindowDetailInfo } from "./3-window-detail/types";
 import {
     hex8,
     integrityLabel,

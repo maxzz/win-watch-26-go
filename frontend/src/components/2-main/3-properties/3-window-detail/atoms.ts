@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { appSettings } from "../8-ui-settings";
+import { appSettings } from "@renderer/store/8-ui-settings";
 import { type PropsTab } from "./types";
 
 const propsTabBaseAtom = atom<PropsTab>(appSettings.ui_panels_PropTab);

@@ -3,8 +3,8 @@ import { Copy, FolderOpen } from "lucide-react";
 import { classNames } from "@renderer/utils";
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster";
-import { type RectInfo } from "@renderer/store/3-window-detail";
-import { FileIcon } from "../5-file-icons";
+import { type RectInfo } from "./3-window-detail/types";
+import { FileIcon } from "../5-file-icons/file-icon";
 
 /** Marker label for a horizontal separator in data-driven property lists. */
 export const PROP_SEP = "-";

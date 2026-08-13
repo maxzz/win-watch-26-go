@@ -1,1 +1,1 @@
-export { PropertiesPanel } from "./3-properties";
+export { PropertiesPanel } from "./3-properties/0-properties-panel";

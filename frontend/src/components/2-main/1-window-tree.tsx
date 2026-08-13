@@ -7,7 +7,7 @@ import { selectWindowAtom } from "@renderer/store/2-3-atoms-highlight";
 import { ScrollArea } from "../ui/shadcn/scroll-area";
 import { WindowTreeHeader } from "./headers/5-window-tree-header";
 import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight } from "../ui/icons";
-import { FileIcon } from "./5-file-icons";
+import { FileIcon } from "./5-file-icons/file-icon";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "./shared/tree-selection";
 
 export function WindowTreePanel() {
