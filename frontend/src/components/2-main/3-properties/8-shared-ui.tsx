@@ -59,12 +59,16 @@ export function PropertyRow({ label, children, title }: { label: string; childre
 
 /**
  * Full-width horizontal rule (edge to edge of the grid).
- * Uses the same 1px fill as the vertical divider; sits above row dividers so
- * junctions stay clean and every separator renders with identical weight.
+ *
+ * Painted as a border on a zero-height track (not an `h-px` row). Under Windows
+ * display scaling, 1px grid rows round to 1 or 2 device pixels depending on Y
+ * position — which made some separators look bold and others thin.
  */
 export function PropertySeparator() {
     return (
-        <div aria-hidden className="col-span-2 relative z-10 h-px bg-foreground/20 dark:bg-foreground/20" />
+        <div aria-hidden className="col-span-2 relative h-0">
+            <div className="absolute inset-x-0 top-0 border-t border-foreground/20" />
+        </div>
     );
 }
 
