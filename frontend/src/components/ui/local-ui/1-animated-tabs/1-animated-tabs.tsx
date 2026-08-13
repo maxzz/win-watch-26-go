@@ -52,19 +52,7 @@ export function AnimatedTabsTrigger({ className, children, value, ...rest }: Ani
     const selected = ctx.value === value;
 
     return (
-        <TabsTrigger
-            value={value}
-            className={classNames(
-                "relative h-[calc(100%-1px)] font-medium transition-none",
-                "border-transparent bg-transparent shadow-none",
-                "data-[state=active]:bg-transparent data-[state=active]:shadow-none",
-                "dark:data-[state=active]:bg-transparent dark:data-[state=active]:border-transparent",
-                "hover:bg-transparent",
-                selected ? "text-foreground" : "text-foreground/60 hover:text-foreground",
-                className
-            )}
-            {...rest}
-        >
+        <TabsTrigger className={classNames(animatedTabsTriggerClasses, selected ? "text-foreground" : "text-foreground/60 hover:text-foreground", className)} value={value} {...rest}>
             {selected && (
                 <motion.div
                     layoutId={ctx.layoutId}
@@ -76,3 +64,20 @@ export function AnimatedTabsTrigger({ className, children, value, ...rest }: Ani
         </TabsTrigger>
     );
 }
+
+const animatedTabsTriggerClasses = "\
+relative h-[calc(100%-1px)] font-medium \
+transition-none \
+\
+border-transparent \
+bg-transparent \
+shadow-none \
+\
+data-[state=active]:bg-transparent \
+data-[state=active]:shadow-none \
+\
+dark:data-[state=active]:bg-transparent \
+dark:data-[state=active]:border-transparent \
+\
+hover:bg-transparent \
+";
