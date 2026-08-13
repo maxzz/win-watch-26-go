@@ -17,7 +17,7 @@ export type PropertyEntry = {
 
 export function PropertyGrid({ children, className }: PropsWithChildren<{ className?: string; }>) {
     return (
-        <div className={classNames("text-xs grid grid-cols-[auto_1fr]", className)}>
+        <div className={classNames("w-full text-xs grid grid-cols-[auto_1fr]", className)}>
             {children}
         </div>
     );
@@ -45,7 +45,9 @@ export function PropertyRow({ label, children, title }: { label: string; childre
     const titleText = title ?? (typeof children === "string" ? children : undefined);
     return (
         <div className="contents">
-            <div className="px-1.5 py-px border-r border-foreground/20 dark:border-foreground/20 cursor-default select-none" title={label}>
+            <div className="relative px-1.5 py-px cursor-default select-none" title={label}>
+                {/* Vertical divider painted inside the cell so it never crosses adjacent separators. */}
+                <div aria-hidden className="absolute inset-y-0 right-0 w-px bg-foreground/20 dark:bg-foreground/20" />
                 {label}
             </div>
             <div className="px-1.5 py-px break-all truncate cursor-default" title={titleText}>
@@ -57,15 +59,12 @@ export function PropertyRow({ label, children, title }: { label: string; childre
 
 /**
  * Full-width horizontal rule (edge to edge of the grid).
- * No vertical segment — the column divider lives only on PropertyRow labels,
- * so it stops cleanly at each horizontal line (T-junction).
+ * Uses the same 1px fill as the vertical divider; sits above row dividers so
+ * junctions stay clean and every separator renders with identical weight.
  */
 export function PropertySeparator() {
     return (
-        <div
-            aria-hidden
-            className="col-span-2 h-px bg-foreground/20 dark:bg-foreground/20"
-        />
+        <div aria-hidden className="col-span-2 relative z-10 h-px bg-foreground/20 dark:bg-foreground/20" />
     );
 }
 
