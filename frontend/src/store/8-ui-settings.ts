@@ -51,46 +51,18 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 // Load settings from localStorage
 
-const LEGACY_PROPS_TAB_KEY = "win-watch.propsTab";
-
-function normalizePropsTab(value: unknown): PropsTab {
-    if (value === "accessibility" || value === "general" || value === "windowExtra") {
-        return value;
-    }
-    if (value === "class" || value === "styles") {
-        return "windowExtra";
-    }
-    return "accessibility";
-}
-
-function takeLegacyPropsTab(): PropsTab | undefined {
-    try {
-        const stored = localStorage.getItem(LEGACY_PROPS_TAB_KEY);
-        if (stored == null) {
-            return undefined;
-        }
-        localStorage.removeItem(LEGACY_PROPS_TAB_KEY);
-        return normalizePropsTab(stored);
-    } catch {
-        return undefined;
-    }
-}
-
 function loadSettings(): AppSettings {
     try {
         const stored = localStorage.getItem(STORAGE_ID);
         if (stored) {
             // merge stored settings with defaults to ensure new fields are present
-            const rv = { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-            rv.ui_panels_PropTab = takeLegacyPropsTab() ?? normalizePropsTab(rv.ui_panels_PropTab);
+            const rv =  { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
             return rv;
         }
     } catch (e) {
         console.error("Failed to load settings", e);
     }
-    const settings = { ...DEFAULT_SETTINGS };
-    settings.ui_panels_PropTab = takeLegacyPropsTab() ?? settings.ui_panels_PropTab;
-    return settings;
+    return { ...DEFAULT_SETTINGS };
 }
 
 export const appSettings = proxy<AppSettings>(loadSettings());
