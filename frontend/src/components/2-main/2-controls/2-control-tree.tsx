@@ -9,9 +9,9 @@ import { selectedHwndAtom } from "@renderer/store/2-1-atoms-windows-list";
 import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom, windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom } from "@renderer/store/2-2-1-atoms-controls-list";
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
-import { ScrollArea } from "../ui/shadcn/scroll-area";
-import { ControlTreeHeader } from "./headers/6-control-tree-header";
-import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "./shared/tree-selection";
+import { ScrollArea } from "../../ui/shadcn/scroll-area";
+import { ControlTreeHeader } from "./6-control-tree-header";
+import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
 
 export function ControlTreeLoader() {
     const selectedHwnd = useAtomValue(selectedHwndAtom);

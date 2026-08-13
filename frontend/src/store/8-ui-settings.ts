@@ -2,7 +2,7 @@ import { proxy, subscribe } from "valtio";
 import { atom } from "jotai";
 import { type ThemeMode, themeApplyMode } from "../utils/theme-apply";
 import type { Layout } from "react-resizable-panels";
-import { type PropsTab } from "../components/2-main/3-properties/3-window-detail/9-types-window-info";
+import { type PropsTab } from "../components/2-main/3-panel-props/3-window-detail/9-types-window-info";
 
 const STORE_KEY = "win-watch-25";
 const STORE_VER = "v1.0";

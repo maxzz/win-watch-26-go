@@ -2,8 +2,8 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { appSettings, setPanelLayoutAtom } from "@renderer/store/8-ui-settings";
 import { WindowTreePanel } from "../2-main/1-windows/1-window-tree";
-import { ControlTreeLoader } from "../2-main/2-control-tree";
-import { PropertiesPanel } from "../2-main/3-properties-panel";
+import { ControlTreeLoader } from "../2-main/2-controls/2-control-tree";
+import { PropertiesPanel } from "../2-main/3-panel-props/0-properties-panel";
 import { FooterWindowInfo } from "../2-main/4-footer-window-info";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "../ui/shadcn/resizable";
 
