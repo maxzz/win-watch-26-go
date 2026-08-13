@@ -10,10 +10,10 @@ import { type PropsTab, type WindowDetailInfo } from "./3-window-detail/9-types-
 import { ScrollArea } from "@renderer/components/ui/shadcn/scroll-area";
 import { Tabs, TabsContent } from "@renderer/components/ui/shadcn/tabs";
 import { AnimatedTabsList, AnimatedTabsTrigger } from "@renderer/components/ui/local-ui";
-import { PropertiesPanelHeader } from "../headers/7-properties-panel-header";
-import { TabAccessibility } from "./1-tab-accessibility";
-import { TabGeneral } from "./2-tab-general";
-import { TabWindowExtra } from "./3-tab-window-extra";
+import { PropertiesPanelHeader } from "./1-properties-panel-header";
+import { TabAccessibility } from "./2-1-tab-accessibility";
+import { TabGeneral } from "./2-2-tab-general";
+import { TabWindowExtra } from "./2-3-tab-window-extra";
 
 export function PropertiesPanel() {
     const control = useAtomValue(selectedControlAtom);

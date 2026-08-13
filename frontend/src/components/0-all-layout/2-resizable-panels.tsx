@@ -4,7 +4,7 @@ import { appSettings, setPanelLayoutAtom } from "@renderer/store/8-ui-settings";
 import { WindowTreePanel } from "../2-main/1-panel-windows/0-all-window-tree";
 import { ControlTreeLoader } from "../2-main/2-panel-controls/0-all-control-tree";
 import { PropertiesPanel } from "../2-main/3-panel-props/0-all-props";
-import { FooterWindowInfo } from "../2-main/4-footer-window-info";
+import { FooterWindowInfo } from "../3-footer/4-footer-window-info";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "../ui/shadcn/resizable";
 
 export function MainContent({ className }: { className?: string; }) {
