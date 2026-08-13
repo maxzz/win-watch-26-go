@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
-import { type ControlNode } from "../../../../store/9-types-tmapi";
+
+import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { type RawControlNode, initializeControlTreeForHwndAtom } from "./2-2-2-atoms-controls-ini-states";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { cachedWindowControlsTreeFamily, pruneExpiredControlsTreeCache, pruneOverflowControlsTreeCache, updateControlsTreeCacheMeta } from "./2-2-3-atoms-controls-cache";

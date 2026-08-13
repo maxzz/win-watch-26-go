@@ -1,12 +1,13 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { classNames, normalizeHwnd } from "@renderer/utils";
+import { ScrollArea } from "../../ui/shadcn/scroll-area";
+import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight } from "../../ui/icons";
+
 import { type WindowInfo } from "@renderer/store/9-types-tmapi";
 import { selectedHwndAtom, windowInfosAtom } from "./state-atoms/2-1-atoms-windows-list";
 import { selectWindowAtom } from "@renderer/store/2-3-atoms-highlight";
-import { ScrollArea } from "../../ui/shadcn/scroll-area";
 import { WindowTreeHeader } from "./1-window-tree-header";
-import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight } from "../../ui/icons";
 import { FileIcon } from "../5-file-icons/0-file-icon";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
 

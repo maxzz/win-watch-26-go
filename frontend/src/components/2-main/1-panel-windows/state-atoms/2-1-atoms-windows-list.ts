@@ -1,6 +1,7 @@
 import { atom } from "jotai";
-import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
+import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
+
 import { type WindowInfo } from "@renderer/store/9-types-tmapi";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 import { ensureFileIcons } from "../../5-file-icons/4-file-icons/c-store-icons";

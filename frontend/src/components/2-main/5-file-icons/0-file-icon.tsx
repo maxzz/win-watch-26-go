@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
+
 import { type FileIconEntry } from "./4-file-icons/9-types-icons";
 import { ensureFileIcons, fileIconStore, normalizeFileIconPath } from "./4-file-icons/c-store-icons";
 

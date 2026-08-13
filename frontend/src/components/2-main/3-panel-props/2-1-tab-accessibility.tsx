@@ -1,9 +1,10 @@
 import { type ReactNode } from "react";
 import { asHex, hexAccRuntimeId, normalizeHwnd } from "@renderer/utils";
 import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-names";
+
+import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
-import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);

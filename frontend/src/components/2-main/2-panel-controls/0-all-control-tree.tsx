@@ -2,14 +2,18 @@ import { type ReactNode, useEffect } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { classNames } from "@renderer/utils/classnames";
 import { ChevronRight, ChevronDown, MousePointerClick } from "lucide-react";
+import { ScrollArea } from "@renderer/components/ui/shadcn/scroll-area";
 import { getControlTypeName } from "@renderer/utils/uia/0-uia-control-type-names";
 import { getControlTypeIcon } from "@renderer/utils/uia/1-uia-control-type-icons-svg";
+
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { selectedHwndAtom } from "../1-panel-windows/state-atoms/2-1-atoms-windows-list";
-import { refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom, windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
+import {
+    refreshWindowControlsTreeAtom, selectedControlAtom, windowControlsTreeAtom, windowControlsTreeErrorAtom,
+    windowControlsTreeHwndAtom, windowControlsTreeLoadingAtom, windowControlsTreeRefreshingAtom
+} from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
-import { ScrollArea } from "../../ui/shadcn/scroll-area";
 import { ControlTreeHeader } from "./1-control-tree-header";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
 
@@ -29,8 +33,7 @@ export function ControlTreeLoader() {
             // Fetch the new controls tree when window selection changes.
             void refreshTree();
         },
-        [selectedHwnd, refreshTree]
-    );
+        [selectedHwnd, refreshTree]);
 
     useEffect(
         () => {
@@ -38,8 +41,7 @@ export function ControlTreeLoader() {
             // so the properties panel doesn't show stale data.
             void setSelectedControl(null);
         },
-        [selectedHwnd, setSelectedControl]
-    );
+        [selectedHwnd, setSelectedControl]);
 
     useEffect(
         () => {
@@ -47,8 +49,7 @@ export function ControlTreeLoader() {
             // When a new controls tree is obtained, select the first control in the tree.
             void setSelectedControl(windowControlsTree);
         },
-        [windowControlsTree, setSelectedControl]
-    );
+        [windowControlsTree, setSelectedControl]);
 
     return (
         <div className="h-full min-h-0 bg-card flex flex-col">
@@ -120,13 +121,8 @@ function ControlTree({ windowControlsTree, refreshing, error }: { windowControls
     return (
         <div className="relative flex-1 min-h-0">
             <ControlTreeInlineStatus refreshing={refreshing} error={error} />
-            <ScrollArea
-                className="group/tree size-full"
-                fixedWidth
-                parentContentWidth
-                viewportClassName="outline-none"
-                viewportProps={treeScrollViewportProps}
-            >
+
+            <ScrollArea className="group/tree size-full" fixedWidth parentContentWidth viewportClassName="outline-none" viewportProps={treeScrollViewportProps}>
                 <ControlTreeNode node={windowControlsTree} depth={0} />
             </ScrollArea>
         </div>
@@ -147,14 +143,7 @@ function ControlTreeNode({ node, depth }: { node: ControlNode; depth: number; })
     const controlIcon = getControlTypeIcon(node.controlType);
 
     return (<>
-        <div
-            className={getRowClasses(isSelected)}
-            style={{ paddingLeft: `${depth * 15 + 4}px` }}
-            onClick={(e) => {
-                focusTreeViewFromEvent(e);
-                setSelectedControl(node);
-            }}
-        >
+        <div className={getRowClasses(isSelected)} style={{ paddingLeft: `${depth * 15 + 4}px` }} onClick={(e) => { focusTreeViewFromEvent(e); setSelectedControl(node); }}>
             <span className="shrink-0 mr-1 size-4 flex items-center justify-center" onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}>
                 {hasChildren && (
                     expanded

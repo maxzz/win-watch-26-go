@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { AnimatePresence, motion } from "motion/react";
 import { useSnapshot } from "valtio/react";
+import { AnimatePresence, motion } from "motion/react";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
+import { Button } from "@renderer/components/ui/shadcn/button";
+import { Label } from "@renderer/components/ui/shadcn/label";
+import { Switch } from "@renderer/components/ui/shadcn/switch";
+import { IconRefresh } from "@renderer/components/ui/icons";
+
 import { selectedHwndAtom } from "../1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { refreshWindowControlsTreeAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { setAutoHighlightSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { emptyBoundsFlashTokenAtom } from "@renderer/store/2-4-atoms-bounds";
-import { Button } from "../../ui/shadcn/button";
-import { Label } from "../../ui/shadcn/label";
-import { Switch } from "../../ui/shadcn/switch";
-import { IconRefresh } from "../../ui/icons";
 
 export function ControlTreeHeader() {
     return (
@@ -54,8 +55,7 @@ function EmptyBoundsFlashBadge() {
             );
             return () => clearTimeout(timeout);
         },
-        [flashToken]
-    );
+        [flashToken]);
 
     return (
         <AnimatePresence initial={false}>

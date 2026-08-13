@@ -3,13 +3,14 @@ import { useAtom, useAtomValue } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames, hasNativeWindowHandle } from "@renderer/utils";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
+import { ScrollArea } from "@renderer/components/ui/shadcn/scroll-area";
+import { Tabs, TabsContent } from "@renderer/components/ui/shadcn/tabs";
+import { AnimatedTabsList, AnimatedTabsTrigger } from "@renderer/components/ui/local-ui";
+
 import { selectedControlAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { propsTabAtom } from "./state-atoms/a-atoms-win-info";
 import { loadWindowDetailInfo, windowDetailStore } from "./state-atoms/c-store-win-info";
 import { type PropsTab, type WindowDetailInfo } from "./state-atoms/9-types-window-info";
-import { ScrollArea } from "@renderer/components/ui/shadcn/scroll-area";
-import { Tabs, TabsContent } from "@renderer/components/ui/shadcn/tabs";
-import { AnimatedTabsList, AnimatedTabsTrigger } from "@renderer/components/ui/local-ui";
 import { PropertiesPanelHeader } from "./1-properties-panel-header";
 import { TabAccessibility } from "./2-1-tab-accessibility";
 import { TabGeneral } from "./2-2-tab-general";

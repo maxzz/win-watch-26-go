@@ -1,14 +1,5 @@
 import { type WindowDetailInfo } from "./state-atoms/9-types-window-info";
-import {
-    hex8,
-    Mono,
-    PropertyFullRow,
-    PropertyGrid,
-    PropertyHeader,
-    PropertyRow,
-    PropertySeparator,
-    StyleList,
-} from "./8-shared-ui";
+import { hex8, Mono, PropertyFullRow, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, StyleList } from "./8-shared-ui";
 
 export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
     return (

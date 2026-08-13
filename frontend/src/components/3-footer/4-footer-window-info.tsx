@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
-import { selectedHwndAtom, windowInfosAtom } from "../2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { normalizeHwnd, asHexNumber } from "@renderer/utils";
+import { selectedHwndAtom, windowInfosAtom } from "../2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 
 export function FooterWindowInfo() {
     const windowInfos = useAtomValue(windowInfosAtom);

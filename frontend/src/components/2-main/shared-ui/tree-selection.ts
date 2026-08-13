@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, MouseEvent } from "react";
+import { type ComponentPropsWithoutRef, type MouseEvent } from "react";
 
 /**
  * Selection look for window / control tree rows:

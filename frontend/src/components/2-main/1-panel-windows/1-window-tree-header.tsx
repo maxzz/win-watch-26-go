@@ -2,10 +2,11 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { Crosshair } from "lucide-react";
-import { Button } from "../../ui/shadcn/button";
-import { Label } from "../../ui/shadcn/label";
-import { Switch } from "../../ui/shadcn/switch";
-import { IconRefresh, Symbol_uia_Toolbar, Symbol_uia_Tooltip, Symbol_uia_Tooltip2 } from "../../ui/icons";
+import { Button } from "@renderer/components/ui/shadcn/button";
+import { Label } from "@renderer/components/ui/shadcn/label";
+import { Switch } from "@renderer/components/ui/shadcn/switch";
+import { IconRefresh, Symbol_uia_Toolbar, Symbol_uia_Tooltip, Symbol_uia_Tooltip2 } from "@renderer/components/ui/icons";
+
 import { doRefreshWindowInfosAtom, selectedHwndAtom } from "./state-atoms/2-1-atoms-windows-list";
 import { doHighlightSelectedWindowAtom } from "@renderer/store/2-3-atoms-highlight";
 

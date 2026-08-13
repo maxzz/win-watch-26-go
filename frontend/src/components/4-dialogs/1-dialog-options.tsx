@@ -2,9 +2,10 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "../ui/shadcn/dialog";
-import { Label } from "../ui/shadcn/label";
-import { Switch } from "../ui/shadcn/switch";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
+import { Label } from "@renderer/components/ui/shadcn/label";
+import { Switch } from "@renderer/components/ui/shadcn/switch";
+
 import { setAutoHighlightSelectedControlAtom, setHighlightBlinkCountAtom, setHighlightBorderColorAtom, setHighlightBorderWidthAtom, setShowEmptyBoundsNotificationAtom } from "@renderer/store/2-3-atoms-highlight";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 

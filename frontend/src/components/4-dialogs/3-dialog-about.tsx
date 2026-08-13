@@ -1,11 +1,11 @@
 import { envBuildVersion, envModifiedDate } from "@renderer/utils/env-date-formatter";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "../ui/shadcn/dialog";
-import { IconMicroscope } from "../ui/icons";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
+import { IconMicroscope } from "@renderer/components/ui/icons";
 
 export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="px-4 py-3 w-auto sm:max-w-[400px] text-xs">
+            <DialogContent className="px-4 py-3 w-auto sm:max-w-100 text-xs">
 
                 <DialogHeader>
                     <DialogTitle>
