@@ -21,32 +21,22 @@ export function PropertiesPanel() {
     const isPropertiesOnRight = propertiesPanelPosition === "right";
 
     const hwnd = control?.nativeWindowHandle;
-    const windowTabsEnabled = hasNativeWindowHandle(hwnd);
+    const hasWindowHandle = hasNativeWindowHandle(hwnd);
 
     useEffect(
         () => {
-            if (windowTabsEnabled && hwnd) {
+            if (hasWindowHandle && hwnd) {
                 void loadWindowDetailInfo(hwnd);
                 return;
             }
             void loadWindowDetailInfo(null);
         },
-        [hwnd, windowTabsEnabled]);
-
-    useEffect(
-        () => {
-            if (!windowTabsEnabled && (tab === "general" || tab === "windowExtra")) {
-                setTab("accessibility");
-            }
-        },
-        [windowTabsEnabled, tab, setTab]);
+        [hwnd, hasWindowHandle]);
 
     const activeTab: PropsTab =
-        !windowTabsEnabled
-            ? "accessibility"
-            : tab === "windowExtra" || tab === "general" || tab === "accessibility"
-                ? tab
-                : "accessibility";
+        tab === "windowExtra" || tab === "general" || tab === "accessibility"
+            ? tab
+            : "accessibility";
 
     const info = detailSnap.info as WindowDetailInfo | null;
 
@@ -57,8 +47,8 @@ export function PropertiesPanel() {
             <Tabs className="flex-1 min-h-0 flex flex-col gap-1 pt-1" value={activeTab} onValueChange={(v) => setTab(v as PropsTab)}>
                 <AnimatedTabsList layoutId="control-props-tabs" className="mx-1 h-7">
                     <AnimatedTabsTrigger valueAtom={propsTabAtom} value="accessibility" className="text-xs px-2">Accessibility</AnimatedTabsTrigger>
-                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="general" className="text-xs px-2" disabled={!windowTabsEnabled}>General</AnimatedTabsTrigger>
-                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="windowExtra" className="text-xs px-2" disabled={!windowTabsEnabled}>Window Extra</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="general" className="text-xs px-2">General</AnimatedTabsTrigger>
+                    <AnimatedTabsTrigger valueAtom={propsTabAtom} value="windowExtra" className="text-xs px-2">Window Extra</AnimatedTabsTrigger>
                 </AnimatedTabsList>
 
                 <ScrollArea className="flex-1 min-h-0" fixedWidth parentContentWidth>
@@ -69,7 +59,8 @@ export function PropertiesPanel() {
                     </TabsContent>
                     <TabsContent value="general" className="mt-0">
                         <WindowDetailBody
-                            enabled={windowTabsEnabled}
+                            hasSelection={!!control}
+                            hasWindowHandle={hasWindowHandle}
                             loading={detailSnap.loading}
                             error={detailSnap.error}
                             info={info}
@@ -78,7 +69,8 @@ export function PropertiesPanel() {
                     </TabsContent>
                     <TabsContent value="windowExtra" className="mt-0">
                         <WindowDetailBody
-                            enabled={windowTabsEnabled}
+                            hasSelection={!!control}
+                            hasWindowHandle={hasWindowHandle}
                             loading={detailSnap.loading}
                             error={detailSnap.error}
                             info={info}
@@ -99,11 +91,15 @@ function EmptyHint() {
     );
 }
 
-function WindowDetailBody({ enabled, loading, error, info, tab }: { enabled: boolean; loading: boolean; error: string | null; info: WindowDetailInfo | null; tab: "general" | "windowExtra"; }) {
-    if (!enabled) {
+function WindowDetailBody({ hasSelection, hasWindowHandle, loading, error, info, tab }: { hasSelection: boolean; hasWindowHandle: boolean; loading: boolean; error: string | null; info: WindowDetailInfo | null; tab: "general" | "windowExtra"; }) {
+    if (!hasSelection) {
+        return <EmptyHint />;
+    }
+
+    if (!hasWindowHandle) {
         return (
             <div className="p-3 text-xs text-muted-foreground">
-                Select a control with a native window handle to view window properties.
+                The selected element has no native window handle, so there are no window properties to display.
             </div>
         );
     }
