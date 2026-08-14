@@ -9,6 +9,7 @@ import { IconRefresh, Symbol_uia_Toolbar, Symbol_uia_Tooltip, Symbol_uia_Tooltip
 
 import { doRefreshWindowInfosAtom, selectedHwndAtom } from "./state-atoms/2-1-atoms-windows-list";
 import { doHighlightSelectedWindowAtom } from "@renderer/store/2-3-atoms-highlight";
+import { WindowsTreeOptionsPopover } from "./1-1-tree-options-popover";
 
 export function WindowTreeHeader() {
     return (
@@ -19,6 +20,7 @@ export function WindowTreeHeader() {
 
             <div className="flex items-center gap-0 pr-1.75">
                 <Button_FollowFocus />
+                <WindowsTreeOptionsPopover />
                 <Button_RefreshTree />
                 {/* <Button_HighlightHwnd /> */}
 

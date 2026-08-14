@@ -27,9 +27,12 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                 </DialogHeader>
 
                 <div className="pb-4 grid gap-1">
+
                     <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
 
-                    <OptionCheckbox
+                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">There are no options available yet. More to come soon.</div>
+
+                    {/* <OptionCheckbox
                         checked={settings.winlist_ExcludeUs}
                         onCheckedChange={(checked) => void setExcludeOwnAppWindows(checked)}
                         label="Exclude windows of our application"
@@ -40,7 +43,9 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                         onCheckedChange={(checked) => void setSortWindowsByProcessName(checked)}
                         label="Sort windows list by process name"
                         title="Sort acquired windows alphabetically by process name"
-                    />
+                    /> */}
+
+
                 </div>
             </DialogContent>
         </Dialog>
