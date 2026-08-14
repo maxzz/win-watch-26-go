@@ -12,6 +12,7 @@ import { selectedHwndAtom } from "../1-panel-windows/state-atoms/2-1-atoms-windo
 import { refreshWindowControlsTreeAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { setAutoHighlightSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { emptyBoundsFlashTokenAtom } from "@renderer/store/2-4-atoms-bounds";
+import { TreeOptionsPopover } from "./1-1-tree-options-popover";
 
 export function ControlTreeHeader() {
     return (
@@ -35,6 +36,7 @@ export function ControlTreeHeader() {
 
             <div className="flex items-center gap-0">
                 <ControlTreeAutoHighlightToggle />
+                <TreeOptionsPopover />
                 <Button_RefreshControlsTree />
             </div>
         </div>
