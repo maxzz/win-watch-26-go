@@ -23,6 +23,7 @@ export interface AppSettings {
     controls_highlightBorderColor: string;      // Border color used for the highlight rectangle (hex)
     controls_ShowEmptyBoundsNotice: boolean;    // Whether to show a notification when the selected control bounds are empty
     ui_showFooter: boolean;                     // Whether to show the footer
+    ui_stayOnTop: boolean;                      // Keep main window above other windows
     ui_theme: ThemeMode;                        // The theme: 'light' or 'dark'
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
     ui_panels_PropPos: PropertiesPanelPosition; // The position of the properties panel: 'bottom' or 'right'
@@ -39,6 +40,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     controls_highlightBorderColor: "#ff0000",
     controls_ShowEmptyBoundsNotice: true,
     ui_showFooter: true,
+    ui_stayOnTop: false,
     ui_theme: "light",
     ui_panels_Layout: {
         "left-panel": 25,
@@ -69,16 +71,26 @@ function loadSettings(): AppSettings {
 export const appSettings = proxy<AppSettings>(loadSettings());
 
 themeApplyMode(appSettings.ui_theme);
+applyStayOnTop(appSettings.ui_stayOnTop);
 
 subscribe(appSettings, () => {
     try {
         themeApplyMode(appSettings.ui_theme);
+        applyStayOnTop(appSettings.ui_stayOnTop);
         localStorage.setItem(STORAGE_ID, JSON.stringify(appSettings));
     } catch (e) {
         console.error("Failed to save settings", e);
     }
 });
 
+function applyStayOnTop(stayOnTop: boolean) {
+    try {
+        const runtime = (window as Window & { runtime?: { WindowSetAlwaysOnTop?: (b: boolean) => void; }; }).runtime;
+        runtime?.WindowSetAlwaysOnTop?.(stayOnTop);
+    } catch {
+        // Wails runtime unavailable (e.g. Vite-only browser preview).
+    }
+}
 // Jotai atom setter for panel layout
 export const setPanelLayoutAtom = atom(
     null,

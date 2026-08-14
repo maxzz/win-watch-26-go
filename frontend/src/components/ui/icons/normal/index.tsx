@@ -25,6 +25,7 @@ export * from "./29-3-zoom-reset";
 
 export * from "./30-1-theme-moon";
 export * from "./30-2-theme-sun";
+export * from "./43-picture-in-picture";
 
 export * from "./editor-manual-fields";
 export * from "./editor-swap-popup";
