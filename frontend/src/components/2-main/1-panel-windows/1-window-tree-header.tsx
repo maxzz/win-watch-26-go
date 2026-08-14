@@ -16,7 +16,8 @@ export function WindowTreeHeader() {
             <span className="text-xs font-semibold">
                 Top Windows
             </span>
-            <div className="flex items-center gap-0">
+
+            <div className="flex items-center gap-0 pr-1.75">
                 <Button_FollowFocus />
                 <Button_RefreshTree />
                 {/* <Button_HighlightHwnd /> */}
@@ -33,10 +34,10 @@ function Button_FollowFocus() {
     const settings = useSnapshot(appSettings);
     const enabled = settings.winlist_ActiveWinMonEnabled;
     return (
-        <Label className="text-xs font-normal text-muted-foreground cursor-pointer gap-0" title={enabled ? "Stop following the focused window" : "Follow the focused window"}>
-            <span className="pb-0.5">Follow focus:</span>
+        <Label className="text-[0.65rem] font-normal text-muted-foreground cursor-pointer gap-0" title={enabled ? "Stop following the focused window" : "Follow the focused window"}>
+            <span className="pb-px">Follow focus:</span>
             <Switch
-                className="scale-65"
+                className="-ml-0.5 scale-60"
                 checked={enabled}
                 onCheckedChange={(checked) => appSettings.winlist_ActiveWinMonEnabled = checked}
             />
@@ -53,7 +54,7 @@ function Button_RefreshTree() {
             onClick={refreshWindowInfos}
             title="Refresh window list (refresh window tree)"
         >
-            <IconRefresh className="size-3" />
+            <IconRefresh className="size-2.5" />
         </Button>
     );
 }

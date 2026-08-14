@@ -14,7 +14,7 @@ import {
 } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { setSelectedControlAtom } from "@renderer/store/2-3-atoms-highlight";
 import { doInvokeControlAtom } from "@renderer/store/2-5-atoms-invoke";
-import { ControlTreeHeader } from "./1-control-tree-header";
+import { ControlTreeHeader } from "./1-0-control-tree-header";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
 
 export function ControlTreeLoader() {

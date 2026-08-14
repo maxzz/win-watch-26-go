@@ -13,7 +13,7 @@ export function TreeOptionsPopover() {
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="xs" title="Tree options" type="button">
-                    <Settings className="size-3.5 text-muted-foreground" />
+                    <Settings className="size-3 stroke-1!" />
                 </Button>
             </PopoverTrigger>
 

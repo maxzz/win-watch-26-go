@@ -34,7 +34,7 @@ export function ControlTreeHeader() {
                 empty bounds
             </motion.div> */}
 
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-0 pr-1.75">
                 <ControlTreeAutoHighlightToggle />
                 <TreeOptionsPopover />
                 <Button_RefreshControlsTree />
@@ -48,10 +48,10 @@ function ControlTreeAutoHighlightToggle() {
     const setAutoHighlightSelectedControl = useSetAtom(setAutoHighlightSelectedControlAtom);
 
     return (
-        <Label className="text-xs font-normal text-muted-foreground cursor-pointer gap-0" title="Auto highlight the selected control">
-            <span className="pb-0.5">Auto-highlight:</span>
+        <Label className="text-[0.65rem] font-normal text-muted-foreground cursor-pointer gap-0" title="Auto highlight the selected control">
+            <span className="pb-px">Auto-highlight:</span>
             <Switch
-                className="scale-65"
+                className="-ml-0.5 scale-60"
                 checked={autoHighlightSelectedControl}
                 onCheckedChange={(checked) => setAutoHighlightSelectedControl(checked)}
             />
@@ -71,7 +71,7 @@ function Button_RefreshControlsTree() {
             title="Refresh controls tree"
             disabled={!selectedHwnd}
         >
-            <IconRefresh className="size-3" />
+            <IconRefresh className="size-2.5" />
         </Button>
     );
 }
