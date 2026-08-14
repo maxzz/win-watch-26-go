@@ -1,4 +1,4 @@
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { Settings } from "lucide-react";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
@@ -7,8 +7,11 @@ import { Button } from "@renderer/components/ui/shadcn/button";
 import { Checkbox } from "@renderer/components/ui/shadcn/checkbox";
 import { Input } from "@renderer/components/ui/shadcn/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@renderer/components/ui/shadcn/popover";
+import { controlsTreeCountAtom } from "./state-atoms/2-2-1-atoms-controls-list";
 
 export function TreeOptionsPopover() {
+    const count = useAtomValue(controlsTreeCountAtom);
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -25,6 +28,13 @@ export function TreeOptionsPopover() {
                 <Separator />
 
                 <Block_HighlightOptions />
+
+                <Separator />
+
+                <div className="text-muted-foreground grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 cursor-default">
+                    <span title="Total number of controls in the tree">Total controls</span>
+                    <span className="tabular-nums text-[11px]">{count}</span>
+                </div>
             </PopoverContent>
         </Popover>
     );
@@ -39,7 +49,7 @@ function Block_HighlightOptions() {
 
     return (
         <div className="select-none flex flex-col">
-            <div className="pb-1 text-xs font-semibold">
+            <div className="pb-2 text-xs font-semibold">
                 Highlight Window Rectangle
             </div>
 
@@ -65,7 +75,7 @@ function Block_HighlightOptions() {
                     <input
                         type="color"
                         title="Highlight border color"
-                        className="p-0 h-6 w-8 bg-transparent border border-border rounded cursor-pointer"
+                        className="p-0 px-1.5 h-6 w-8 bg-transparent border border-border rounded shadow-xs cursor-pointer"
                         value={normalizeHexColor(settings.controls_highlightBorderColor)}
                         onChange={(e) => setHighlightBorderColor(normalizeHexColor(e.target.value))}
                     />

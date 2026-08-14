@@ -220,4 +220,3 @@ function getRowClasses(isSelected: boolean): string {
 
 //TODO: when "Folow focus" but the new window not in the list then refresh the tree for the new window.
 //TODO: ControlTreeStatus should be an overlay on the control tree, not a separate component.
-//TODO: Add control tree count to the footer.

@@ -44,15 +44,7 @@ function WindowNode({ windowInfo, selectedHandle, onSelect, depth }: { windowInf
 
     return (
         <div>
-            <div
-                className={getRowClasses(isSelected)}
-                style={{ paddingLeft: `${depth * 12 + 4}px` }}
-                onClick={(e) => {
-                    focusTreeViewFromEvent(e);
-                    onSelect(windowInfo.handle);
-                }}
-                title={getWindowNodeTitle(windowInfo)}
-            >
+            <div className={getRowClasses(isSelected)} style={{ paddingLeft: `${depth * 12 + 4}px` }} onClick={(e) => { focusTreeViewFromEvent(e); onSelect(windowInfo.handle); }} title={getWindowNodeTitle(windowInfo)}>
                 <span
                     className="shrink-0 mr-1 size-4 flex items-center justify-center"
                     onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
@@ -65,7 +57,7 @@ function WindowNode({ windowInfo, selectedHandle, onSelect, depth }: { windowInf
 
                 <WindowNodeIcon windowInfo={windowInfo} />
 
-                <span className="text-xs truncate">
+                <span className="ml-1 text-xs truncate">
                     {/* <span className="ml-1 text-xs text-muted-foreground">
                         {window.handle}
                     </span> */}

@@ -79,6 +79,21 @@ export const refreshWindowControlsTreeAtom = atom(
 
 export const selectedControlAtom = atom<ControlNode | null>(null);
 
+export const controlsTreeCountAtom = atom(
+    (get): number => countControlNodes(get(windowControlsTreeAtom))
+);
+
+function countControlNodes(node: ControlNode | null): number {
+    if (!node) {
+        return 0;
+    }
+    let count = 1;
+    for (const child of node.children ?? []) {
+        count += countControlNodes(child);
+    }
+    return count;
+}
+
 //#endregion Control tree
  
 //#region comments

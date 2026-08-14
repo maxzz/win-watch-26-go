@@ -19,7 +19,7 @@ export function ControlTreeHeader() {
         <div className="shrink-0 px-2 py-1 pr-0 h-7 border-b bg-muted/20 flex items-center justify-between select-none">
             <div className="flex items-center gap-1">
                 <span className="text-xs font-semibold">
-                    Control Hierarchy:
+                    Controls
                 </span>
 
                 <div className="self-stretch relative w-px">

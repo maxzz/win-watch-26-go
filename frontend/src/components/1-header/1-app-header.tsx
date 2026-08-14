@@ -8,6 +8,7 @@ import { PanelBottomIcon, PanelRightIcon, SettingsIcon } from "lucide-react";
 import { Button } from "../ui/shadcn/button";
 import { TopMenu } from "./1-top-menu";
 import { ButtonThemeToggle } from "./3-5-btn-theme-toggle";
+import { IconSliders } from "../ui/icons/normal";
 
 export function AppHeader({ className }: { className?: string; }) {
     return (
@@ -20,7 +21,7 @@ export function AppHeader({ className }: { className?: string; }) {
                     </span>
                 )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0">
                 <ButtonOpenOptionsDialog />
                 <ButtonThemeToggle />
                 {/* <Button_TogglePropertiesPosition /> */}
@@ -41,7 +42,7 @@ function ButtonOpenOptionsDialog() {
             title="Options"
             type="button"
         >
-            <SettingsIcon className="size-3 stroke-1!" />
+            <IconSliders className="size-3.5 stroke-1!" />
         </Button>
     );
 }
