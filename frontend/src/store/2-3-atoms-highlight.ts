@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
+import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster-in-status-bar";
 import { appSettings } from "./1-0-ui-settings";
 import { areWindowHandlesEqual } from "@renderer/utils/win32/handles";
 

@@ -1,4 +1,5 @@
 import { useActiveWindow, useAppStartInitialize, useMonitorActiveWindow } from "@renderer/store/hooks/useActiveWindow";
+import { Toaster } from "sonner";
 import { UISymbolDefs } from "../ui/icons/symbols";
 import { AppHeader } from "../1-header/1-app-header";
 import { MainContent } from "./1-resizable-panels";
@@ -9,6 +10,7 @@ import { AppStatusBar } from "../3-footer/status-bar";
 export function App() {
     return (<>
         <UISymbolDefs />
+        <Toaster />
         <AppGlobals />
 
         <AppContents />

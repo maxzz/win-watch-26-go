@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { notice } from "@renderer/components/ui/local-ui/7-toaster";
+import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster-in-status-bar";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { selectedControlAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { type AccApiKind } from "./9-types";

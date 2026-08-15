@@ -1,6 +1,6 @@
 import { atom, getDefaultStore } from "jotai";
 import { appSettings } from "./1-0-ui-settings";
-import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster";
+import { notice } from "@renderer/components/ui/local-ui/7-toaster/7-toaster-in-status-bar";
 import { type ControlNode, type NativeBounds } from "./9-types-tmapi";
 
 // Get the current highlight bounds.
