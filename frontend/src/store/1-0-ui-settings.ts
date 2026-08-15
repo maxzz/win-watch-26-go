@@ -10,7 +10,7 @@ const STORE_VER = "v1.0";
 const STORAGE_ID = `${STORE_KEY}__${STORE_VER}`;
 
 type PropertiesPanelPosition = 'bottom' | 'right';
-type PanelId = "left-panel" | "right-panel" | "controls-panel" | "control-props-panel" | "workspace-panel" | "report-panel";
+type PanelId = "left-panel" | "right-panel" | "controls-panel" | "control-props-panel";
 type PanelLayout = Record<PanelId, number>;
 
 export interface AppSettings {
@@ -24,6 +24,7 @@ export interface AppSettings {
     controls_ShowEmptyBoundsNotice: boolean;    // Whether to show a notification when the selected control bounds are empty
     ui_showFooter: boolean;                     // Whether to show the footer
     ui_showReportPanel: boolean;                // Whether to show the report / action log panel
+    ui_reportPanelHeight: number;               // Report panel height in pixels
     ui_stayOnTop: boolean;                      // Keep main window above other windows
     ui_theme: ThemeMode;                        // The theme: 'light' or 'dark'
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
@@ -42,6 +43,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     controls_ShowEmptyBoundsNotice: true,
     ui_showFooter: true,
     ui_showReportPanel: false,
+    ui_reportPanelHeight: 220,
     ui_stayOnTop: false,
     ui_theme: "light",
     ui_panels_Layout: {
@@ -49,8 +51,6 @@ const DEFAULT_SETTINGS: AppSettings = {
         "right-panel": 75,
         "controls-panel": 70,
         "control-props-panel": 30,
-        "workspace-panel": 78,
-        "report-panel": 22,
     },
     ui_panels_PropPos: 'right',
     ui_panels_PropTab: 'accessibility',
