@@ -58,9 +58,10 @@ application well enough to build them.
 
 WinWatch is a [Wails v2](https://wails.io) + Go desktop app. The native UI
 Automation layer is **pure Go** (no cgo), so you do not need a C/C++
-compiler. Compared with an Electron build of the same kind of app, the
-result is a single Windows executable that is dramatically smaller
-(~12 MB vs ~150+ MB).
+compiler. Compared to building a similar Electron-based application 
+(which includes C++ DLLs, a NAPI addon, and Node.js), the result is 
+a single Windows executable that is significantly smaller (~12 MB vs. ~150+ MB) 
+and starts up faster, while the build process itself is simpler and quicker.
 
 <p align="center">
   <img src="docs/preview-light.png" alt="WinWatch in light theme: top-level windows, control tree, and properties" width="48%">
