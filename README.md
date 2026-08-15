@@ -185,4 +185,4 @@ so DevTools can reopen on startup without attaching a console window.
 
 ## License
 
-ISC
+MIT
