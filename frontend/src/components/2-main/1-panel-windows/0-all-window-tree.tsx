@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { classNames, normalizeHwnd } from "@renderer/utils";
+import { classNames } from "@renderer/utils";
 import { ScrollArea } from "../../ui/shadcn/scroll-area";
 import { IconDesktopComputerPc, IconL_AppWindow, IconL_ChevronDown, IconL_ChevronRight } from "../../ui/icons";
 
@@ -10,6 +10,7 @@ import { selectWindowAtom } from "@renderer/store/2-3-atoms-highlight";
 import { WindowTreeHeader } from "./1-window-tree-header";
 import { FileIcon } from "../5-file-icons/0-file-icon";
 import { focusTreeViewFromEvent, treeRowSelectedClasses, treeScrollViewportProps } from "../shared-ui/tree-selection";
+import { onWindowListMouseLeave, onWindowListMouseOver, onWindowListScroll, WindowListTooltip } from "./shared-tooltip";
 
 export function WindowTreePanel() {
     const windowInfos: WindowInfo[] = useAtomValue(windowInfosAtom);
@@ -25,7 +26,12 @@ export function WindowTreePanel() {
                 fixedWidth
                 parentContentWidth
                 viewportClassName="outline-none"
-                viewportProps={treeScrollViewportProps}
+                viewportProps={{
+                    ...treeScrollViewportProps,
+                    onMouseOver: onWindowListMouseOver,
+                    onMouseLeave: onWindowListMouseLeave,
+                    onScroll: onWindowListScroll,
+                }}
             >
                 {windowInfos.map(
                     (windowInfo, i) => (
@@ -33,6 +39,8 @@ export function WindowTreePanel() {
                     )
                 )}
             </ScrollArea>
+
+            <WindowListTooltip />
         </div>
     );
 }
@@ -44,7 +52,13 @@ function WindowNode({ windowInfo, selectedHandle, onSelect, depth }: { windowInf
 
     return (
         <div>
-            <div className={getRowClasses(isSelected)} style={{ paddingLeft: `${depth * 12 + 4}px` }} onClick={(e) => { focusTreeViewFromEvent(e); onSelect(windowInfo.handle); }} title={getWindowNodeTitle(windowInfo)}>
+            <div
+                className={getRowClasses(isSelected)}
+                style={{ paddingLeft: `${depth * 12 + 4}px` }}
+                data-window-row=""
+                data-hwnd={windowInfo.handle}
+                onClick={(e) => { focusTreeViewFromEvent(e); onSelect(windowInfo.handle); }}
+            >
                 <span
                     className="shrink-0 mr-1 size-4 flex items-center justify-center"
                     onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
@@ -106,10 +120,3 @@ function getRowClasses(isSelected: boolean): string {
     );
 }
 
-function getWindowNodeTitle(windowInfo: WindowInfo): string {
-    const hwnd = normalizeHwnd(windowInfo.handle);
-    const title = windowInfo.title || "No Title";
-    const processName = windowInfo.processName || "No Process Name";
-    const className = windowInfo.className || "No Class Name";
-    return `Process: ${processName}\nTitle: ${title}\nHWND: ${hwnd}\nClassname: ${className}`;
-}

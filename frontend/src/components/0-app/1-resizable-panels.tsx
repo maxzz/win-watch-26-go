@@ -4,7 +4,6 @@ import { appSettings, setPanelLayoutAtom } from "@renderer/store/1-0-ui-settings
 import { WindowTreePanel } from "../2-main/1-panel-windows/0-all-window-tree";
 import { ControlTreeLoader } from "../2-main/2-panel-controls/0-all-control-tree";
 import { PropertiesPanel } from "../2-main/3-panel-props/0-all-props";
-import { FooterWindowInfo } from "../3-footer/4-footer-window-info";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "../ui/shadcn/resizable";
 
 export function MainContent({ className }: { className?: string; }) {
@@ -23,11 +22,8 @@ export function MainContent({ className }: { className?: string; }) {
         <ResizablePanelGroup className={className} orientation="horizontal" onLayoutChanged={setPanelLayout}>
             {/* Left panel - Window Tree */}
             <ResizablePanel id="left-panel" minSize="15px" maxSize="75%" defaultSize={mainPanelSize}>
-                <div className="h-full min-h-0 flex flex-col">
-                    <div className="flex-1 min-h-0">
-                        <WindowTreePanel />
-                    </div>
-                    <FooterWindowInfo />
+                <div className="h-full min-h-0">
+                    <WindowTreePanel />
                 </div>
             </ResizablePanel>
 
@@ -56,8 +52,6 @@ export function MainContent({ className }: { className?: string; }) {
                             <PropertiesPanel />
                         </ResizablePanel>
                     </ResizablePanelGroup>
-
-                    {/* <FooterWindowInfo /> */} {/* show something related to control tree elements here (count, etc.) */}
                 </div>
             </ResizablePanel>
         </ResizablePanelGroup>
