@@ -399,7 +399,7 @@ func (a *Automation) findByRuntimeID(root, walker uintptr, runtimeID string) uin
 	return 0
 }
 
-func (a *Automation) withTarget(hwnd uintptr, runtimeID string, f func(target uintptr)) {
+func (a *Automation) withTarget(hwnd uintptr, runtimeID string, f func(target uintptr, isRoot bool)) {
 	var root uintptr
 	hr := comCall(a.ptr, idxAutoElementFromHandle, hwnd, uintptr(unsafe.Pointer(&root)))
 	if int32(hr) < 0 || root == 0 {
@@ -420,7 +420,7 @@ func (a *Automation) withTarget(hwnd uintptr, runtimeID string, f func(target ui
 	if target != root {
 		defer release(target)
 	}
-	f(target)
+	f(target, target == root)
 }
 
 // InvokeControl invokes (or toggles) the control identified by runtimeID.
@@ -430,7 +430,7 @@ func (a *Automation) InvokeControl(hwnd uintptr, runtimeID string) bool {
 	}
 	result := false
 	a.do(func() {
-		a.withTarget(hwnd, runtimeID, func(target uintptr) {
+		a.withTarget(hwnd, runtimeID, func(target uintptr, _ bool) {
 			var invoke uintptr
 			if hr := comCall(target, idxElemGetCurrentPattern, uiaInvokePatternID, uintptr(unsafe.Pointer(&invoke))); int32(hr) >= 0 && invoke != 0 {
 				r := comCall(invoke, idxInvokeInvoke)
@@ -457,9 +457,12 @@ func (a *Automation) GetControlBounds(hwnd uintptr, runtimeID string) (Bounds, b
 	var b Bounds
 	ok := false
 	a.do(func() {
-		a.withTarget(hwnd, runtimeID, func(target uintptr) {
+		a.withTarget(hwnd, runtimeID, func(target uintptr, isRoot bool) {
 			if r, valid := getRect(target, idxElemCurBoundingRectangle); valid {
 				native := getHandle(target, idxElemCurNativeWindowHandle)
+				if native == 0 && isRoot {
+					native = hwnd
+				}
 				b = visibleBoundsForHwnd(native, Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom})
 				ok = true
 			}

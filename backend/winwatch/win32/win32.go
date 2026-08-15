@@ -19,7 +19,6 @@ var (
 	kernel32 = windows.NewLazySystemDLL("kernel32.dll")
 	psapi    = windows.NewLazySystemDLL("psapi.dll")
 	gdi32    = windows.NewLazySystemDLL("gdi32.dll")
-	dwmapi   = windows.NewLazySystemDLL("dwmapi.dll")
 
 	procEnumWindows             = user32.NewProc("EnumWindows")
 	procIsWindow                = user32.NewProc("IsWindow")
@@ -31,8 +30,6 @@ var (
 	procGetWindowRect           = user32.NewProc("GetWindowRect")
 	procGetForegroundWindow     = user32.NewProc("GetForegroundWindow")
 	procGetAncestor             = user32.NewProc("GetAncestor")
-
-	procDwmGetWindowAttribute = dwmapi.NewProc("DwmGetWindowAttribute")
 
 	procGetModuleBaseNameW = psapi.NewProc("GetModuleBaseNameW")
 
@@ -53,10 +50,7 @@ type HWND uintptr
 
 const (
 	gaParent = 1 // GA_PARENT for GetAncestor
-
-	// DWMWA_EXTENDED_FRAME_BOUNDS: visible window frame in screen coordinates,
-	// excluding the DWM drop-shadow padding that GetWindowRect includes.
-	dwmwaExtendedFrameBounds = 9
+	gaRoot   = 2 // GA_ROOT for GetAncestor
 )
 
 // WindowInfo describes a single top-level window. The JSON tags match the
@@ -205,38 +199,39 @@ func GetWindowRectValue(hwnd HWND) Rect {
 	return r
 }
 
-// GetVisibleFrameBounds returns the visible top-level window frame via
+// GetVisibleFrameBounds returns the visible window frame via
 // DwmGetWindowAttribute(DWMWA_EXTENDED_FRAME_BOUNDS), excluding drop shadow.
 func GetVisibleFrameBounds(hwnd HWND) (Rect, bool) {
-	if procDwmGetWindowAttribute.Find() != nil {
-		return Rect{}, false
-	}
 	var r Rect
-	hr, _, _ := procDwmGetWindowAttribute.Call(
-		uintptr(hwnd),
-		dwmwaExtendedFrameBounds,
-		uintptr(unsafe.Pointer(&r)),
-		unsafe.Sizeof(r),
+	err := windows.DwmGetWindowAttribute(
+		windows.HWND(hwnd),
+		uint32(windows.DWMWA_EXTENDED_FRAME_BOUNDS),
+		unsafe.Pointer(&r),
+		uint32(unsafe.Sizeof(r)),
 	)
-	if hr != 0 || r.Right <= r.Left || r.Bottom <= r.Top {
+	if err != nil || r.Right <= r.Left || r.Bottom <= r.Top {
 		return Rect{}, false
 	}
 	return r, true
 }
 
-// IsTopLevelWindow reports whether hwnd has no parent (GA_PARENT).
+// IsTopLevelWindow reports whether hwnd is its own root window.
+// GetAncestor(GA_PARENT) cannot be used: for top-level windows it returns
+// the desktop, not 0.
 func IsTopLevelWindow(hwnd HWND) bool {
-	return hwnd != 0 && IsWindow(hwnd) && GetParentWindow(hwnd) == 0
+	if hwnd == 0 || !IsWindow(hwnd) {
+		return false
+	}
+	ret, _, _ := procGetAncestor.Call(uintptr(hwnd), gaRoot)
+	return HWND(ret) == hwnd
 }
 
 // VisibleWindowRect returns the on-screen rectangle occupied by a window.
-// For top-level windows this prefers DWMWA_EXTENDED_FRAME_BOUNDS so the
-// result matches the visible frame rather than GetWindowRect's shadow box.
+// Prefers DWMWA_EXTENDED_FRAME_BOUNDS so top-level results match the visible
+// frame rather than GetWindowRect's shadow box.
 func VisibleWindowRect(hwnd HWND) Rect {
-	if IsTopLevelWindow(hwnd) {
-		if r, ok := GetVisibleFrameBounds(hwnd); ok {
-			return r
-		}
+	if r, ok := GetVisibleFrameBounds(hwnd); ok {
+		return r
 	}
 	return GetWindowRectValue(hwnd)
 }
@@ -246,10 +241,8 @@ func GetWindowRectOK(hwnd HWND) (Rect, bool) {
 	if !IsWindow(hwnd) {
 		return Rect{}, false
 	}
-	if IsTopLevelWindow(hwnd) {
-		if r, ok := GetVisibleFrameBounds(hwnd); ok {
-			return r, true
-		}
+	if r, ok := GetVisibleFrameBounds(hwnd); ok {
+		return r, true
 	}
 	var r Rect
 	ret, _, _ := procGetWindowRect.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&r)))
