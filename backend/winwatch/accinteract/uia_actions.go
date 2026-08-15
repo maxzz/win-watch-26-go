@@ -33,8 +33,8 @@ func executeUia(target uintptr, actionID, value string) error {
 	handlers := map[string]spec{
 		"invoke.invoke":           {patternInvoke, func(p uintptr) error { return call(p, 3, "Invoke") }},
 		"toggle.toggle":           {patternToggle, func(p uintptr) error { return call(p, 3, "Toggle") }},
-		"expandCollapse.expand":   {patternExpandCollapse, func(p uintptr) error { return call(p, 3, "Expand") }},
-		"expandCollapse.collapse": {patternExpandCollapse, func(p uintptr) error { return call(p, 4, "Collapse") }},
+		"expandCollapse.expand":   {patternExpandCollapse, expandPattern},
+		"expandCollapse.collapse": {patternExpandCollapse, collapsePattern},
 		"value.setValue":          {patternValue, func(p uintptr) error { return setLPCWSTR(p, 3, value, "SetValue") }},
 		"rangeValue.setValue": {patternRangeValue, func(p uintptr) error {
 			n, err := strconv.ParseFloat(value, 64)
@@ -113,6 +113,43 @@ func executeUia(target uintptr, actionID, value string) error {
 	}
 	defer uia.Release(pattern)
 	return h.run(pattern)
+}
+
+const (
+	expandCollapsed         = 0
+	expandExpanded          = 1
+	expandPartiallyExpanded = 2
+	expandLeafNode          = 3
+)
+
+func expandPattern(pattern uintptr) error {
+	state := uia.GetInt32(pattern, 5)
+	if state == expandExpanded || state == expandLeafNode {
+		return nil
+	}
+	if err := call(pattern, 3, "Expand"); err != nil {
+		state = uia.GetInt32(pattern, 5)
+		if state == expandExpanded || state == expandPartiallyExpanded {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func collapsePattern(pattern uintptr) error {
+	state := uia.GetInt32(pattern, 5)
+	if state == expandCollapsed || state == expandLeafNode {
+		return nil
+	}
+	if err := call(pattern, 4, "Collapse"); err != nil {
+		state = uia.GetInt32(pattern, 5)
+		if state == expandCollapsed {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 func call(obj uintptr, idx int, name string) error {

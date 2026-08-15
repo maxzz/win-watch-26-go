@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { type AccActionDef, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection } from "./9-types";
+import { type AccActionDef, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection, normalizeSnapshot } from "./9-types";
 
 type AccInteractState = {
     key: string | null;
@@ -53,11 +53,11 @@ function seedDrafts(snapshot: AccInteractSnapshot): void {
             accInteractStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
         }
     };
-    seed("uia", snapshot.uia.actions);
-    for (const pattern of snapshot.uia.patterns) {
-        seed("uia", pattern.actions);
+    seed("uia", snapshot.uia?.actions ?? []);
+    for (const pattern of snapshot.uia?.patterns ?? []) {
+        seed("uia", pattern.actions ?? []);
     }
-    seed("msaa", snapshot.msaa.actions);
+    seed("msaa", snapshot.msaa?.actions ?? []);
 }
 
 function applySnapshot(key: string, snapshot: AccInteractSnapshot): void {
@@ -108,7 +108,7 @@ export async function loadAccInteract(handle: string | null | undefined, runtime
         if (requestId !== selectionRequestId) {
             return;
         }
-        const snapshot = JSON.parse(json) as AccInteractSnapshot;
+        const snapshot = normalizeSnapshot(JSON.parse(json) as AccInteractSnapshot);
         applySnapshot(key, snapshot);
     } catch (e) {
         if (requestId !== selectionRequestId) {
@@ -139,7 +139,10 @@ export async function executeAccAction(handle: string, runtimeId: string, kind: 
         }
         const key = selectionKey(handle, runtimeId);
         if (result.snapshot && key) {
-            applySnapshot(key, result.snapshot);
+            const snapshot = normalizeSnapshot(result.snapshot);
+            if (snapshot.found) {
+                applySnapshot(key, snapshot);
+            }
         }
         accInteractStore.error = null;
         return true;

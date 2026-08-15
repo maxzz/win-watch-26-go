@@ -12,7 +12,7 @@ import (
 // GetSnapshot returns available UIA patterns and MSAA state for a control.
 func GetSnapshot(auto *uia.Automation, hwnd uintptr, runtimeID string) Snapshot {
 	if !uia.EnsureStarted(auto) {
-		return Snapshot{Error: "UI Automation is not available"}
+		return emptySnapshot("UI Automation is not available")
 	}
 	var snap Snapshot
 	uia.Do(auto, func() {
@@ -21,7 +21,7 @@ func GetSnapshot(auto *uia.Automation, hwnd uintptr, runtimeID string) Snapshot 
 			snap.Found = true
 		})
 		if !found {
-			snap.Error = "Control not found"
+			snap = emptySnapshot("Control not found")
 		}
 	})
 	return snap
@@ -49,6 +49,11 @@ func Execute(auto *uia.Automation, hwnd uintptr, runtimeID, kind, actionID, valu
 				return
 			}
 			result.OK = true
+			// Read from the live element first. Expand/collapse often rebuilds
+			// the tree so a later runtime-id lookup can miss.
+			snap := readSnapshot(target)
+			snap.Found = true
+			result.Snapshot = &snap
 		})
 		if !found && result.Error == "" {
 			result.Error = "Control not found"
@@ -60,8 +65,26 @@ func Execute(auto *uia.Automation, hwnd uintptr, runtimeID, kind, actionID, valu
 	// Re-query after the provider applies the change (focus, visual state, bounds).
 	time.Sleep(80 * time.Millisecond)
 	snap := GetSnapshot(auto, hwnd, runtimeID)
-	result.Snapshot = &snap
+	if snap.Found {
+		result.Snapshot = &snap
+	}
 	return result
+}
+
+func emptySnapshot(err string) Snapshot {
+	return Snapshot{
+		Error: err,
+		UIA: UiaSection{
+			Properties: []NamedValue{},
+			Actions:    []ActionDef{},
+			Patterns:   []UiaPattern{},
+		},
+		MSAA: MsaaSection{
+			Properties: []NamedValue{},
+			StateFlags: []string{},
+			Actions:    []ActionDef{},
+		},
+	}
 }
 
 func readSnapshot(target uintptr) Snapshot {

@@ -11,7 +11,7 @@ import { type UiaSection } from "./state/9-types";
 export function UiaInteractSection({ section, loading }: { section: UiaSection; loading: boolean; }) {
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
-    const patternCount = section.patterns.length;
+    const patternCount = section.patterns?.length ?? 0;
 
     return (
         <AccCollapsible

@@ -59,3 +59,30 @@ export function emptyUiaSection(): UiaSection {
 export function emptyMsaaSection(): MsaaSection {
     return { available: false, properties: [], stateValue: 0, stateFlags: [], actions: [] };
 }
+
+export function normalizeSnapshot(raw: Partial<AccInteractSnapshot> | null | undefined): AccInteractSnapshot {
+    const uia = raw?.uia;
+    const msaa = raw?.msaa;
+    return {
+        found: !!raw?.found,
+        error: raw?.error,
+        uia: {
+            properties: uia?.properties ?? [],
+            actions: uia?.actions ?? [],
+            patterns: (uia?.patterns ?? []).map((pattern) => ({
+                id: pattern.id,
+                name: pattern.name,
+                properties: pattern.properties ?? [],
+                actions: pattern.actions ?? [],
+            })),
+        },
+        msaa: {
+            available: !!msaa?.available,
+            error: msaa?.error,
+            properties: msaa?.properties ?? [],
+            stateValue: msaa?.stateValue ?? 0,
+            stateFlags: msaa?.stateFlags ?? [],
+            actions: msaa?.actions ?? [],
+        },
+    };
+}
