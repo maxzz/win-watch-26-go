@@ -9,7 +9,6 @@ and automation APIs see it.
 - [Project structure](#project-structure)
   - [Architecture](#architecture)
   - [Native layer (pure Go)](#native-layer-pure-go)
-- [Migration notes / known differences](#migration-notes--known-differences)
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
 - [License](#license)
@@ -57,11 +56,11 @@ RPA-style workflow, or an in-house helper that talks to software you do
 not own. WinWatch does not replace those tools — it is how you learn the
 application well enough to build them.
 
-This is a [Wails v2](https://wails.io) + Go port of the original Electron +
-Node.js (NAPI/C++) application. The React UI is virtually unchanged; the native
-UI Automation layer was rewritten in **pure Go** (no cgo). The result is a
-single Windows executable that is dramatically smaller than the Electron build
-(~12 MB vs ~150+ MB), and you do not need a C/C++ compiler to build it.
+WinWatch is a [Wails v2](https://wails.io) + Go desktop app. The native UI
+Automation layer is **pure Go** (no cgo), so you do not need a C/C++
+compiler. Compared with an Electron build of the same kind of app, the
+result is a single Windows executable that is dramatically smaller
+(~12 MB vs ~150+ MB).
 
 <p align="center">
   <img src="docs/preview-light.png" alt="WinWatch in light theme: top-level windows, control tree, and properties" width="48%">
@@ -79,10 +78,10 @@ single Windows executable that is dramatically smaller than the Electron build
 win-watch-26-go/
 ├─ main.go                  Wails bootstrap (embeds frontend/dist, window options, Bind)
 ├─ wails.json               Wails config (frontend commands use pnpm)
-├─ backend/                 Go application code (same layout as traytools-26)
+├─ backend/                 Go application code
 │  ├─ app.go                App lifecycle: window-bounds restore/save, shutdown
-│  ├─ winwatch/             The native "plugin" - framework-independent
-│  │  ├─ service.go         Public Go API (returns the same JSON as the old C++ addon)
+│  ├─ winwatch/             Native Windows layer (framework-independent)
+│  │  ├─ service.go         Public Go API (window list, control tree, invoke, highlight)
 │  │  ├─ win32/             Win32 syscalls: window enumeration, foreground monitor, highlight overlay
 │  │  ├─ uia/               UI Automation via direct COM vtable calls (control tree, invoke, bounds)
 │  │  └─ windowdetail/      Win32 window + process properties (General / Window Extra tabs)
@@ -90,9 +89,9 @@ win-watch-26-go/
 │  ├─ winlaunch/            Reveal a path in File Explorer
 │  ├─ platform/             DevTools window detect/close
 │  ├─ appstate/             Host persistence (window bounds, zoom, DevTools in %AppData%)
-│  └─ bindings/             Wails-bound API (mirrors the former `tmApi`) + runtime events
+│  └─ bindings/             Wails-bound API + runtime events
 └─ frontend/                React app (pnpm package)
-   ├─ src/                  Ported renderer (components, Jotai/Valtio store, utils, assets)
+   ├─ src/                  React UI (components, Jotai/Valtio store, utils, assets)
    │  └─ api/
    │     ├─ tmApi.ts        Bootstrap: Wails bindings or a browser stub
    │     ├─ tmApi.wails.ts  Maps `tmApi` onto generated Wails bindings + events
@@ -122,12 +121,12 @@ React UI ──window.tmApi.*──► tmApi shim ──► wailsjs bindings ─
 - **State management**: the UI uses [Jotai](https://jotai.org/) atoms together
   with [Valtio](https://valtio.dev/) proxies (e.g. `frontend/src/store`). New
   functionality should follow the same pattern rather than `useState`.
-- **JSON contract preserved**: backend methods return the same JSON strings the
-  original C++ addon produced, so the renderer's parsing logic is unchanged.
+- **JSON API**: backend methods return JSON strings that the renderer parses
+  directly.
 
 ### Native layer (pure Go)
 
-`backend/winwatch` reimplements the original C++ DLL + NAPI addon:
+`backend/winwatch` is the native Windows layer:
 
 | Capability               | Implementation                                             |
 | ------------------------ | ---------------------------------------------------------- |
@@ -135,17 +134,6 @@ React UI ──window.tmApi.*──► tmApi shim ──► wailsjs bindings ─
 | Active-window monitoring  | `SetWinEventHook(EVENT_SYSTEM_FOREGROUND, ...)` (`win32`)  |
 | Highlight overlay        | Layered window + GDI on a dedicated message-loop goroutine |
 | Control tree / invoke    | `IUIAutomation` via direct COM vtable calls (`uia`)        |
-
-## Migration notes / known differences
-
-- **Zoom** and the **Ctrl+,** (open Options) shortcut were Electron
-  main-process features. Zoom is now native WebView2 page zoom
-  (`App.SetZoomLevel`, persisted as `zoomLevel` in `init.json`). **Ctrl+,**
-  remains a `keydown` listener in `tmApi.wails.ts`.
-- **`hasHtmlAccess`** (IAccessible/IHTMLElement probing) from the original
-  control-tree walker is not ported and is reported as `false`.
-- `uiAccess=true` / Authenticode code-signing (from the original packaging) are
-  out of scope for this port.
 
 ## Requirements
 
@@ -175,8 +163,8 @@ pnpm build
 
 ### Developer tools
 
-Toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I** (same approach as
-`traytools-26` / `to-diag-trace-go`). Each toggle saves whether DevTools are open
+Toggle DevTools with **Ctrl+Shift+F12** or **Ctrl+Shift+I**. Each toggle saves
+whether DevTools are open
 to `%AppData%/WinWatch/init.json` (`devTools`). On the next launch, Wails
 `OpenInspectorOnStartup` restores that state.
 
