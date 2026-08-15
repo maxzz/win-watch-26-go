@@ -7,7 +7,7 @@ export default defineConfig({
     base: "",
     resolve: {
         alias: {
-            "@renderer": resolve(__dirname, "src"),
+            "@renderer": resolve(import.meta.dirname, "src"),
         },
     },
     plugins: [
