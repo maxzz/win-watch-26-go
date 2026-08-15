@@ -35,6 +35,28 @@ need to prove it is the one you think it is.
 - **Invoke** — fire the default action on a control without writing a script.
 - **Light and dark** — the same workspace in either theme.
 
+WinWatch is also a research instrument for people who build *other* tools
+that have to live inside real applications. Most desktop software never
+ships a public API. The only stable surface is the UI itself: windows,
+controls, names, automation IDs, bounds, and the process that owns them.
+Before you can fill a login dialog, scrape a status field, drive a vendor
+console from a script, or write an accessibility check, you need a map of
+that surface — not a screenshot, the live tree the OS actually exposes.
+
+That map is what WinWatch produces. You attach to a running app, walk its
+control tree, and collect the identifiers your integrator will need:
+window class and handle, process path and PID, control type, Automation
+ID, runtime ID, enabled/visible state, and on-screen rectangle. Highlight
+proves you have the right node. Invoke proves the default action is
+reachable. The property pane is the notebook you fill before you write a
+line of automation.
+
+From there you can design a companion: a password manager that targets a
+native dialog, a test harness that clicks through a UI with no API, an
+RPA-style workflow, or an in-house helper that talks to software you do
+not own. WinWatch does not replace those tools — it is how you learn the
+application well enough to build them.
+
 This is a [Wails v2](https://wails.io) + Go port of the original Electron +
 Node.js (NAPI/C++) application. The React UI is virtually unchanged; the native
 UI Automation layer was rewritten in **pure Go** (no cgo). The result is a
