@@ -1,6 +1,6 @@
 import { envBuildVersion, envModifiedDate } from "@renderer/utils/env-date-formatter";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
-import { IconMicroscope } from "@renderer/components/ui/icons";
+import gadgetUrl from "@renderer/assets/icons/gadget.svg";
 
 export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     return (
@@ -19,13 +19,13 @@ export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChang
 
                 <div className="text-xs grid grid-cols-[auto_1fr] gap-3 1items-center">
                     <a
-                        className="bg-sky-50 dark:bg-sky-950 border-sky-500 border rounded shadow shadow-foreground/20 dark:shadow-foreground/30 active:scale-50 transition-all flex items-center justify-center"
+                        className="p-1 bg-sky-50 dark:bg-sky-950 border-sky-500 border rounded shadow shadow-foreground/20 dark:shadow-foreground/30 active:scale-50 transition-all flex items-center justify-center"
                         href="https://github.com/maxzz/win-watch-25"
                         target="_blank"
                         rel="noreferrer"
                         title="Open GitHub Repository"
                     >
-                        <IconMicroscope className="p-1 size-12 stroke-[3px]! stroke-sky-500 dark:stroke-sky-400" />
+                        <img src={gadgetUrl} alt="logo" className="size-12 object-contain" />
                     </a>
 
                     <div className="grid gap-1">
