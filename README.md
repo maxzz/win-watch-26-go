@@ -64,9 +64,9 @@ a single Windows executable that is significantly smaller (~12 MB vs. ~150+ MB)
 and starts up faster, while the build process itself is simpler and quicker.
 
 <p align="center">
-  <img src="docs/preview-light.png" alt="WinWatch in light theme: top-level windows, control tree, and properties" width="48%">
+  <img src="frontend/src/assets/previews/2026,08.14.26,190414,light.png" alt="WinWatch in light theme: top-level windows, control tree, and properties" width="48%">
   &nbsp;
-  <img src="docs/preview-dark.png" alt="WinWatch in dark theme: the same three-pane inspector" width="48%">
+  <img src="frontend/src/assets/previews/2026,08.14.26,190449,dark.png" alt="WinWatch in dark theme: the same three-pane inspector" width="48%">
 </p>
 
 <p align="center">
