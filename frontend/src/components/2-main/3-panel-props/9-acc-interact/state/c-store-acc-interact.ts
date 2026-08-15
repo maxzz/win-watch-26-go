@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection } from "./9-types";
+import { type AccActionDef, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection } from "./9-types";
 
 type AccInteractState = {
     key: string | null;
@@ -45,7 +45,7 @@ export function setDraft(kind: string, actionId: string, value: string): void {
 }
 
 function seedDrafts(snapshot: AccInteractSnapshot): void {
-    const seed = (kind: string, actions: { id: string; currentValue?: string; }[]) => {
+    const seed = (kind: string, actions: readonly AccActionDef[]) => {
         for (const action of actions) {
             if (!action.currentValue) {
                 continue;
