@@ -12,7 +12,7 @@ export interface WindowInfo {       // Top level window info (obtained from C++ 
     processPath?: string;           // from QueryFullProcessImageName
     processId: number;              // from GetWindowThreadProcessId
     className: string;              // from GetWindowClassNameStr
-    rect: NativeBounds;             // from GetWindowRect
+    rect: NativeBounds;             // visible frame (DWMWA_EXTENDED_FRAME_BOUNDS)
     children?: WindowInfo[];        // from EnumWindowsProc
 }
 

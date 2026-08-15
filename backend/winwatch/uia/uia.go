@@ -349,7 +349,7 @@ func (a *Automation) walk(elem uintptr, walker uintptr) ControlNode {
 	node.ProcessID = getInt32(elem, idxElemCurProcessID)
 
 	if r, ok := getRect(elem, idxElemCurBoundingRectangle); ok {
-		node.Bounds = Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom}
+		node.Bounds = visibleBoundsForHwnd(native, Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom})
 	}
 
 	node.IsEnabled = getBool(elem, idxElemCurIsEnabled)
@@ -459,10 +459,26 @@ func (a *Automation) GetControlBounds(hwnd uintptr, runtimeID string) (Bounds, b
 	a.do(func() {
 		a.withTarget(hwnd, runtimeID, func(target uintptr) {
 			if r, valid := getRect(target, idxElemCurBoundingRectangle); valid {
-				b = Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom}
+				native := getHandle(target, idxElemCurNativeWindowHandle)
+				b = visibleBoundsForHwnd(native, Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom})
 				ok = true
 			}
 		})
 	})
 	return b, ok
+}
+
+// visibleBoundsForHwnd replaces UIA BoundingRectangle with DWM visible-frame
+// bounds when the element is a top-level HWND. UIA (like GetWindowRect)
+// includes drop-shadow padding around top-level windows.
+func visibleBoundsForHwnd(native uintptr, fallback Bounds) Bounds {
+	hwnd := win32.HWND(native)
+	if !win32.IsTopLevelWindow(hwnd) {
+		return fallback
+	}
+	r, ok := win32.GetVisibleFrameBounds(hwnd)
+	if !ok {
+		return fallback
+	}
+	return Bounds{Left: r.Left, Top: r.Top, Right: r.Right, Bottom: r.Bottom}
 }

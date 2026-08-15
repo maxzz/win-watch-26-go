@@ -116,6 +116,7 @@ func (s *Service) HideHighlight() {
 }
 
 // GetWindowRect returns the JSON rectangle of a window, or "null".
+// Top-level windows use DWMWA_EXTENDED_FRAME_BOUNDS (visible frame, no shadow).
 func (s *Service) GetWindowRect(handle string) string {
 	hwnd, ok := win32.TryParseHwnd(handle)
 	if !ok {
