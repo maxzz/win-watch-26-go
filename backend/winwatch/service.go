@@ -11,6 +11,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/maxzz/win-watch-26/backend/winwatch/accinteract"
 	"github.com/maxzz/win-watch-26/backend/winwatch/uia"
 	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
 	"github.com/maxzz/win-watch-26/backend/winwatch/windowdetail"
@@ -166,6 +167,35 @@ func (s *Service) GetWindowDetailInfo(handle string) string {
 	data, err := json.Marshal(info)
 	if err != nil {
 		return `{"valid":false}`
+	}
+	return string(data)
+}
+
+// GetControlAccInteract returns JSON with UIA patterns and MSAA actions
+// available on the control identified by handle + runtimeID.
+func (s *Service) GetControlAccInteract(handle, runtimeID string) string {
+	hwnd, ok := win32.TryParseHwnd(handle)
+	if !ok {
+		return `{"found":false,"error":"invalid window handle"}`
+	}
+	snap := accinteract.GetSnapshot(s.automation, uintptr(hwnd), runtimeID)
+	data, err := json.Marshal(snap)
+	if err != nil {
+		return `{"found":false,"error":"marshal failed"}`
+	}
+	return string(data)
+}
+
+// ExecuteAccAction runs a UIA or MSAA action (kind is "uia" or "msaa").
+func (s *Service) ExecuteAccAction(handle, runtimeID, kind, actionID, value string) string {
+	hwnd, ok := win32.TryParseHwnd(handle)
+	if !ok {
+		return `{"ok":false,"error":"invalid window handle"}`
+	}
+	result := accinteract.Execute(s.automation, uintptr(hwnd), runtimeID, kind, actionID, value)
+	data, err := json.Marshal(result)
+	if err != nil {
+		return `{"ok":false,"error":"marshal failed"}`
 	}
 	return string(data)
 }

@@ -99,6 +99,13 @@ export function createBrowserTmApi(): WinWatchApi {
         getWindowRect: async () => "null",
         getWindowDetailInfo: async () => JSON.stringify({ valid: false }),
         getControlCurrentBounds: async () => "null",
+        getControlAccInteract: async () => JSON.stringify({
+            found: false,
+            error: "UI Automation is not available in the browser preview",
+            uia: { properties: [], actions: [], patterns: [] },
+            msaa: { available: false, properties: [], stateValue: 0, stateFlags: [], actions: [] },
+        }),
+        executeAccAction: async () => JSON.stringify({ ok: false, error: "not available in browser preview" }),
         isWindowHandleValid: async () => false,
         revealInExplorer: async () => undefined,
         getFileIcons: async () => "[]",

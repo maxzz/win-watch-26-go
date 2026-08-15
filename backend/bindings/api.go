@@ -99,6 +99,17 @@ func (a *Api) GetWindowDetailInfo(handle string) string {
 	return a.service.GetWindowDetailInfo(handle)
 }
 
+// GetControlAccInteract returns JSON with UIA patterns and MSAA actions
+// for the control identified by handle + runtimeId.
+func (a *Api) GetControlAccInteract(handle, runtimeId string) string {
+	return a.service.GetControlAccInteract(handle, runtimeId)
+}
+
+// ExecuteAccAction runs a UIA or MSAA action. kind is "uia" or "msaa".
+func (a *Api) ExecuteAccAction(handle, runtimeId, kind, actionId, value string) string {
+	return a.service.ExecuteAccAction(handle, runtimeId, kind, actionId, value)
+}
+
 // RevealInExplorer opens File Explorer with path selected (highlighted).
 func (a *Api) RevealInExplorer(path string) error {
 	return winlaunch.RevealInExplorer(path)

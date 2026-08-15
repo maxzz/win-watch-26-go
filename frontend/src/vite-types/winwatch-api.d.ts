@@ -44,6 +44,8 @@ interface WinWatchApi {
     getWindowRect: (handle: string) => Promise<string>;
     getWindowDetailInfo: (handle: string) => Promise<string>;
     getControlCurrentBounds: (handle: string, runtimeId: string) => Promise<string>;
+    getControlAccInteract: (handle: string, runtimeId: string) => Promise<string>;
+    executeAccAction: (handle: string, runtimeId: string, kind: "uia" | "msaa", actionId: string, value: string) => Promise<string>;
     isWindowHandleValid: (handle: string) => Promise<boolean>;
     revealInExplorer: (path: string) => Promise<void>;
     /** pathsJSON: JSON string array of file paths; returns JSON array of {path, dataUrl, error?}. */

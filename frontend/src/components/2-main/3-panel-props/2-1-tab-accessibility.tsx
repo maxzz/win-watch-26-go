@@ -5,24 +5,28 @@ import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-n
 import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
+import { AccInteractSection } from "./9-acc-interact";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);
 
     return (
-        <PropertyGrid>
-            <PropertyHeader>UI Accessibility</PropertyHeader>
-            {properties.map((prop, idx) => {
-                if (prop.label === PROP_SEP) {
-                    return <PropertySeparator key={idx} />;
-                }
-                return (
-                    <PropertyRow key={idx} label={prop.label} title={prop.title || strEmpty(prop.value)}>
-                        <PropertyValueContent label={prop.label} value={prop.value} />
-                    </PropertyRow>
-                );
-            })}
-        </PropertyGrid>
+        <>
+            <PropertyGrid>
+                <PropertyHeader>UI Accessibility</PropertyHeader>
+                {properties.map((prop, idx) => {
+                    if (prop.label === PROP_SEP) {
+                        return <PropertySeparator key={idx} />;
+                    }
+                    return (
+                        <PropertyRow key={idx} label={prop.label} title={prop.title || strEmpty(prop.value)}>
+                            <PropertyValueContent label={prop.label} value={prop.value} />
+                        </PropertyRow>
+                    );
+                })}
+            </PropertyGrid>
+            <AccInteractSection control={control} />
+        </>
     );
 }
 
