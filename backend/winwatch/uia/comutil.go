@@ -181,3 +181,14 @@ func GetFloat64(obj uintptr, idx int) (float64, bool) {
 	hr := comCall(obj, idx, uintptr(unsafe.Pointer(&v)))
 	return v, int32(hr) >= 0
 }
+
+// BoundingRect returns the element's current rectangle, using the DWM visible
+// frame for top-level windows (same rule as the control-tree bounds).
+func BoundingRect(elem uintptr) (Bounds, bool) {
+	r, ok := getRect(elem, idxElemCurBoundingRectangle)
+	if !ok {
+		return Bounds{}, false
+	}
+	native := getHandle(elem, idxElemCurNativeWindowHandle)
+	return visibleBoundsForHwnd(native, Bounds{Left: r.left, Top: r.top, Right: r.right, Bottom: r.bottom}), true
+}

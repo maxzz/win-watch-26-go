@@ -47,13 +47,10 @@ export function setDraft(kind: string, actionId: string, value: string): void {
 function seedDrafts(snapshot: AccInteractSnapshot): void {
     const seed = (kind: string, actions: readonly AccActionDef[]) => {
         for (const action of actions) {
-            if (!action.currentValue) {
+            if (action.kind === "command") {
                 continue;
             }
-            const key = draftKey(kind, action.id);
-            if (accInteractStore.drafts[key] === undefined) {
-                accInteractStore.drafts[key] = action.currentValue;
-            }
+            accInteractStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
         }
     };
     seed("uia", snapshot.uia.actions);

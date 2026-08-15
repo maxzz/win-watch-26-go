@@ -3,6 +3,7 @@ package accinteract
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/maxzz/win-watch-26/backend/winwatch/msaa"
 	"github.com/maxzz/win-watch-26/backend/winwatch/uia"
@@ -47,15 +48,19 @@ func Execute(auto *uia.Automation, hwnd uintptr, runtimeID, kind, actionID, valu
 				result.Error = err.Error()
 				return
 			}
-			snap := readSnapshot(target)
-			snap.Found = true
 			result.OK = true
-			result.Snapshot = &snap
 		})
 		if !found && result.Error == "" {
 			result.Error = "Control not found"
 		}
 	})
+	if !result.OK {
+		return result
+	}
+	// Re-query after the provider applies the change (focus, visual state, bounds).
+	time.Sleep(80 * time.Millisecond)
+	snap := GetSnapshot(auto, hwnd, runtimeID)
+	result.Snapshot = &snap
 	return result
 }
 
@@ -82,7 +87,7 @@ func readUia(target uintptr) UiaSection {
 		if pattern == 0 {
 			continue
 		}
-		item := probe.read(pattern)
+		item := probe.read(target, pattern)
 		item.ID = probe.id
 		item.Name = probe.name
 		if item.Properties == nil {

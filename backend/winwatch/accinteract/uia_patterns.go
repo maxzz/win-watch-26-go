@@ -37,30 +37,34 @@ const (
 type patternProbe struct {
 	id   int
 	name string
-	read func(pattern uintptr) UiaPattern
+	read func(elem, pattern uintptr) UiaPattern
+}
+
+func patternOnly(fn func(pattern uintptr) UiaPattern) func(elem, pattern uintptr) UiaPattern {
+	return func(_ uintptr, pattern uintptr) UiaPattern { return fn(pattern) }
 }
 
 var uiaProbes = []patternProbe{
-	{patternInvoke, "Invoke", readInvoke},
-	{patternToggle, "Toggle", readToggle},
-	{patternExpandCollapse, "ExpandCollapse", readExpandCollapse},
-	{patternValue, "Value", readValue},
-	{patternRangeValue, "RangeValue", readRangeValue},
-	{patternSelection, "Selection", readSelection},
-	{patternSelectionItem, "SelectionItem", readSelectionItem},
-	{patternScroll, "Scroll", readScroll},
-	{patternScrollItem, "ScrollItem", readScrollItem},
-	{patternWindow, "Window", readWindow},
+	{patternInvoke, "Invoke", patternOnly(readInvoke)},
+	{patternToggle, "Toggle", patternOnly(readToggle)},
+	{patternExpandCollapse, "ExpandCollapse", patternOnly(readExpandCollapse)},
+	{patternValue, "Value", patternOnly(readValue)},
+	{patternRangeValue, "RangeValue", patternOnly(readRangeValue)},
+	{patternSelection, "Selection", patternOnly(readSelection)},
+	{patternSelectionItem, "SelectionItem", patternOnly(readSelectionItem)},
+	{patternScroll, "Scroll", patternOnly(readScroll)},
+	{patternScrollItem, "ScrollItem", patternOnly(readScrollItem)},
+	{patternWindow, "Window", patternOnly(readWindow)},
 	{patternTransform, "Transform", readTransform},
-	{patternDock, "Dock", readDock},
-	{patternMultipleView, "MultipleView", readMultipleView},
-	{patternGrid, "Grid", readGrid},
-	{patternGridItem, "GridItem", readGridItem},
-	{patternTable, "Table", readTable},
-	{patternTableItem, "TableItem", readTableItem},
-	{patternText, "Text", readText},
-	{patternVirtualizedItem, "VirtualizedItem", readVirtualizedItem},
-	{patternItemContainer, "ItemContainer", readItemContainer},
+	{patternDock, "Dock", patternOnly(readDock)},
+	{patternMultipleView, "MultipleView", patternOnly(readMultipleView)},
+	{patternGrid, "Grid", patternOnly(readGrid)},
+	{patternGridItem, "GridItem", patternOnly(readGridItem)},
+	{patternTable, "Table", patternOnly(readTable)},
+	{patternTableItem, "TableItem", patternOnly(readTableItem)},
+	{patternText, "Text", patternOnly(readText)},
+	{patternVirtualizedItem, "VirtualizedItem", patternOnly(readVirtualizedItem)},
+	{patternItemContainer, "ItemContainer", patternOnly(readItemContainer)},
 }
 
 var toggleStateNames = []string{"Off", "On", "Indeterminate"}
@@ -236,24 +240,31 @@ func readWindow(pattern uintptr) UiaPattern {
 			nv("WindowInteractionState", enumName(windowInteractionNames, uia.GetInt32(pattern, 11))),
 		},
 		Actions: []ActionDef{
-			cmd("window.setNormal", "Restore"),
-			cmd("window.setMaximized", "Maximize"),
-			cmd("window.setMinimized", "Minimize"),
-			{ID: "window.close", Label: "Close", Kind: "command", Destructive: true},
+			titleBarCmd("window.setNormal", "Restore"),
+			titleBarCmd("window.setMaximized", "Maximize"),
+			titleBarCmd("window.setMinimized", "Minimize"),
+			titleBarCmd("window.close", "Close"),
 		},
 	}
 }
 
-func readTransform(pattern uintptr) UiaPattern {
+func readTransform(elem, pattern uintptr) UiaPattern {
 	canMove := uia.GetBool(pattern, 6)
 	canResize := uia.GetBool(pattern, 7)
 	canRotate := uia.GetBool(pattern, 8)
+	moveCurrent, resizeCurrent := "", ""
+	if b, ok := uia.BoundingRect(elem); ok {
+		moveCurrent = fmt.Sprintf("%d, %d", b.Left, b.Top)
+		w := b.Right - b.Left
+		h := b.Bottom - b.Top
+		resizeCurrent = fmt.Sprintf("%d, %d", w, h)
+	}
 	actions := []ActionDef{}
 	if canMove {
-		actions = append(actions, setPair("transform.move", "Move", "", "x, y", "Screen coordinates"))
+		actions = append(actions, setPair("transform.move", "Move", moveCurrent, "x, y", "Screen coordinates"))
 	}
 	if canResize {
-		actions = append(actions, setPair("transform.resize", "Resize", "", "width, height", "Size in pixels"))
+		actions = append(actions, setPair("transform.resize", "Resize", resizeCurrent, "width, height", "Size in pixels"))
 	}
 	if canRotate {
 		actions = append(actions, setNumber("transform.rotate", "Rotate", "0", "degrees"))

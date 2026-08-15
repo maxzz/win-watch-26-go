@@ -47,6 +47,7 @@ type ActionDef struct {
 	CurrentValue string `json:"currentValue,omitempty"`
 	Placeholder  string `json:"placeholder,omitempty"`
 	Hint         string `json:"hint,omitempty"`
+	Group        string `json:"group,omitempty"`
 	Destructive  bool   `json:"destructive,omitempty"`
 }
 
@@ -62,6 +63,10 @@ func nv(name, value string) NamedValue {
 
 func cmd(id, label string) ActionDef {
 	return ActionDef{ID: id, Label: label, Kind: "command"}
+}
+
+func titleBarCmd(id, label string) ActionDef {
+	return ActionDef{ID: id, Label: label, Kind: "command", Group: "titlebar"}
 }
 
 func setString(id, label, current, placeholder string) ActionDef {

@@ -13,6 +13,7 @@ export type AccActionDef = {
     readonly currentValue?: string;
     readonly placeholder?: string;
     readonly hint?: string;
+    readonly group?: string;
     readonly destructive?: boolean;
 };
 
