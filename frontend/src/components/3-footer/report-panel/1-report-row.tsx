@@ -1,6 +1,8 @@
+import { type MouseEvent } from "react";
 import { classNames } from "@renderer/utils";
 import { IconStopCircle, SymbolInfo, SymbolWarning } from "@renderer/components/ui/icons";
 import { type ReportEntry, type ReportLevel } from "./9-types";
+import { hoverReportInfoIcon, leaveReportInfoIcon } from "./c-store-report-tooltip";
 
 export function formatReportTime(at: number): string {
     return new Date(at).toLocaleTimeString(undefined, {
@@ -11,77 +13,42 @@ export function formatReportTime(at: number): string {
 }
 
 export function ReportRow({ entry }: { entry: ReportEntry; }) {
-    const detail = entry.detail || fieldSummary(entry);
     return (
-        <div className="text-xs grid grid-cols-[auto_auto_minmax(0,auto)_minmax(0,1fr)] items-center gap-x-2 gap-y-0.5">
-            <span className="font-semibold tabular-nums text-muted-foreground">
+        <div className="text-xs flex items-center gap-2 min-w-0">
+            <span className="font-semibold tabular-nums text-muted-foreground shrink-0">
                 {formatReportTime(entry.at)}
             </span>
 
-            <ReportLevelStatus level={entry.level} />
+            <ReportLevelStatus entry={entry} />
 
-            <span className="truncate" title={entry.title}>
-                {entry.source && (
-                    <span className="mr-1.5 text-muted-foreground/70">
-                        {entry.source}
-                    </span>
-                )}
+            <span className="truncate min-w-0">
                 {entry.title}
             </span>
-
-            <span className="text-muted-foreground truncate" title={detailTitle(entry)}>
-                {detail}
-            </span>
-
-            {entry.fields?.length
-                ? (
-                    <div className="col-span-4 pl-[4.5rem] text-[0.65rem] text-muted-foreground/80 space-y-0.5">
-                        {entry.fields.map(
-                            (field) => (
-                                <div key={field.name} className="truncate" title={`${field.name}: ${field.value}`}>
-                                    <span className="font-medium text-foreground/70">{field.name}: </span>
-                                    {field.value}
-                                </div>
-                            )
-                        )}
-                    </div>
-                )
-                : null}
         </div>
     );
 }
 
-function ReportLevelStatus({ level }: { level: ReportLevel; }) {
+function ReportLevelStatus({ entry }: { entry: ReportEntry; }) {
+    const hasDetails = !!(entry.detail || entry.fields?.length);
     return (
-        <span className={classNames("min-w-16 inline-flex items-center gap-1 justify-end", levelToneClass[level])}>
-            {level}
-            {level === "success" && <SymbolInfo className="size-3" />}
-            {level === "info" && <SymbolInfo className="size-3" />}
-            {level === "warning" && <SymbolWarning className="size-3" />}
-            {level === "error" && <IconStopCircle className="size-3" />}
+        <span className={classNames("min-w-16 shrink-0 inline-flex items-center gap-1 justify-end", levelToneClass[entry.level])}>
+            {entry.level}
+            <span
+                className={hasDetails ? "cursor-default" : undefined}
+                onMouseEnter={hasDetails ? (e) => onInfoEnter(e, entry.id) : undefined}
+                onMouseLeave={hasDetails ? leaveReportInfoIcon : undefined}
+            >
+                {entry.level === "success" && <SymbolInfo className="size-3" />}
+                {entry.level === "info" && <SymbolInfo className="size-3" />}
+                {entry.level === "warning" && <SymbolWarning className="size-3" />}
+                {entry.level === "error" && <IconStopCircle className="size-3" />}
+            </span>
         </span>
     );
 }
 
-function fieldSummary(entry: ReportEntry): string {
-    if (!entry.fields?.length) {
-        return "";
-    }
-    return entry.fields.map((field) => `${field.name}: ${field.value}`).join(" · ");
-}
-
-function detailTitle(entry: ReportEntry): string {
-    const lines = [entry.title];
-    if (entry.detail) {
-        lines.push(entry.detail);
-    }
-    if (entry.source) {
-        lines.push(`Source: ${entry.source}`);
-    }
-    for (const field of entry.fields ?? []) {
-        lines.push(`${field.name}: ${field.value}`);
-    }
-    return lines.join("\n");
+function onInfoEnter(e: MouseEvent<HTMLElement>, entryId: number): void {
+    hoverReportInfoIcon(entryId, e.currentTarget.getBoundingClientRect());
 }
 
 const levelToneClass: Record<ReportLevel, string> = {

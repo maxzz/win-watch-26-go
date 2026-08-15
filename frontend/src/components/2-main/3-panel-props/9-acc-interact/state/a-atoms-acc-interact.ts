@@ -34,15 +34,16 @@ export const doExecuteAccActionAtom = atom(
         });
         const ok = await executeAccAction(handle, control.runtimeId, payload.kind, payload.actionId, value);
         if (!ok) {
-            report.error(accInteractStore.error || described.failedTitle, {
+            report.error(described.failedTitle, {
                 source: payload.kind,
-                detail: accInteractStore.error || undefined,
+                detail: accInteractStore.error || described.failedDetail,
                 fields: described.fields,
             });
             return;
         }
         report.success(described.title, {
             source: payload.kind,
+            detail: described.detail,
             fields: described.fields,
         });
     }

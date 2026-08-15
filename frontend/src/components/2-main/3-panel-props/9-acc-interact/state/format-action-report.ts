@@ -26,12 +26,12 @@ export function describeAccAction(input: {
     value?: string;
     action?: AccActionDef;
     controlName?: string;
-}): { title: string; failedTitle: string; fields: Record<string, string>; } {
+}): { title: string; failedTitle: string; detail: string; failedDetail: string; fields: Record<string, string>; } {
     const label = input.action?.label || humanizeActionId(input.actionId);
     const value = input.value?.trim() ?? "";
     const name = input.controlName?.trim() ?? "";
-    const title = successTitle(input.actionId, label, value, name);
-    const failedTitle = failedMessage(input.actionId, label, value, name);
+    const detail = successTitle(input.actionId, label, value, name);
+    const failedDetail = failedMessage(input.actionId, label, value, name);
 
     const fields: Record<string, string> = {
         API: input.kind === "msaa" ? "MSAA" : "UI Automation",
@@ -43,7 +43,13 @@ export function describeAccAction(input: {
     if (value) {
         fields.Value = value;
     }
-    return { title, failedTitle, fields };
+    return {
+        title: `Action: ${label} applied`,
+        failedTitle: `Action: ${label} failed`,
+        detail,
+        failedDetail,
+        fields,
+    };
 }
 
 function successTitle(actionId: string, label: string, value: string, name: string): string {

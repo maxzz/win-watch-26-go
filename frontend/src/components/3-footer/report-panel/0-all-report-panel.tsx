@@ -4,7 +4,9 @@ import { Button } from "@renderer/components/ui/shadcn/button";
 import { ScrollArea2 } from "@renderer/components/ui/shadcn/scroll-area";
 import { IconTrash24 } from "@renderer/components/ui/icons";
 import { ReportRow } from "./1-report-row";
+import { ReportDetailTooltip } from "./2-report-detail-tooltip";
 import { clearReportMessages, reportStore } from "./c-store-report";
+import { leaveReportInfoIcon } from "./c-store-report-tooltip";
 
 const NEAR_BOTTOM_PX = 48;
 
@@ -22,6 +24,7 @@ export function AppReportPanel() {
             }
             const onScroll = () => {
                 stickToBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight <= NEAR_BOTTOM_PX;
+                leaveReportInfoIcon();
             };
             el.addEventListener("scroll", onScroll, { passive: true });
             return () => el.removeEventListener("scroll", onScroll);
@@ -73,6 +76,7 @@ export function AppReportPanel() {
                         </div>
                     )}
             </ScrollArea2>
+            <ReportDetailTooltip />
         </div>
     );
 }
