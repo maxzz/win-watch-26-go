@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useSnapshot } from "valtio/react";
+import { PanelBottomIcon } from "lucide-react";
 import { classNames } from "@renderer/utils";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { IconStopCircle, SymbolCross, SymbolInfo, SymbolWarning } from "@renderer/components/ui/icons";
 import { type StatusNotice, type StatusNoticeType } from "./9-types";
@@ -10,13 +12,16 @@ export function AppStatusBar() {
     const { current } = useSnapshot(statusBarStore);
 
     return (
-        <div className="relative shrink-0 h-7 text-[.65rem] bg-muted/20 border-t border-foreground/20 overflow-hidden">
-            <AnimatePresence initial={false} mode="popLayout">
-                {current
-                    ? <StatusNoticeRow key={current.id} notice={current} />
-                    : <ReadyRow key="ready" />
-                }
-            </AnimatePresence>
+        <div className="shrink-0 h-7 text-[.65rem] bg-muted/20 border-t border-foreground/20 flex items-center">
+            <div className="relative flex-1 min-w-0 h-full overflow-hidden">
+                <AnimatePresence initial={false} mode="popLayout">
+                    {current
+                        ? <StatusNoticeRow key={current.id} notice={current} />
+                        : <ReadyRow key="ready" />
+                    }
+                </AnimatePresence>
+            </div>
+            <ButtonToggleReport />
         </div>
     );
 }
@@ -62,6 +67,22 @@ function StatusNoticeRow({ notice }: { notice: StatusNotice; }) {
                 <SymbolCross className="size-2.5" />
             </Button>
         </motion.div>
+    );
+}
+
+function ButtonToggleReport() {
+    const { ui_showReportPanel } = useSnapshot(appSettings);
+    return (
+        <Button
+            className={classNames("size-5 rounded mr-1", ui_showReportPanel && "bg-accent")}
+            variant="ghost"
+            size="icon"
+            type="button"
+            title={ui_showReportPanel ? "Hide report" : "Show report"}
+            onClick={() => { appSettings.ui_showReportPanel = !appSettings.ui_showReportPanel; }}
+        >
+            <PanelBottomIcon className="size-3" />
+        </Button>
     );
 }
 

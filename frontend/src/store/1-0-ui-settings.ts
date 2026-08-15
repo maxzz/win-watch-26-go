@@ -10,7 +10,7 @@ const STORE_VER = "v1.0";
 const STORAGE_ID = `${STORE_KEY}__${STORE_VER}`;
 
 type PropertiesPanelPosition = 'bottom' | 'right';
-type PanelId = "left-panel" | "right-panel" | "controls-panel" | "control-props-panel";
+type PanelId = "left-panel" | "right-panel" | "controls-panel" | "control-props-panel" | "workspace-panel" | "report-panel";
 type PanelLayout = Record<PanelId, number>;
 
 export interface AppSettings {
@@ -23,6 +23,7 @@ export interface AppSettings {
     controls_highlightBorderColor: string;      // Border color used for the highlight rectangle (hex)
     controls_ShowEmptyBoundsNotice: boolean;    // Whether to show a notification when the selected control bounds are empty
     ui_showFooter: boolean;                     // Whether to show the footer
+    ui_showReportPanel: boolean;                // Whether to show the report / action log panel
     ui_stayOnTop: boolean;                      // Keep main window above other windows
     ui_theme: ThemeMode;                        // The theme: 'light' or 'dark'
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
@@ -40,6 +41,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     controls_highlightBorderColor: "#ff0000",
     controls_ShowEmptyBoundsNotice: true,
     ui_showFooter: true,
+    ui_showReportPanel: false,
     ui_stayOnTop: false,
     ui_theme: "light",
     ui_panels_Layout: {
@@ -47,6 +49,8 @@ const DEFAULT_SETTINGS: AppSettings = {
         "right-panel": 75,
         "controls-panel": 70,
         "control-props-panel": 30,
+        "workspace-panel": 78,
+        "report-panel": 22,
     },
     ui_panels_PropPos: 'right',
     ui_panels_PropTab: 'accessibility',
@@ -59,8 +63,15 @@ function loadSettings(): AppSettings {
         const stored = localStorage.getItem(STORAGE_ID);
         if (stored) {
             // merge stored settings with defaults to ensure new fields are present
-            const rv =  { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
-            return rv;
+            const storedSettings = JSON.parse(stored) as Partial<AppSettings>;
+            return {
+                ...DEFAULT_SETTINGS,
+                ...storedSettings,
+                ui_panels_Layout: {
+                    ...DEFAULT_SETTINGS.ui_panels_Layout,
+                    ...storedSettings.ui_panels_Layout,
+                },
+            };
         }
     } catch (e) {
         console.error("Failed to load settings", e);

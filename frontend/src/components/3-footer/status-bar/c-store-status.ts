@@ -39,15 +39,19 @@ function toNoticeText(message: ReactNode): string {
     return "";
 }
 
-export function pushStatusNotice(type: StatusNoticeType, message: ReactNode): number {
+export function showStatusNotice(type: StatusNoticeType, message: string): number {
     const id = nextId++;
     statusBarStore.current = {
         id,
         type,
-        message: toNoticeText(message),
+        message,
     };
     scheduleDismiss(id);
     return id;
+}
+
+export function pushStatusNotice(type: StatusNoticeType, message: ReactNode): number {
+    return showStatusNotice(type, toNoticeText(message));
 }
 
 export function clearStatusNotice(id?: string | number): void {
