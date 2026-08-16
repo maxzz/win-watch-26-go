@@ -17,7 +17,7 @@ export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: r
 
     return (
         <PropertyRow label="Title Bar" interactive>
-            <div className="1py-0.5 inline-flex items-stretch border border-input rounded overflow-hidden">
+            <div className="w-min flex items-stretch border border-input rounded-xs overflow-hidden">
                 {ordered.map((action) => (
                     <AccTitleBarButton key={action.id} kind={kind} action={action} />
                 ))}
@@ -36,7 +36,7 @@ function AccTitleBarButton({ kind, action }: { kind: AccApiKind; action: AccActi
 
     return (
         <button
-            className={classNames(titleBarButtonClasses, isClose ? "hover:bg-[#e81123] hover:text-white rounded-r" : "hover:bg-accent hover:text-accent-foreground")}
+            className={classNames(titleBarButtonClasses, isClose ? "hover:bg-[#e81123] hover:text-white rounded-r-xs" : "hover:bg-accent hover:text-accent-foreground")}
             onClick={() => void execute({ kind, actionId: action.id })}
             disabled={!!busyActionId}
             title={action.label}
@@ -49,7 +49,7 @@ function AccTitleBarButton({ kind, action }: { kind: AccApiKind; action: AccActi
 }
 
 const titleBarButtonClasses = "\
-px-2 h-3 \
+px-2 h-3.5 \
 text-foreground/80 border-l border-input \
 \
 first:border-l-0 \
@@ -70,7 +70,7 @@ const titleBarIcons: Record<string, ReactNode> = {
 function IconCaptionMinimize({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
     return (
         <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
-            <path d="M1 6.5h8" />
+            <path d="M1 7h8" />
         </svg>
     );
 }
@@ -79,7 +79,7 @@ function IconCaptionMinimize({ className, ...rest }: SVGAttributes<SVGSVGElement
 function IconCaptionMaximize({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
     return (
         <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
-            <rect x="1.5" y="1.5" width="7" height="7" rx="1" ry="1" />
+            <rect x="1.6" y="1.6" width="7" height="7" rx="1" ry="1" />
         </svg>
     );
 }
@@ -88,8 +88,8 @@ function IconCaptionMaximize({ className, ...rest }: SVGAttributes<SVGSVGElement
 function IconCaptionRestore({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
     return (
         <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
-            <rect x="3" y="1.5" width="5.5" height="5.5" rx="1" ry="1" />
-            <rect className="fill-card" x="1.5" y="3.5" width="5.5" height="5.5" rx="1" ry="1" />
+            <rect x="3" y="1" width="5.5" height="5.5" rx="1" ry="1" />
+            <rect className="fill-card" x="1" y="3.5" width="5.5" height="5.5" rx="1" ry="1" />
         </svg>
     );
 }
