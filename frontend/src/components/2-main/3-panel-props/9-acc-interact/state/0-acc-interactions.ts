@@ -56,7 +56,6 @@ export async function loadAccInteract(handle: string | null | undefined, runtime
 
     if (accInteractStore.key !== key) {
         accInteractStore.drafts = {};
-        accInteractStore.snapshot = null;
     }
 
     accInteractStore.key = key;

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { motion } from "motion/react";
@@ -13,9 +14,16 @@ import { type UiaSection } from "./state/9-types";
 export function UiaInteractSection({ section, loading }: { section: UiaSection; loading: boolean; }) {
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
+    const showReadingMessage = useDelayedTrue(loading, 2000, snap.key);
     const patternCount = section.patterns?.length ?? 0;
 
-    const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : loading ? "reading patterns…" : "no patterns";
+    const subtitle = showReadingMessage
+        ? "reading patterns…"
+        : patternCount
+            ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}`
+            : loading
+                ? undefined
+                : "no patterns";
 
     return (
         <AccCollapsible
@@ -27,7 +35,7 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
             refreshDisabled={loading}
             refreshTitle="Get current UIA state"
         >
-            {loading && !section.patterns.length && !section.actions.length
+            {showReadingMessage
                 ? (
                     <ReadingPatternsMessage />
                 )
@@ -58,13 +66,29 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
     );
 }
 
+function useDelayedTrue(active: boolean, delayMs: number, resetKey?: string | null): boolean {
+    const [ready, setReady] = useState(false);
+    useEffect(
+        () => {
+            if (!active) {
+                setReady(false);
+                return;
+            }
+            setReady(false);
+            const id = window.setTimeout(() => setReady(true), delayMs);
+            return () => window.clearTimeout(id);
+        },
+        [active, delayMs, resetKey]);
+    return ready && active;
+}
+
 function ReadingPatternsMessage() {
     return (
         <motion.div
             className="px-2.5 py-1 text-xs text-muted-foreground"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
         >
             Reading patterns…
         </motion.div>
