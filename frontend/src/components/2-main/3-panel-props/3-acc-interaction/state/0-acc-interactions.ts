@@ -1,5 +1,5 @@
 import { proxy } from "valtio";
-import { type AccActionDef, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection, normalizeSnapshot } from "./9-types";
+import { type AccAction, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection, normalizeSnapshot } from "./9-types";
 
 type InteractStore = {
     key: string | null;
@@ -145,7 +145,7 @@ export function setDraft(kind: string, actionId: string, value: string): void {
 
 function seedDrafts(snapshot: AccInteractSnapshot): void {
 
-    function seed(kind: string, actions: readonly AccActionDef[]) {
+    function seed(kind: string, actions: readonly AccAction[]) {
         for (const action of actions) {
             if (action.kind === "command") {
                 continue;

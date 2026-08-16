@@ -4,12 +4,12 @@ import { Button } from "@renderer/components/ui/shadcn/button";
 import { Input } from "@renderer/components/ui/shadcn/input";
 import { IconRefresh } from "@renderer/components/ui/icons";
 
-import { type AccActionDef, type AccApiKind } from "./state/9-types";
+import { type AccAction, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom, doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
 import { interactStore, setDraft } from "./state/0-acc-interactions";
 import { AccTitleBarRow } from "./5-0-titlebar-row";
 
-export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccActionDef; }) {
+export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAction; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
     const { busyActionId } = useSnapshot(interactStore);
     const busy = busyActionId === `${kind}:${action.id}`;
@@ -35,7 +35,7 @@ export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAc
     );
 }
 
-function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; action: AccActionDef; busy: boolean; disabled: boolean; }) {
+function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; action: AccAction; busy: boolean; disabled: boolean; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
     const reload = useSetAtom(doLoadAccInteractAtom);
     const snap = useSnapshot(interactStore);
@@ -88,7 +88,7 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
     );
 }
 
-export function AccCommandGroup({ kind, actions }: { kind: AccApiKind; actions: readonly AccActionDef[]; }) {
+export function AccCommandGroup({ kind, actions }: { kind: AccApiKind; actions: readonly AccAction[]; }) {
     const titleBar = actions.filter((a) => a.group === "titlebar");
     const commands = actions.filter((a) => a.kind === "command" && a.group !== "titlebar");
     const setters = actions.filter((a) => a.kind !== "command");

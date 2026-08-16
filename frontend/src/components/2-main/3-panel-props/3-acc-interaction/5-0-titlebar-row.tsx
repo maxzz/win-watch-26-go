@@ -3,13 +3,13 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
 
-import { type AccActionDef, type AccApiKind } from "./state/9-types";
+import { type AccAction, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
 import { interactStore } from "./state/0-acc-interactions";
 
-export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccActionDef[]; }) {
+export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccAction[]; }) {
     const byId = new Map(actions.map((action) => [action.id, action]));
-    const ordered = titleBarOrder.map((id) => byId.get(id)).filter((action): action is AccActionDef => !!action);
+    const ordered = titleBarOrder.map((id) => byId.get(id)).filter((action): action is AccAction => !!action);
     if (ordered.length === 0) {
         return null;
     }
@@ -30,7 +30,7 @@ export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: r
 
 const titleBarOrder = ["window.setMinimized", "window.setMaximized", "window.setNormal", "window.close"] as const;
 
-function AccTitleBarButton({ kind, action }: { kind: AccApiKind; action: AccActionDef; }) {
+function AccTitleBarButton({ kind, action }: { kind: AccApiKind; action: AccAction; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
     const { busyActionId } = useSnapshot(interactStore);
     const busy = busyActionId === `${kind}:${action.id}`;

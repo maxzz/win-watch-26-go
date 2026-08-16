@@ -1,6 +1,6 @@
-import { type AccActionDef, type AccApiKind, type AccInteractSnapshot } from "./9-types";
+import { type AccAction, type AccApiKind, type AccInteractSnapshot } from "./9-types";
 
-export function findAccAction(snapshot: AccInteractSnapshot | null | undefined, kind: AccApiKind, actionId: string): AccActionDef | undefined {
+export function findAccAction(snapshot: AccInteractSnapshot | null | undefined, kind: AccApiKind, actionId: string): AccAction | undefined {
     if (!snapshot) {
         return undefined;
     }
@@ -28,7 +28,7 @@ export function describeAccAction(input: {
     kind: AccApiKind;
     actionId: string;
     value?: string;
-    action?: AccActionDef;
+    action?: AccAction;
     controlName?: string;
 }): { title: string; failedTitle: string; detail: string; failedDetail: string; fields: Record<string, string>; } {
     const label = input.action?.label || humanizeActionId(input.actionId);

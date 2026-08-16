@@ -6,15 +6,15 @@ export type NamedValue = {
     readonly value: string;
 };
 
-export type AccActionDef = {
-    readonly id: string;            // unique identifier for the action
-    readonly label: string;         // human-readable label for the action (e.g. "Click", "Set text", "Set number", "Set pair")
-    readonly kind: AccActionKind;   // kind of action
-    readonly currentValue?: string; // current value of the action
-    readonly placeholder?: string;  // placeholder for the action (e.g. "Enter text", "Enter number", "Enter pair")
-    readonly hint?: string;         // hint for the action (e.g. "Click the button", "Set the text", "Set the number", "Set the pair")
-    readonly group?: string;        // group for the action (e.g. "Click", "Set text", "Set number", "Set pair")
-    readonly destructive?: boolean; // whether the action is destructive
+export type AccAction = {           // Action definition
+    readonly id: string;            // Unique identifier for the action
+    readonly label: string;         // Human-readable label for the action
+    readonly kind: AccActionKind;   // Kind of action
+    readonly currentValue?: string; // Current value of the action
+    readonly placeholder?: string;  // Placeholder for the action (e.g. "Enter text", "Enter number", "Enter pair", "Enter focus")
+    readonly hint?: string;         // Hint for the action (e.g. "Click the button", "Set the text", "Set the number", "Set the pair", "Set the focus")
+    readonly group?: string;        // Group for the action (e.g. "titlebar", "content")
+    readonly destructive?: boolean; // Whether the action is destructive
 };
 
 // UIA section
@@ -23,12 +23,12 @@ export type UiaPattern = {
     readonly id: number;
     readonly name: string;
     readonly properties: readonly NamedValue[];
-    readonly actions: readonly AccActionDef[];
+    readonly actions: readonly AccAction[];
 };
 
 export type UiaSection = {
     readonly properties: readonly NamedValue[];
-    readonly actions: readonly AccActionDef[];
+    readonly actions: readonly AccAction[];
     readonly patterns: readonly UiaPattern[];
 };
 
@@ -40,7 +40,7 @@ export type MsaaSection = {
     readonly properties: readonly NamedValue[];
     readonly stateValue: number;
     readonly stateFlags: readonly string[];
-    readonly actions: readonly AccActionDef[];
+    readonly actions: readonly AccAction[];
 };
 
 // Snapshot
