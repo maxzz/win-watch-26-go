@@ -7,7 +7,7 @@ type AccInteractState = {
     loading: boolean;
     error: string | null;
     busyActionId: string | null;
-    drafts: Record<string, string>;
+    drafts: Record<string, string>; // Drafts are used to store the current value of an action for a given API and action ID.
     uiaOpen: boolean;
     msaaOpen: boolean;
 };
@@ -23,49 +23,9 @@ export const accInteractStore = proxy<AccInteractState>({
     msaaOpen: true,
 });
 
+// Selection
+
 let selectionRequestId = 0;
-
-function selectionKey(handle: string | null | undefined, runtimeId: string | null | undefined): string | null {
-    if (!handle || !runtimeId) {
-        return null;
-    }
-    return `${handle}\0${runtimeId}`;
-}
-
-export function draftKey(kind: string, actionId: string): string {
-    return `${kind}:${actionId}`;
-}
-
-export function getDraft(kind: string, actionId: string, fallback = ""): string {
-    return accInteractStore.drafts[draftKey(kind, actionId)] ?? fallback;
-}
-
-export function setDraft(kind: string, actionId: string, value: string): void {
-    accInteractStore.drafts[draftKey(kind, actionId)] = value;
-}
-
-function seedDrafts(snapshot: AccInteractSnapshot): void {
-    const seed = (kind: string, actions: readonly AccActionDef[]) => {
-        for (const action of actions) {
-            if (action.kind === "command") {
-                continue;
-            }
-            accInteractStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
-        }
-    };
-    seed("uia", snapshot.uia?.actions ?? []);
-    for (const pattern of snapshot.uia?.patterns ?? []) {
-        seed("uia", pattern.actions ?? []);
-    }
-    seed("msaa", snapshot.msaa?.actions ?? []);
-}
-
-function applySnapshot(key: string, snapshot: AccInteractSnapshot): void {
-    accInteractStore.key = key;
-    accInteractStore.snapshot = snapshot;
-    accInteractStore.error = snapshot.error ?? null;
-    seedDrafts(snapshot);
-}
 
 export function clearAccInteract(): void {
     selectionRequestId += 1;
@@ -152,4 +112,48 @@ export async function executeAccAction(handle: string, runtimeId: string, kind: 
     } finally {
         accInteractStore.busyActionId = null;
     }
+}
+
+function selectionKey(handle: string | null | undefined, runtimeId: string | null | undefined): string | null {
+    if (!handle || !runtimeId) {
+        return null;
+    }
+    return `${handle}\0${runtimeId}`;
+}
+
+function applySnapshot(key: string, snapshot: AccInteractSnapshot): void {
+    accInteractStore.key = key;
+    accInteractStore.snapshot = snapshot;
+    accInteractStore.error = snapshot.error ?? null;
+    seedDrafts(snapshot);
+}
+
+// Drafts
+
+export function getDraft(kind: string, actionId: string, fallback = ""): string {
+    return accInteractStore.drafts[draftKey(kind, actionId)] ?? fallback;
+}
+
+export function setDraft(kind: string, actionId: string, value: string): void {
+    accInteractStore.drafts[draftKey(kind, actionId)] = value;
+}
+
+function seedDrafts(snapshot: AccInteractSnapshot): void {
+    const seed = (kind: string, actions: readonly AccActionDef[]) => {
+        for (const action of actions) {
+            if (action.kind === "command") {
+                continue;
+            }
+            accInteractStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
+        }
+    };
+    seed("uia", snapshot.uia?.actions ?? []);
+    for (const pattern of snapshot.uia?.patterns ?? []) {
+        seed("uia", pattern.actions ?? []);
+    }
+    seed("msaa", snapshot.msaa?.actions ?? []);
+}
+
+function draftKey(kind: string, actionId: string): string {
+    return `${kind}:${actionId}`;
 }

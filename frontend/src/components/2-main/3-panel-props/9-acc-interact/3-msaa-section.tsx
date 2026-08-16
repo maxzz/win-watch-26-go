@@ -1,11 +1,11 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { PropertyGrid, PropertyRow, PropertySeparator } from "../8-shared-ui";
-import { AccCollapsible } from "./1-collapsible";
+import { AccCollapsible } from "./8-shared-ui-collapsible";
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues } from "./8-prop-rows";
 import { doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore } from "./state/c-store-acc-interact";
+import { accInteractStore } from "./state/0-acc-interactions";
 import { type MsaaSection } from "./state/9-types";
 
 export function MsaaInteractSection({ section, loading }: { section: MsaaSection; loading: boolean; }) {

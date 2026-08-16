@@ -5,7 +5,7 @@ import { Input } from "@renderer/components/ui/shadcn/input";
 import { IconRefresh } from "@renderer/components/ui/icons";
 import { type AccActionDef, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom, doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore, setDraft } from "./state/c-store-acc-interact";
+import { accInteractStore, setDraft } from "./state/0-acc-interactions";
 import { AccTitleBarRow } from "./5-titlebar-row";
 
 export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccActionDef; }) {
