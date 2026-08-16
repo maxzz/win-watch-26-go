@@ -51,10 +51,8 @@ export function PropertyRow({ label, children, title, interactive }: { label: st
                 <div aria-hidden className="absolute inset-y-0 right-0 w-px bg-foreground/20 dark:bg-foreground/20" />
                 {label}
             </div>
-            <div
-                className={interactive ? "px-1.5 py-px min-w-0" : "px-1.5 py-px break-all truncate cursor-default"}
-                title={interactive ? undefined : titleText}
-            >
+
+            <div className={interactive ? "pl-1.5 pr-2.5 py-px min-w-0" : "px-1.5 py-px break-all truncate cursor-default"} title={interactive ? undefined : titleText}>
                 {children}
             </div>
         </div>
