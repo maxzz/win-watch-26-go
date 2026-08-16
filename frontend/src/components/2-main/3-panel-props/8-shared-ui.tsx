@@ -52,7 +52,7 @@ export function PropertyRow({ label, children, title, interactive }: { label: st
                 {label}
             </div>
 
-            <div className={interactive ? "pl-1.5 pr-2.5 py-px min-w-0" : "px-1.5 py-px break-all truncate cursor-default"} title={interactive ? undefined : titleText}>
+            <div className={interactive ? "pl-1.5 pr-2.5 py-px min-w-0" : "px-1.5 pr-2.5 py-px break-all truncate cursor-default"} title={interactive ? undefined : titleText}>
                 {children}
             </div>
         </div>

@@ -27,7 +27,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
 
     return (
         <div className="border-t border-foreground/20">
-            <div className="flex items-center gap-0.5 pr-1">
+            <div className="flex items-center gap-0.5 pr-2.5">
 
                 <button className="flex-1 min-w-0 px-1.5 pl-2 py-1 text-left text-xs font-semibold select-none inline-flex items-center gap-1 hover:bg-muted/40" onClick={() => onOpenChange(!open)} type="button">
                     <span className="truncate" title={titleHint}>
