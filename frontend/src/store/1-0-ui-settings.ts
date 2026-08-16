@@ -30,6 +30,7 @@ export interface AppSettings {
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
     ui_panels_PropPos: PropertiesPanelPosition; // The position of the properties panel: 'bottom' or 'right'
     ui_panels_PropTab: PropsTab;                // The active properties panel tab
+    ui_panels_AccOpen: boolean;                 // Whether the UI Accessibility section is expanded
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -54,6 +55,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     },
     ui_panels_PropPos: 'right',
     ui_panels_PropTab: 'accessibility',
+    ui_panels_AccOpen: true,
 };
 
 // Load settings from localStorage

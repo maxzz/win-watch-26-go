@@ -25,7 +25,7 @@ export function AccInteractSection({ control }: { control: ControlNode; }) {
     const msaa = snapshot?.msaa ?? emptyMsaaSection();
 
     return (
-        <div className="mt-1">
+        <>
             {error && !snapshot?.found
                 ? (
                     <div className="px-2.5 py-1 text-xs text-destructive">
@@ -36,6 +36,6 @@ export function AccInteractSection({ control }: { control: ControlNode; }) {
             }
             <UiaInteractSection section={uia} loading={loading} />
             <MsaaInteractSection section={msaa} loading={loading} />
-        </div>
+        </>
     );
 }

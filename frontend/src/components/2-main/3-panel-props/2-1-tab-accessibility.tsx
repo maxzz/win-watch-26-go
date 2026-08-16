@@ -1,30 +1,39 @@
 import { type ReactNode } from "react";
+import { useSnapshot } from "valtio/react";
 import { asHex, hexAccRuntimeId, normalizeHwnd } from "@renderer/utils";
 import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-names";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 
-import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
+import { PROP_SEP, PropertyGrid, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
 import { AccInteractSection } from "./3-acc-interaction/0-all-acc-interact";
+import { AccCollapsible } from "./3-acc-interaction/8-shared-ui-collapsible";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);
+    const { ui_panels_AccOpen: accOpen } = useSnapshot(appSettings);
 
     return (
         <>
-            <PropertyGrid>
-                <PropertyHeader>UI Accessibility</PropertyHeader>
-                {properties.map((prop, idx) => {
-                    if (prop.label === PROP_SEP) {
-                        return <PropertySeparator key={idx} />;
-                    }
-                    return (
-                        <PropertyRow key={idx} label={prop.label} title={prop.title || strEmpty(prop.value)}>
-                            <PropertyValueContent label={prop.label} value={prop.value} />
-                        </PropertyRow>
-                    );
-                })}
-            </PropertyGrid>
+            <AccCollapsible
+                open={accOpen}
+                onOpenChange={(open) => { appSettings.ui_panels_AccOpen = open; }}
+                title="UI Accessibility"
+            >
+                <PropertyGrid>
+                    {properties.map((prop, idx) => {
+                        if (prop.label === PROP_SEP) {
+                            return <PropertySeparator key={idx} />;
+                        }
+                        return (
+                            <PropertyRow key={idx} label={prop.label} title={prop.title || strEmpty(prop.value)}>
+                                <PropertyValueContent label={prop.label} value={prop.value} />
+                            </PropertyRow>
+                        );
+                    })}
+                </PropertyGrid>
+            </AccCollapsible>
             <AccInteractSection control={control} />
         </>
     );
@@ -46,7 +55,6 @@ function getControlProperties(control: ControlNode): PropertyEntry[] {
     }
 
     return [
-        { label: PROP_SEP, value: null },
         { label: "Process ID", value: asHex({ value: String(control.processId), prefix: true }), title: `dec: ${String(control.processId)}` },
         { label: "Framework ID", value: <span className="-ml-1 px-1 text-foreground bg-sky-100 dark:bg-sky-900 border border-sky-300 dark:border-sky-700 rounded">{control.frameworkId}</span> },
         { label: "Native Window Handle", value: normalizeHwnd(control.nativeWindowHandle) },
@@ -67,7 +75,6 @@ function getControlProperties(control: ControlNode): PropertyEntry[] {
         { label: "Enabled", value: String(control.isEnabled) },
         { label: "Visible", value: String(control.isVisible) },
         { label: "Bounds", value: control.bounds ? `[${control.bounds.left}, ${control.bounds.top}, ${control.bounds.right}, ${control.bounds.bottom}]` : "N/A" },
-        { label: PROP_SEP, value: null },
     ];
 }
 
