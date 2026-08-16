@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
+import { motion } from "motion/react";
 import { PropertyGrid } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
 
@@ -28,9 +29,7 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
         >
             {loading && !section.patterns.length && !section.actions.length
                 ? (
-                    <div className="px-2.5 py-1 text-xs text-muted-foreground">
-                        Reading patterns…
-                    </div>
+                    <ReadingPatternsMessage />
                 )
                 : (
                     <PropertyGrid>
@@ -53,7 +52,21 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
                             </div>
                         )}
                     </PropertyGrid>
-                )}
+                )
+            }
         </AccCollapsible>
+    );
+}
+
+function ReadingPatternsMessage() {
+    return (
+        <motion.div
+            className="px-2.5 py-1 text-xs text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2, duration: 0.3, ease: "easeOut" }}
+        >
+            Reading patterns…
+        </motion.div>
     );
 }
