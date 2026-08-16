@@ -31,6 +31,8 @@ export interface AppSettings {
     ui_panels_PropPos: PropertiesPanelPosition; // The position of the properties panel: 'bottom' or 'right'
     ui_panels_PropTab: PropsTab;                // The active properties panel tab
     ui_panels_AccOpen: boolean;                 // Whether the UI Accessibility section is expanded
+    ui_panels_UiaOpen: boolean;                 // Whether the UI Automation section is expanded
+    ui_panels_MsaaOpen: boolean;                // Whether the MSAA section is expanded
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -56,6 +58,8 @@ const DEFAULT_SETTINGS: AppSettings = {
     ui_panels_PropPos: 'right',
     ui_panels_PropTab: 'accessibility',
     ui_panels_AccOpen: true,
+    ui_panels_UiaOpen: true,
+    ui_panels_MsaaOpen: true,
 };
 
 // Load settings from localStorage

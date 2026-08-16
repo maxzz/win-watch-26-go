@@ -8,8 +8,6 @@ type InteractStore = {
     error: string | null;
     busyActionId: string | null;
     drafts: Record<string, string>; // Drafts are used to store the current value of an action for a given API and action ID.
-    uiaOpen: boolean;
-    msaaOpen: boolean;
 };
 
 export const interactStore = proxy<InteractStore>({
@@ -19,8 +17,6 @@ export const interactStore = proxy<InteractStore>({
     error: null,
     busyActionId: null,
     drafts: {},
-    uiaOpen: true,
-    msaaOpen: true,
 });
 
 // Selection

@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { PropertyGrid } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
 
@@ -11,14 +12,15 @@ import { type UiaSection } from "./state/9-types";
 
 export function UiaInteractSection({ section, loading }: { section: UiaSection; loading: boolean; }) {
     const snap = useSnapshot(interactStore);
+    const { ui_panels_UiaOpen: uiaOpen } = useSnapshot(appSettings);
     const reload = useSetAtom(doLoadAccInteractAtom);
     const patternCount = section.patterns?.length ?? 0;
     const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : "no patterns";
 
     return (
         <AccCollapsible
-            open={snap.uiaOpen}
-            onOpenChange={(open) => { interactStore.uiaOpen = open; }}
+            open={uiaOpen}
+            onOpenChange={(open) => { appSettings.ui_panels_UiaOpen = open; }}
             title="UI Automation"
             subtitle={subtitle}
             loading={loading}

@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { PropertyGrid, PropertyRow, PropertySeparator } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
 
@@ -11,12 +12,13 @@ import { type MsaaSection } from "./state/9-types";
 
 export function MsaaInteractSection({ section, loading }: { section: MsaaSection; loading: boolean; }) {
     const snap = useSnapshot(interactStore);
+    const { ui_panels_MsaaOpen: msaaOpen } = useSnapshot(appSettings);
     const reload = useSetAtom(doLoadAccInteractAtom);
 
     return (
         <AccCollapsible
-            open={snap.msaaOpen}
-            onOpenChange={(open) => { interactStore.msaaOpen = open; }}
+            open={msaaOpen}
+            onOpenChange={(open) => { appSettings.ui_panels_MsaaOpen = open; }}
             title="MSAA"
             titleHint="Microsoft Active Accessibility (MSAA). IAccessible is the legacy API for accessibility."
             subtitle={section.available ? undefined : "unavailable"}
