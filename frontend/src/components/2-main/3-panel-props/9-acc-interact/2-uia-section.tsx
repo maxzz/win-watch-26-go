@@ -14,12 +14,14 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
     const reload = useSetAtom(doLoadAccInteractAtom);
     const patternCount = section.patterns?.length ?? 0;
 
+    const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : loading ? "reading patterns…" : "no patterns";
+
     return (
         <AccCollapsible
             open={snap.uiaOpen}
             onOpenChange={(open) => { accInteractStore.uiaOpen = open; }}
             title="UI Automation"
-            subtitle={patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : undefined}
+            subtitle={subtitle}
             onRefresh={() => void reload({ force: true })}
             refreshDisabled={loading}
             refreshTitle="Get current UIA state"
@@ -45,14 +47,11 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
                             )
                         )}
 
-                        {patternCount === 0 && !loading
-                            ? (
-                                <div className="col-span-2 px-2.5 py-1 text-xs text-muted-foreground">
-                                    No interactive UIA patterns on this element.
-                                </div>
-                            )
-                            : null
-                        }
+                        {patternCount === 0 && !loading && (
+                            <div className="col-span-2 px-2.5 py-1 text-xs text-muted-foreground">
+                                No interactive UIA patterns on this element.
+                            </div>
+                        )}
                     </PropertyGrid>
                 )}
         </AccCollapsible>

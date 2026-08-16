@@ -13,12 +13,15 @@ export function MsaaInteractSection({ section, loading }: { section: MsaaSection
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
 
+    const subtitle = loading && !section.available ? undefined : section.available ? undefined : "unavailable";
+
     return (
         <AccCollapsible
             open={snap.msaaOpen}
             onOpenChange={(open) => { accInteractStore.msaaOpen = open; }}
-            title="Microsoft Active Accessibility"
-            subtitle={loading && !section.available ? undefined : section.available ? "IAccessible" : "unavailable"}
+            title="MSAA"
+            titleHint="Microsoft Active Accessibility (MSAA). IAccessible is the legacy API for accessibility."
+            subtitle={subtitle}
             onRefresh={() => void reload({ force: true })}
             refreshDisabled={loading}
             refreshTitle="Get current MSAA state"
