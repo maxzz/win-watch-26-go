@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, type SVGAttributes } from "react";
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
@@ -6,7 +6,6 @@ import { classNames } from "@renderer/utils";
 import { type AccActionDef, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
 import { accInteractStore } from "./state/0-acc-interactions";
-import { IconCaptionClose, IconCaptionMaximize, IconCaptionMinimize, IconCaptionRestore } from "./5-1-titlebar-icons";
 
 export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccActionDef[]; }) {
     const byId = new Map(actions.map((action) => [action.id, action]));
@@ -68,3 +67,42 @@ const titleBarIcons: Record<string, ReactNode> = {
     "window.setNormal": <IconCaptionRestore />,
     "window.close": <IconCaptionClose />,
 };
+
+const iconProps = "size-3 shrink-0";
+
+/** Windows caption Minimize — horizontal bar. */
+function IconCaptionMinimize({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
+    return (
+        <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
+            <path d="M1 5h8" stroke="currentColor" strokeWidth="1" />
+        </svg>
+    );
+}
+
+/** Windows caption Maximize — single square. */
+function IconCaptionMaximize({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
+    return (
+        <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
+            <rect x="1.5" y="1.5" width="7" height="7" stroke="currentColor" strokeWidth="1" />
+        </svg>
+    );
+}
+
+/** Windows caption Restore — overlapping squares. */
+function IconCaptionRestore({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
+    return (
+        <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
+            <rect x="3" y="1.5" width="5.5" height="5.5" stroke="currentColor" strokeWidth="1" />
+            <rect className="fill-card" x="1.5" y="3.5" width="5.5" height="5.5" stroke="currentColor" strokeWidth="1" />
+        </svg>
+    );
+}
+
+/** Windows caption Close — X. */
+function IconCaptionClose({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
+    return (
+        <svg className={classNames(iconProps, className)} viewBox="0 0 10 10" fill="none" aria-hidden {...rest}>
+            <path d="M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1" />
+        </svg>
+    );
+}

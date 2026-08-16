@@ -5,7 +5,7 @@ import { formatHexU32, formatMsaaRole } from "@renderer/utils/msaa/0-msaa-role-n
 import { PROP_SEP, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, type PropertyEntry } from "./8-shared-ui";
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { formatControlType } from "@renderer/utils/uia/0-uia-control-type-names";
-import { AccInteractSection } from "./3-acc-interaction";
+import { AccInteractSection } from "./3-acc-interaction/0-all-acc-interact";
 
 export function TabAccessibility({ control }: { control: ControlNode; }) {
     const properties = getControlProperties(control);
