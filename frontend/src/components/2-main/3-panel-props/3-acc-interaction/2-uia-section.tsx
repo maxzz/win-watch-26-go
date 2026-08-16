@@ -6,11 +6,11 @@ import { AccCollapsible } from "./8-shared-ui-collapsible";
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues, AccPatternHeader } from "./8-prop-rows";
 import { doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore } from "./state/0-acc-interactions";
+import { interactStore } from "./state/0-acc-interactions";
 import { type UiaSection } from "./state/9-types";
 
 export function UiaInteractSection({ section, loading }: { section: UiaSection; loading: boolean; }) {
-    const snap = useSnapshot(accInteractStore);
+    const snap = useSnapshot(interactStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
     const patternCount = section.patterns?.length ?? 0;
     const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : "no patterns";
@@ -18,7 +18,7 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
     return (
         <AccCollapsible
             open={snap.uiaOpen}
-            onOpenChange={(open) => { accInteractStore.uiaOpen = open; }}
+            onOpenChange={(open) => { interactStore.uiaOpen = open; }}
             title="UI Automation"
             subtitle={subtitle}
             loading={loading}

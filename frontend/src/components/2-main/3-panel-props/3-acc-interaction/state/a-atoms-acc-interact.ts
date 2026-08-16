@@ -4,7 +4,7 @@ import { report } from "@renderer/components/3-footer/report-panel";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { selectedControlAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { type AccApiKind } from "./9-types";
-import { accInteractStore, executeAccAction, getDraft, loadAccInteract } from "./0-acc-interactions";
+import { interactStore, executeAccAction, getDraft, loadAccInteract } from "./0-acc-interactions";
 import { describeAccAction, findAccAction } from "./1-format-action-report";
 
 export const doLoadAccInteractAtom = atom(
@@ -31,7 +31,7 @@ export const doExecuteAccActionAtom = atom(
             kind: payload.kind,
             actionId: payload.actionId,
             value,
-            action: findAccAction(accInteractStore.snapshot, payload.kind, payload.actionId),
+            action: findAccAction(interactStore.snapshot, payload.kind, payload.actionId),
             controlName: control.name,
         });
 
@@ -39,7 +39,7 @@ export const doExecuteAccActionAtom = atom(
         if (!ok) {
             report.error(described.failedTitle, {
                 source: payload.kind,
-                detail: accInteractStore.error || described.failedDetail,
+                detail: interactStore.error || described.failedDetail,
                 fields: described.fields,
             });
             return;

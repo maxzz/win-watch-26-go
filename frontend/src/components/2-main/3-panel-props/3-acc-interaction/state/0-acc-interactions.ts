@@ -1,7 +1,7 @@
 import { proxy } from "valtio";
 import { type AccActionDef, type AccActionResult, type AccInteractSnapshot, emptyMsaaSection, emptyUiaSection, normalizeSnapshot } from "./9-types";
 
-type AccInteractState = {
+type InteractStore = {
     key: string | null;
     snapshot: AccInteractSnapshot | null;
     loading: boolean;
@@ -12,7 +12,7 @@ type AccInteractState = {
     msaaOpen: boolean;
 };
 
-export const accInteractStore = proxy<AccInteractState>({
+export const interactStore = proxy<InteractStore>({
     key: null,
     snapshot: null,
     loading: false,
@@ -29,12 +29,12 @@ let selectionRequestId = 0;
 
 export function clearAccInteract(): void {
     selectionRequestId += 1;
-    accInteractStore.key = null;
-    accInteractStore.snapshot = null;
-    accInteractStore.loading = false;
-    accInteractStore.error = null;
-    accInteractStore.busyActionId = null;
-    accInteractStore.drafts = {};
+    interactStore.key = null;
+    interactStore.snapshot = null;
+    interactStore.loading = false;
+    interactStore.error = null;
+    interactStore.busyActionId = null;
+    interactStore.drafts = {};
 }
 
 export async function loadAccInteract(handle: string | null | undefined, runtimeId: string | null | undefined, options?: { force?: boolean; }): Promise<void> {
@@ -42,74 +42,80 @@ export async function loadAccInteract(handle: string | null | undefined, runtime
     const requestId = ++selectionRequestId;
 
     if (!key || !handle || !runtimeId) {
-        accInteractStore.key = null;
-        accInteractStore.snapshot = null;
-        accInteractStore.loading = false;
-        accInteractStore.error = null;
-        accInteractStore.drafts = {};
+        interactStore.key = null;
+        interactStore.snapshot = null;
+        interactStore.loading = false;
+        interactStore.error = null;
+        interactStore.drafts = {};
         return;
     }
 
-    if (!options?.force && accInteractStore.key === key && accInteractStore.snapshot) {
+    if (!options?.force && interactStore.key === key && interactStore.snapshot) {
         return;
     }
 
-    if (accInteractStore.key !== key) {
-        accInteractStore.drafts = {};
+    if (interactStore.key !== key) {
+        interactStore.drafts = {};
     }
 
-    accInteractStore.key = key;
-    accInteractStore.loading = true;
-    accInteractStore.error = null;
+    interactStore.key = key;
+    interactStore.loading = true;
+    interactStore.error = null;
 
     try {
         const json = await tmApi.getControlAccInteract(handle, runtimeId);
-        if (requestId !== selectionRequestId) {
+
+        if (requestId !== selectionRequestId) { // Aborted by another request
             return;
         }
+
         const snapshot = normalizeSnapshot(JSON.parse(json) as AccInteractSnapshot);
         applySnapshot(key, snapshot);
     } catch (e) {
-        if (requestId !== selectionRequestId) {
+        if (requestId !== selectionRequestId) { // Aborted by another request
             return;
         }
-        accInteractStore.snapshot = {
+
+        interactStore.snapshot = {
             found: false,
             error: String(e),
             uia: emptyUiaSection(),
             msaa: emptyMsaaSection(),
         };
-        accInteractStore.error = String(e);
+        interactStore.error = String(e);
     } finally {
-        if (requestId === selectionRequestId) {
-            accInteractStore.loading = false;
+        if (requestId === selectionRequestId) { // Completed successfully
+            interactStore.loading = false;
         }
     }
 }
 
 export async function executeAccAction(handle: string, runtimeId: string, kind: "uia" | "msaa", actionId: string, value = ""): Promise<boolean> {
-    accInteractStore.busyActionId = `${kind}:${actionId}`;
+    interactStore.busyActionId = `${kind}:${actionId}`;
     try {
         const json = await tmApi.executeAccAction(handle, runtimeId, kind, actionId, value);
+
         const result = JSON.parse(json) as AccActionResult;
-        if (!result.ok) {
-            accInteractStore.error = result.error ?? "Action failed";
+        if (!result.ok) { // Action failed
+            interactStore.error = result.error ?? "Action failed";
             return false;
         }
+
         const key = selectionKey(handle, runtimeId);
-        if (result.snapshot && key) {
+        if (result.snapshot && key) { // Snapshot is available
             const snapshot = normalizeSnapshot(result.snapshot);
             if (snapshot.found) {
                 applySnapshot(key, snapshot);
             }
         }
-        accInteractStore.error = null;
+        
+        interactStore.error = null;
         return true;
     } catch (e) {
-        accInteractStore.error = String(e);
+        interactStore.error = String(e);
         return false;
     } finally {
-        accInteractStore.busyActionId = null;
+        interactStore.busyActionId = null;
     }
 }
 
@@ -121,35 +127,39 @@ function selectionKey(handle: string | null | undefined, runtimeId: string | nul
 }
 
 function applySnapshot(key: string, snapshot: AccInteractSnapshot): void {
-    accInteractStore.key = key;
-    accInteractStore.snapshot = snapshot;
-    accInteractStore.error = snapshot.error ?? null;
+    interactStore.key = key;
+    interactStore.snapshot = snapshot;
+    interactStore.error = snapshot.error ?? null;
     seedDrafts(snapshot);
 }
 
 // Drafts
 
-export function getDraft(kind: string, actionId: string, fallback = ""): string {
-    return accInteractStore.drafts[draftKey(kind, actionId)] ?? fallback;
+export function getDraft(kind: string, actionId: string, defaultValue = ""): string {
+    return interactStore.drafts[draftKey(kind, actionId)] ?? defaultValue;
 }
 
 export function setDraft(kind: string, actionId: string, value: string): void {
-    accInteractStore.drafts[draftKey(kind, actionId)] = value;
+    interactStore.drafts[draftKey(kind, actionId)] = value;
 }
 
 function seedDrafts(snapshot: AccInteractSnapshot): void {
-    const seed = (kind: string, actions: readonly AccActionDef[]) => {
+
+    function seed(kind: string, actions: readonly AccActionDef[]) {
         for (const action of actions) {
             if (action.kind === "command") {
                 continue;
             }
-            accInteractStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
+            interactStore.drafts[draftKey(kind, action.id)] = action.currentValue ?? "";
         }
-    };
+    }
+
     seed("uia", snapshot.uia?.actions ?? []);
+
     for (const pattern of snapshot.uia?.patterns ?? []) {
         seed("uia", pattern.actions ?? []);
     }
+
     seed("msaa", snapshot.msaa?.actions ?? []);
 }
 

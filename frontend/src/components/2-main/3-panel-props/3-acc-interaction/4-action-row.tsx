@@ -6,12 +6,12 @@ import { IconRefresh } from "@renderer/components/ui/icons";
 
 import { type AccActionDef, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom, doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore, setDraft } from "./state/0-acc-interactions";
+import { interactStore, setDraft } from "./state/0-acc-interactions";
 import { AccTitleBarRow } from "./5-0-titlebar-row";
 
 export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccActionDef; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
-    const { busyActionId } = useSnapshot(accInteractStore);
+    const { busyActionId } = useSnapshot(interactStore);
     const busy = busyActionId === `${kind}:${action.id}`;
     const disabled = !!busyActionId;
 
@@ -38,7 +38,7 @@ export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAc
 function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; action: AccActionDef; busy: boolean; disabled: boolean; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
     const reload = useSetAtom(doLoadAccInteractAtom);
-    const snap = useSnapshot(accInteractStore);
+    const snap = useSnapshot(interactStore);
     const value = snap.drafts[`${kind}:${action.id}`] ?? action.currentValue ?? "";
 
     return (

@@ -6,17 +6,17 @@ import { AccCollapsible } from "./8-shared-ui-collapsible";
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues } from "./8-prop-rows";
 import { doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore } from "./state/0-acc-interactions";
+import { interactStore } from "./state/0-acc-interactions";
 import { type MsaaSection } from "./state/9-types";
 
 export function MsaaInteractSection({ section, loading }: { section: MsaaSection; loading: boolean; }) {
-    const snap = useSnapshot(accInteractStore);
+    const snap = useSnapshot(interactStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
 
     return (
         <AccCollapsible
             open={snap.msaaOpen}
-            onOpenChange={(open) => { accInteractStore.msaaOpen = open; }}
+            onOpenChange={(open) => { interactStore.msaaOpen = open; }}
             title="MSAA"
             titleHint="Microsoft Active Accessibility (MSAA). IAccessible is the legacy API for accessibility."
             subtitle={section.available ? undefined : "unavailable"}

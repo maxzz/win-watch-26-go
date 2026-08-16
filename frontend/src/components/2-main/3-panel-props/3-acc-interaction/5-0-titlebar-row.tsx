@@ -5,7 +5,7 @@ import { classNames } from "@renderer/utils";
 
 import { type AccActionDef, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
-import { accInteractStore } from "./state/0-acc-interactions";
+import { interactStore } from "./state/0-acc-interactions";
 
 export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccActionDef[]; }) {
     const byId = new Map(actions.map((action) => [action.id, action]));
@@ -32,7 +32,7 @@ const titleBarOrder = ["window.setMinimized", "window.setMaximized", "window.set
 
 function AccTitleBarButton({ kind, action }: { kind: AccApiKind; action: AccActionDef; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
-    const { busyActionId } = useSnapshot(accInteractStore);
+    const { busyActionId } = useSnapshot(interactStore);
     const busy = busyActionId === `${kind}:${action.id}`;
     const isClose = action.id === "window.close";
 
@@ -67,8 +67,6 @@ const titleBarIcons: Record<string, ReactNode> = {
     "window.setNormal": <IconCaptionRestore />,
     "window.close": <IconCaptionClose />,
 };
-
-const iconProps = "size-3 shrink-0";
 
 /** Windows caption Minimize — horizontal bar. */
 function IconCaptionMinimize({ className, ...rest }: SVGAttributes<SVGSVGElement>) {
@@ -106,3 +104,5 @@ function IconCaptionClose({ className, ...rest }: SVGAttributes<SVGSVGElement>) 
         </svg>
     );
 }
+
+const iconProps = "size-3 shrink-0";
