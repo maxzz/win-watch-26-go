@@ -1,9 +1,8 @@
-import { useRef, type PropsWithChildren, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PropsWithChildren, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { classNames } from "@renderer/utils";
 import { IconL_ChevronDown, IconL_ChevronRight, IconRefresh } from "@renderer/components/ui/icons";
 import { Button } from "@renderer/components/ui/shadcn/button";
-import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
 export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle, subtitleHint, loading, loadingKey, onRefresh, refreshDisabled, refreshTitle, children }: PropsWithChildren<{
     open: boolean;
@@ -19,6 +18,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
     refreshTitle?: string;
 }>) {
     const showReading = useDelayedTrue(!!loading, 2000, loadingKey);
+    
     const committedRef = useRef<{ subtitle?: ReactNode; subtitleHint?: string; children: ReactNode; } | null>(null);
     if (!loading) {
         committedRef.current = { subtitle, subtitleHint, children };
@@ -84,5 +84,34 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
                 </div>
             )}
         </div>
+    );
+}
+
+function useDelayedTrue(active: boolean, delayMs: number, resetKey?: string | null): boolean {
+    const [ready, setReady] = useState(false);
+    useEffect(
+        () => {
+            if (!active) {
+                setReady(false);
+                return;
+            }
+            setReady(false);
+            const id = window.setTimeout(() => setReady(true), delayMs);
+            return () => window.clearTimeout(id);
+        },
+        [active, delayMs, resetKey]);
+    return ready && active;
+}
+
+function AccReadingMessage({ children }: { children: ReactNode; }) {
+    return (
+        <motion.div
+            className="px-2.5 py-1 text-xs text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+            {children}
+        </motion.div>
     );
 }
