@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
+
 import { type ControlNode } from "@renderer/store/9-types-tmapi";
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { emptyMsaaSection, emptyUiaSection } from "./state/9-types";
@@ -26,8 +27,13 @@ export function AccInteractSection({ control }: { control: ControlNode; }) {
     return (
         <div className="mt-1">
             {error && !snapshot?.found
-                ? <div className="px-2.5 py-1 text-xs text-destructive">{error}</div>
-                : null}
+                ? (
+                    <div className="px-2.5 py-1 text-xs text-destructive">
+                        {error}
+                    </div>
+                )
+                : null
+            }
             <UiaInteractSection section={uia} loading={loading} />
             <MsaaInteractSection section={msaa} loading={loading} />
         </div>

@@ -28,28 +28,35 @@ export function AccCollapsible({ open, onOpenChange, title, subtitle, onRefresh,
                         ? <span className="ml-1 font-normal text-muted-foreground truncate">{subtitle}</span>
                         : null}
                 </button>
+                
                 {onRefresh
                     ? (
                         <Button
-                            type="button"
+                            className="shrink-0"
                             variant="ghost"
                             size="xs"
-                            className="shrink-0"
-                            disabled={refreshDisabled}
-                            title={refreshTitle ?? "Get current state"}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onRefresh();
+                                void onRefresh?.();
                             }}
+                            disabled={refreshDisabled}
+                            title={refreshTitle ?? "Get current state"}
+                            type="button"
                         >
                             <IconRefresh className="size-2.5" />
                         </Button>
                     )
                     : null}
             </div>
+
             {open
-                ? <div className={classNames("pb-1.5")}>{children}</div>
-                : null}
+                ? (
+                    <div className={classNames("pb-1.5")}>
+                        {children}
+                    </div>
+                )
+                : null
+            }
         </div>
     );
 }

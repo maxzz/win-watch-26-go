@@ -2,10 +2,11 @@ import { type ReactNode } from "react";
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
+
 import { type AccActionDef, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
 import { accInteractStore } from "./state/0-acc-interactions";
-import { IconCaptionClose, IconCaptionMaximize, IconCaptionMinimize, IconCaptionRestore } from "./5-titlebar-icons";
+import { IconCaptionClose, IconCaptionMaximize, IconCaptionMinimize, IconCaptionRestore } from "./5-1-titlebar-icons";
 
 export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccActionDef[]; }) {
     const byId = new Map(actions.map((action) => [action.id, action]));

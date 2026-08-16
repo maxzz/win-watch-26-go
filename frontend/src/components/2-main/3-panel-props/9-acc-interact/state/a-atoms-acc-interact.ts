@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import { report } from "@renderer/components/3-footer/report-panel";
+
 import { selectedHwndAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 import { selectedControlAtom } from "@renderer/components/2-main/2-panel-controls/state-atoms/2-2-1-atoms-controls-list";
 import { type AccApiKind } from "./9-types";
