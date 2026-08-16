@@ -2,18 +2,22 @@ import { type PropsWithChildren, type ReactNode } from "react";
 import { classNames } from "@renderer/utils";
 import { IconL_ChevronDown, IconL_ChevronRight, IconRefresh } from "@renderer/components/ui/icons";
 import { Button } from "@renderer/components/ui/shadcn/button";
+import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
-export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle, subtitleHint, onRefresh, refreshDisabled, refreshTitle, children }: PropsWithChildren<{
+export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle, subtitleHint, loading, loadingKey, onRefresh, refreshDisabled, refreshTitle, children }: PropsWithChildren<{
     open: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
     titleHint?: string;
     subtitle?: ReactNode;
     subtitleHint?: string;
+    loading?: boolean;
+    loadingKey?: string | null;
     onRefresh?: () => void;
     refreshDisabled?: boolean;
     refreshTitle?: string;
 }>) {
+    const showReading = useDelayedTrue(!!loading, 2000, loadingKey);
     return (
         <div className="border-t border-foreground/20">
             <div className="flex items-center gap-0.5 pr-1">
@@ -28,7 +32,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
                         : <IconL_ChevronRight className="size-3 shrink-0 text-muted-foreground" />
                     }
 
-                    {subtitle && (
+                    {!loading && subtitle && (
                         <span className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate" title={subtitleHint}>
                             {subtitle}
                         </span>
@@ -52,7 +56,10 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
 
             {open && (
                 <div className={classNames("pb-1.5")}>
-                    {children}
+                    {showReading
+                        ? <AccReadingMessage>reading</AccReadingMessage>
+                        : !loading && children
+                    }
                 </div>
             )}
         </div>

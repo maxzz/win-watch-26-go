@@ -2,7 +2,6 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { PropertyGrid, PropertyRow, PropertySeparator } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
-import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues } from "./8-prop-rows";
@@ -13,9 +12,6 @@ import { type MsaaSection } from "./state/9-types";
 export function MsaaInteractSection({ section, loading }: { section: MsaaSection; loading: boolean; }) {
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
-    const showReadingMessage = useDelayedTrue(loading, 2000, snap.key);
-
-    const subtitle = section.available || loading ? undefined : "unavailable";
 
     return (
         <AccCollapsible
@@ -23,37 +19,33 @@ export function MsaaInteractSection({ section, loading }: { section: MsaaSection
             onOpenChange={(open) => { accInteractStore.msaaOpen = open; }}
             title="MSAA"
             titleHint="Microsoft Active Accessibility (MSAA). IAccessible is the legacy API for accessibility."
-            subtitle={subtitle}
+            subtitle={section.available ? undefined : "unavailable"}
+            loading={loading}
+            loadingKey={snap.key}
             onRefresh={() => void reload({ force: true })}
             refreshDisabled={loading}
             refreshTitle="Get current MSAA state"
         >
-            {showReadingMessage
+            {!section.available
                 ? (
-                    <AccReadingMessage>Reading IAccessible…</AccReadingMessage>
+                    <div className="px-2.5 py-1 text-xs text-muted-foreground">
+                        {section.error || "Raw IAccessible is not available for this element."}
+                    </div>
                 )
-                : !section.available
-                    ? loading
-                        ? null
-                        : (
-                            <div className="px-2.5 py-1 text-xs text-muted-foreground">
-                                {section.error || "Raw IAccessible is not available for this element."}
-                            </div>
-                        )
-                    : (
-                        <PropertyGrid>
-                            <AccNamedValues values={section.properties} />
-                            <PropertySeparator />
+                : (
+                    <PropertyGrid>
+                        <AccNamedValues values={section.properties} />
+                        <PropertySeparator />
 
-                            <PropertyRow label="State flags" title={section.stateFlags.join(" | ") || undefined}>
-                                {section.stateFlags.length
-                                    ? <span className="text-[0.65rem]">{section.stateFlags.join(" · ")}</span>
-                                    : <span className="text-muted-foreground italic">none</span>}
-                            </PropertyRow>
+                        <PropertyRow label="State flags" title={section.stateFlags.join(" | ") || undefined}>
+                            {section.stateFlags.length
+                                ? <span className="text-[0.65rem]">{section.stateFlags.join(" · ")}</span>
+                                : <span className="text-muted-foreground italic">none</span>}
+                        </PropertyRow>
 
-                            <AccCommandGroup kind="msaa" actions={section.actions} />
-                        </PropertyGrid>
-                    )
+                        <AccCommandGroup kind="msaa" actions={section.actions} />
+                    </PropertyGrid>
+                )
             }
         </AccCollapsible>
     );

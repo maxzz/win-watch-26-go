@@ -2,7 +2,6 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { PropertyGrid } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
-import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues, AccPatternHeader } from "./8-prop-rows";
@@ -13,16 +12,8 @@ import { type UiaSection } from "./state/9-types";
 export function UiaInteractSection({ section, loading }: { section: UiaSection; loading: boolean; }) {
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
-    const showReadingMessage = useDelayedTrue(loading, 2000, snap.key);
     const patternCount = section.patterns?.length ?? 0;
-
-    const subtitle = showReadingMessage
-        ? "reading patterns…"
-        : patternCount
-            ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}`
-            : loading
-                ? undefined
-                : "no patterns";
+    const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : "no patterns";
 
     return (
         <AccCollapsible
@@ -30,37 +21,32 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
             onOpenChange={(open) => { accInteractStore.uiaOpen = open; }}
             title="UI Automation"
             subtitle={subtitle}
+            loading={loading}
+            loadingKey={snap.key}
             onRefresh={() => void reload({ force: true })}
             refreshDisabled={loading}
             refreshTitle="Get current UIA state"
         >
-            {showReadingMessage
-                ? (
-                    <AccReadingMessage>Reading patterns…</AccReadingMessage>
-                )
-                : (
-                    <PropertyGrid>
-                        <AccNamedValues values={section.properties} />
-                        <AccCommandGroup kind="uia" actions={section.actions} />
+            <PropertyGrid>
+                <AccNamedValues values={section.properties} />
+                <AccCommandGroup kind="uia" actions={section.actions} />
 
-                        {section.patterns.map(
-                            (pattern) => (
-                                <div key={pattern.id} className="contents">
-                                    <AccPatternHeader name={pattern.name} />
-                                    <AccNamedValues values={pattern.properties} />
-                                    <AccCommandGroup kind="uia" actions={pattern.actions} />
-                                </div>
-                            )
-                        )}
+                {section.patterns.map(
+                    (pattern) => (
+                        <div key={pattern.id} className="contents">
+                            <AccPatternHeader name={pattern.name} />
+                            <AccNamedValues values={pattern.properties} />
+                            <AccCommandGroup kind="uia" actions={pattern.actions} />
+                        </div>
+                    )
+                )}
 
-                        {patternCount === 0 && !loading && (
-                            <div className="col-span-2 px-2.5 py-1 text-xs text-muted-foreground">
-                                No interactive UIA patterns on this element.
-                            </div>
-                        )}
-                    </PropertyGrid>
-                )
-            }
+                {patternCount === 0 && (
+                    <div className="col-span-2 px-2.5 py-1 text-xs text-muted-foreground">
+                        No interactive UIA patterns on this element.
+                    </div>
+                )}
+            </PropertyGrid>
         </AccCollapsible>
     );
 }
