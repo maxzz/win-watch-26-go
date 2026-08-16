@@ -1,4 +1,5 @@
-import { type PropsWithChildren, type ReactNode } from "react";
+import { useRef, type PropsWithChildren, type ReactNode } from "react";
+import { motion } from "motion/react";
 import { classNames } from "@renderer/utils";
 import { IconL_ChevronDown, IconL_ChevronRight, IconRefresh } from "@renderer/components/ui/icons";
 import { Button } from "@renderer/components/ui/shadcn/button";
@@ -18,6 +19,12 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
     refreshTitle?: string;
 }>) {
     const showReading = useDelayedTrue(!!loading, 2000, loadingKey);
+    const committedRef = useRef<{ subtitle?: ReactNode; subtitleHint?: string; children: ReactNode; } | null>(null);
+    if (!loading) {
+        committedRef.current = { subtitle, subtitleHint, children };
+    }
+    const committed = committedRef.current;
+
     return (
         <div className="border-t border-foreground/20">
             <div className="flex items-center gap-0.5 pr-1">
@@ -32,11 +39,25 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
                         : <IconL_ChevronRight className="size-3 shrink-0 text-muted-foreground" />
                     }
 
-                    {!loading && subtitle && (
-                        <span className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate" title={subtitleHint}>
-                            {subtitle}
-                        </span>
-                    )}
+                    {showReading
+                        ? (
+                            <motion.span
+                                className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                            >
+                                reading
+                            </motion.span>
+                        )
+                        : committed?.subtitle
+                            ? (
+                                <span className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate" title={committed.subtitleHint}>
+                                    {committed.subtitle}
+                                </span>
+                            )
+                            : null
+                    }
                 </button>
 
                 {onRefresh && (
@@ -55,10 +76,10 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
             </div>
 
             {open && (
-                <div className={classNames("pb-1.5")}>
-                    {showReading
-                        ? <AccReadingMessage>reading</AccReadingMessage>
-                        : !loading && children
+                <div className={classNames("pb-1.5", loading && "pointer-events-none")}>
+                    {committed
+                        ? committed.children
+                        : showReading && <AccReadingMessage>reading</AccReadingMessage>
                     }
                 </div>
             )}
