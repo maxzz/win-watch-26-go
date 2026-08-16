@@ -90,40 +90,38 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
 
 export function AccCommandGroup({ kind, actions }: { kind: AccApiKind; actions: readonly AccAction[]; }) {
     const titleBar = actions.filter((a) => a.group === "titlebar");
-    const commands = actions.filter((a) => a.kind === "command" && a.group !== "titlebar");
     const setters = actions.filter((a) => a.kind !== "command");
-    if (titleBar.length === 0 && commands.length === 0 && setters.length === 0) {
+    const commands = actions.filter((a) => a.kind === "command" && a.group !== "titlebar");
+
+    if (!titleBar.length && !commands.length && !setters.length) {
         return null;
     }
+
+    console.log("titleBar", titleBar, "\ncommands", commands, "\nsetters", setters);
+
     return (
         <div className="col-span-2 space-y-0.5">
             <AccTitleBarRow kind={kind} actions={titleBar} />
 
-            {commands.length > 0
-                ? (
-                    <div className="px-1.5 pl-2.5 py-0.5 flex flex-wrap gap-1">
-                        {commands.map(
-                            (action) => (
-                                <AccActionRow key={action.id} kind={kind} action={action} />
-                            )
-                        )}
-                    </div>
-                )
-                : null
-            }
+            {!!commands.length && (
+                <div className="px-1.5 pl-2.5 py-0.5 flex flex-wrap gap-1">
+                    {commands.map(
+                        (action) => (
+                            <AccActionRow key={action.id} kind={kind} action={action} />
+                        )
+                    )}
+                </div>
+            )}
 
-            {setters.length > 0
-                ? (
-                    <div className="px-1.5 pl-2.5 py-0.5 space-y-0.5">
-                        {setters.map(
-                            (action) => (
-                                <AccActionRow key={action.id} kind={kind} action={action} />
-                            )
-                        )}
-                    </div>
-                )
-                : null
-            }
+            {!!setters.length && (
+                <div className="px-1.5 pl-2.5 py-0.5 space-y-0.5">
+                    {setters.map(
+                        (action) => (
+                            <AccActionRow key={action.id} kind={kind} action={action} />
+                        )
+                    )}
+                </div>
+            )}
         </div>
     );
 }

@@ -4,8 +4,8 @@ import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
 
 import { type AccAction, type AccApiKind } from "./state/9-types";
-import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
 import { interactStore } from "./state/0-acc-interactions";
+import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
 
 export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: readonly AccAction[]; }) {
     const byId = new Map(actions.map((action) => [action.id, action]));
