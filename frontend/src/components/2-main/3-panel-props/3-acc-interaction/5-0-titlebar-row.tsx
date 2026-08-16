@@ -3,6 +3,7 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { classNames } from "@renderer/utils";
 
+import { PropertyRow } from "../8-shared-ui";
 import { type AccAction, type AccApiKind } from "./state/9-types";
 import { interactStore } from "./state/0-acc-interactions";
 import { doExecuteAccActionAtom } from "./state/a-atoms-acc-interact";
@@ -15,16 +16,13 @@ export function AccTitleBarRow({ kind, actions }: { kind: AccApiKind; actions: r
     }
 
     return (
-        <div className="col-span-2 px-1.5 pl-2.5 py-0.5 flex items-center justify-between gap-2 min-w-0">
-            <span className="text-muted-foreground shrink-0">
-                Title Bar
-            </span>
-            <div className="inline-flex items-stretch border border-input rounded overflow-hidden">
+        <PropertyRow label="Title Bar" interactive>
+            <div className="py-0.5 inline-flex items-stretch border border-input rounded overflow-hidden">
                 {ordered.map((action) => (
                     <AccTitleBarButton key={action.id} kind={kind} action={action} />
                 ))}
             </div>
-        </div>
+        </PropertyRow>
     );
 }
 

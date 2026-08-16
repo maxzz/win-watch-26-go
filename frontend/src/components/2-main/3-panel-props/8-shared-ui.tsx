@@ -42,7 +42,7 @@ export function PropertyFullRow({ children, className }: PropsWithChildren<{ cla
     );
 }
 
-export function PropertyRow({ label, children, title }: { label: string; children: ReactNode; title?: string; }) {
+export function PropertyRow({ label, children, title, interactive }: { label: string; children: ReactNode; title?: string; interactive?: boolean; }) {
     const titleText = title ?? (typeof children === "string" ? children : undefined);
     return (
         <div className="contents">
@@ -51,7 +51,10 @@ export function PropertyRow({ label, children, title }: { label: string; childre
                 <div aria-hidden className="absolute inset-y-0 right-0 w-px bg-foreground/20 dark:bg-foreground/20" />
                 {label}
             </div>
-            <div className="px-1.5 py-px break-all truncate cursor-default" title={titleText}>
+            <div
+                className={interactive ? "px-1.5 py-px min-w-0" : "px-1.5 py-px break-all truncate cursor-default"}
+                title={interactive ? undefined : titleText}
+            >
                 {children}
             </div>
         </div>

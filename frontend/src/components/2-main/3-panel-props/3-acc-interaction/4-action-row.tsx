@@ -4,6 +4,7 @@ import { Button } from "@renderer/components/ui/shadcn/button";
 import { Input } from "@renderer/components/ui/shadcn/input";
 import { IconRefresh } from "@renderer/components/ui/icons";
 
+import { PropertyRow } from "../8-shared-ui";
 import { type AccAction, type AccApiKind } from "./state/9-types";
 import { doExecuteAccActionAtom, doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
 import { interactStore, setDraft } from "./state/0-acc-interactions";
@@ -42,49 +43,47 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
     const value = snap.drafts[`${kind}:${action.id}`] ?? action.currentValue ?? "";
 
     return (
-        <div className="flex items-center gap-1 min-w-0">
-            <span className="shrink-0 text-muted-foreground w-22 truncate" title={action.hint || action.label}>
-                {action.label}
-            </span>
+        <PropertyRow label={action.label} title={action.hint || action.label} interactive>
+            <div className="flex items-center gap-1 min-w-0">
+                <Input
+                    className="h-6 px-1.5 text-[0.65rem] flex-1"
+                    type="text"
+                    inputMode={action.kind === "setNumber" ? "decimal" : undefined}
+                    placeholder={action.placeholder}
+                    title={action.hint || action.placeholder}
+                    value={value}
+                    disabled={disabled}
+                    onChange={(e) => setDraft(kind, action.id, e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            void execute({ kind, actionId: action.id, value });
+                        }
+                    }}
+                />
 
-            <Input
-                className="h-6 px-1.5 text-[0.65rem]"
-                type="text"
-                inputMode={action.kind === "setNumber" ? "decimal" : undefined}
-                placeholder={action.placeholder}
-                title={action.hint || action.placeholder}
-                value={value}
-                disabled={disabled}
-                onChange={(e) => setDraft(kind, action.id, e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        void execute({ kind, actionId: action.id, value });
-                    }
-                }}
-            />
+                <Button
+                    className="shrink-0"
+                    size="xs"
+                    variant="outline"
+                    onClick={() => void reload({ force: true })}
+                    disabled={disabled || snap.loading}
+                    title={`Get current ${action.label.toLowerCase()}`}
+                    type="button"
+                >
+                    <IconRefresh className="size-2.5" />
+                </Button>
 
-            <Button
-                className="shrink-0"
-                size="xs"
-                variant="outline"
-                onClick={() => void reload({ force: true })}
-                disabled={disabled || snap.loading}
-                title={`Get current ${action.label.toLowerCase()}`}
-                type="button"
-            >
-                <IconRefresh className="size-2.5" />
-            </Button>
-
-            <Button
-                size="xs"
-                variant="outline"
-                onClick={() => void execute({ kind, actionId: action.id, value })}
-                disabled={disabled}
-                type="button"
-            >
-                {busy ? "…" : "Set"}
-            </Button>
-        </div>
+                <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => void execute({ kind, actionId: action.id, value })}
+                    disabled={disabled}
+                    type="button"
+                >
+                    {busy ? "…" : "Set"}
+                </Button>
+            </div>
+        </PropertyRow>
     );
 }
 
@@ -97,31 +96,25 @@ export function AccCommandGroup({ kind, actions }: { kind: AccApiKind; actions: 
         return null;
     }
 
-    console.log("titleBar", titleBar, "\ncommands", commands, "\nsetters", setters);
+    return (<>
+        <AccTitleBarRow kind={kind} actions={titleBar} />
 
-    return (
-        <div className="col-span-2 space-y-0.5">
-            <AccTitleBarRow kind={kind} actions={titleBar} />
-
-            {!!commands.length && (
-                <div className="px-1.5 pl-2.5 py-0.5 flex flex-wrap gap-1">
+        {!!commands.length && (
+            <PropertyRow label="" interactive>
+                <div className="py-0.5 flex flex-wrap gap-1">
                     {commands.map(
                         (action) => (
                             <AccActionRow key={action.id} kind={kind} action={action} />
                         )
                     )}
                 </div>
-            )}
+            </PropertyRow>
+        )}
 
-            {!!setters.length && (
-                <div className="px-1.5 pl-2.5 py-0.5 space-y-0.5">
-                    {setters.map(
-                        (action) => (
-                            <AccActionRow key={action.id} kind={kind} action={action} />
-                        )
-                    )}
-                </div>
-            )}
-        </div>
-    );
+        {setters.map(
+            (action) => (
+                <AccActionRow key={action.id} kind={kind} action={action} />
+            )
+        )}
+    </>);
 }
