@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
-import { motion } from "motion/react";
 import { PropertyGrid } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
+import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues, AccPatternHeader } from "./8-prop-rows";
@@ -37,7 +36,7 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
         >
             {showReadingMessage
                 ? (
-                    <ReadingPatternsMessage />
+                    <AccReadingMessage>Reading patterns…</AccReadingMessage>
                 )
                 : (
                     <PropertyGrid>
@@ -63,34 +62,5 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
                 )
             }
         </AccCollapsible>
-    );
-}
-
-function useDelayedTrue(active: boolean, delayMs: number, resetKey?: string | null): boolean {
-    const [ready, setReady] = useState(false);
-    useEffect(
-        () => {
-            if (!active) {
-                setReady(false);
-                return;
-            }
-            setReady(false);
-            const id = window.setTimeout(() => setReady(true), delayMs);
-            return () => window.clearTimeout(id);
-        },
-        [active, delayMs, resetKey]);
-    return ready && active;
-}
-
-function ReadingPatternsMessage() {
-    return (
-        <motion.div
-            className="px-2.5 py-1 text-xs text-muted-foreground"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-        >
-            Reading patterns…
-        </motion.div>
     );
 }

@@ -2,6 +2,7 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
 import { PropertyGrid, PropertyRow, PropertySeparator } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
+import { AccReadingMessage, useDelayedTrue } from "./8-shared-ui-reading";
 
 import { AccCommandGroup } from "./4-action-row";
 import { AccNamedValues } from "./8-prop-rows";
@@ -12,8 +13,9 @@ import { type MsaaSection } from "./state/9-types";
 export function MsaaInteractSection({ section, loading }: { section: MsaaSection; loading: boolean; }) {
     const snap = useSnapshot(accInteractStore);
     const reload = useSetAtom(doLoadAccInteractAtom);
+    const showReadingMessage = useDelayedTrue(loading, 2000, snap.key);
 
-    const subtitle = loading && !section.available ? undefined : section.available ? undefined : "unavailable";
+    const subtitle = section.available || loading ? undefined : "unavailable";
 
     return (
         <AccCollapsible
@@ -26,18 +28,18 @@ export function MsaaInteractSection({ section, loading }: { section: MsaaSection
             refreshDisabled={loading}
             refreshTitle="Get current MSAA state"
         >
-            {loading && !section.available
+            {showReadingMessage
                 ? (
-                    <div className="px-2.5 py-1 text-xs text-muted-foreground">
-                        Reading IAccessible…
-                    </div>
+                    <AccReadingMessage>Reading IAccessible…</AccReadingMessage>
                 )
                 : !section.available
-                    ? (
-                        <div className="px-2.5 py-1 text-xs text-muted-foreground">
-                            {section.error || "Raw IAccessible is not available for this element."}
-                        </div>
-                    )
+                    ? loading
+                        ? null
+                        : (
+                            <div className="px-2.5 py-1 text-xs text-muted-foreground">
+                                {section.error || "Raw IAccessible is not available for this element."}
+                            </div>
+                        )
                     : (
                         <PropertyGrid>
                             <AccNamedValues values={section.properties} />
