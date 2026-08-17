@@ -19,6 +19,7 @@ export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAc
     if (action.kind === "command") {
         return (
             <Button
+                className="h-4.5 px-1.5 text-[0.65rem]"
                 size="xs"
                 variant={action.destructive ? "destructive" : "outline"}
                 disabled={disabled}
