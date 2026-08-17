@@ -27,9 +27,9 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
 
     return (
         <div>
-            <div className="flex items-center gap-0.5 pr-2.5">
+            <div className="-mr-4 flex items-center gap-0.5 pr-2.5 shadow bg-muted/60 hover:bg-muted/80">
 
-                <button className="flex-1 min-w-0 px-1.5 pl-2 py-1 text-left text-xs font-semibold select-none inline-flex items-center gap-1 hover:bg-muted/40" onClick={() => onOpenChange(!open)} type="button">
+                <button className="flex-1 min-w-0 px-1.5 pl-2 py-1 text-left text-xs font-semibold select-none inline-flex items-center gap-1" onClick={() => onOpenChange(!open)} type="button">
                     <span className="truncate" title={titleHint}>
                         {title}
                     </span>
@@ -42,7 +42,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
                     {showReading
                         ? (
                             <motion.span
-                                className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate"
+                                className="ml-auto mr-3 text-[0.65rem] font-normal text-muted-foreground truncate"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
@@ -52,7 +52,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
                         )
                         : committed?.subtitle
                             ? (
-                                <span className="ml-auto text-[0.65rem] font-normal text-muted-foreground truncate" title={committed.subtitleHint}>
+                                <span className="ml-auto mr-3 text-[0.65rem] font-normal text-muted-foreground truncate" title={committed.subtitleHint}>
                                     {committed.subtitle}
                                 </span>
                             )
@@ -62,7 +62,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
 
                 {onRefresh && (
                     <Button
-                        className="shrink-0"
+                        className="shrink-0 size-5 mr-4"
                         variant="ghost"
                         size="xs"
                         onClick={(e) => { e.stopPropagation(); void onRefresh?.(); }}
@@ -76,7 +76,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
             </div>
 
             {open && (
-                <div className={classNames("border-y border-foreground/20", loading && "pointer-events-none")}>
+                <div className={classNames("mb-4 border-y border-foreground/20", loading && "pointer-events-none")}>
                     {committed
                         ? committed.children
                         : showReading && <AccReadingMessage>reading</AccReadingMessage>
