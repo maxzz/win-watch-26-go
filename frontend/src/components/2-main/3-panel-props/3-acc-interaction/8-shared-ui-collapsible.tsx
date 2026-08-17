@@ -26,7 +26,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
     const committed = committedRef.current;
 
     return (
-        <div className="border-t border-foreground/20">
+        <div>
             <div className="flex items-center gap-0.5 pr-2.5">
 
                 <button className="flex-1 min-w-0 px-1.5 pl-2 py-1 text-left text-xs font-semibold select-none inline-flex items-center gap-1 hover:bg-muted/40" onClick={() => onOpenChange(!open)} type="button">
@@ -76,7 +76,7 @@ export function AccCollapsible({ open, onOpenChange, title, titleHint, subtitle,
             </div>
 
             {open && (
-                <div className={classNames("pb-1.5", loading && "pointer-events-none")}>
+                <div className={classNames("border-y border-foreground/20", loading && "pointer-events-none")}>
                     {committed
                         ? committed.children
                         : showReading && <AccReadingMessage>reading</AccReadingMessage>
