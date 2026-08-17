@@ -5,6 +5,7 @@ import { PropertyGrid } from "../8-shared-ui";
 import { AccCollapsible } from "./8-shared-ui-collapsible";
 
 import { AccCommandGroup } from "./4-action-row";
+import { AccFocusRow, withoutFocusItems } from "./5-1-focus-row";
 import { AccNamedValues, AccPatternHeader } from "./8-prop-rows";
 import { doLoadAccInteractAtom } from "./state/a-atoms-acc-interact";
 import { interactStore } from "./state/0-acc-interactions";
@@ -16,6 +17,7 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
     const reload = useSetAtom(doLoadAccInteractAtom);
     const patternCount = section.patterns?.length ?? 0;
     const subtitle = patternCount ? `${patternCount} pattern${patternCount === 1 ? "" : "s"}` : "no patterns";
+    const rest = withoutFocusItems(section.properties, section.actions);
 
     return (
         <AccCollapsible
@@ -30,8 +32,10 @@ export function UiaInteractSection({ section, loading }: { section: UiaSection; 
             refreshTitle="Get current UIA state"
         >
             <PropertyGrid>
-                <AccNamedValues values={section.properties} />
-                <AccCommandGroup kind="uia" actions={section.actions} />
+                <AccFocusRow properties={section.properties} actions={section.actions} />
+                
+                <AccNamedValues values={rest.properties} />
+                <AccCommandGroup kind="uia" actions={rest.actions} />
 
                 {section.patterns.map(
                     (pattern) => (

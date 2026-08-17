@@ -1,5 +1,6 @@
 import { type WindowDetailInfo } from "./state-atoms/9-types-window-info";
-import { hex8, integrityLabel, Mono, PathWithCopy, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, rectText } from "./8-shared-ui";
+import { hex8, Mono, PathWithCopy, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, rectText } from "./8-shared-ui";
+import { ReactNode } from "react";
 
 export function TabGeneral({ info }: { info: WindowDetailInfo; }) {
     return (
@@ -50,4 +51,17 @@ export function TabGeneral({ info }: { info: WindowDetailInfo; }) {
             <PropertySeparator />
         </PropertyGrid>
     );
+}
+
+function integrityLabel(level: string): ReactNode {
+    switch (level) {
+        case "high": return "High";
+        case "medium": return "Medium";
+        case "mediumplus": return "Medium Plus";
+        case "low": return "Low";
+        case "na": return "N/A";
+        case "undetected":
+        default:
+            return <span className="text-muted-foreground/60">N/A</span>;
+    }
 }

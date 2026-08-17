@@ -1,5 +1,5 @@
 import { type WindowDetailInfo } from "./state-atoms/9-types-window-info";
-import { hex8, Mono, PropertyFullRow, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator, StyleList } from "./8-shared-ui";
+import { hex8, Mono, PropertyFullRow, PropertyGrid, PropertyHeader, PropertyRow, PropertySeparator } from "./8-shared-ui";
 
 export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
     return (
@@ -24,5 +24,25 @@ export function TabWindowExtra({ info }: { info: WindowDetailInfo; }) {
             </PropertyFullRow>
             <PropertySeparator />
         </PropertyGrid>
+    );
+}
+
+function StyleList({ title, hexValue, names }: { title: string; hexValue: number; names: string[]; }) {
+    return (
+        <div className="mb-2 last:mb-0 px-1.5">
+            <div className="mb-1 text-xs">
+                <span className="text-muted-foreground">{title}</span>
+                {": "}
+                <Mono>{hex8(hexValue)}</Mono>
+            </div>
+            
+            {names.length === 0
+                ? <div className="pl-2 text-xs text-muted-foreground">(none)</div>
+                : (
+                    <ul className="pl-2 text-xs space-y-0.5">
+                        {names.map((n) => <li key={n}>{n}</li>)}
+                    </ul>
+                )}
+        </div>
     );
 }

@@ -1,5 +1,6 @@
 import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio/react";
+import { cn } from "@renderer/utils";
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { Input } from "@renderer/components/ui/shadcn/input";
 import { IconRefresh } from "@renderer/components/ui/icons";
@@ -10,7 +11,7 @@ import { doExecuteAccActionAtom, doLoadAccInteractAtom } from "./state/a-atoms-a
 import { interactStore, setDraft } from "./state/0-acc-interactions";
 import { AccTitleBarRow } from "./5-0-titlebar-row";
 
-export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAction; }) {
+export function AccActionRow({ kind, action, className }: { kind: AccApiKind; action: AccAction; className?: string; }) {
     const execute = useSetAtom(doExecuteAccActionAtom);
     const { busyActionId } = useSnapshot(interactStore);
     const busy = busyActionId === `${kind}:${action.id}`;
@@ -19,7 +20,7 @@ export function AccActionRow({ kind, action }: { kind: AccApiKind; action: AccAc
     if (action.kind === "command") {
         return (
             <Button
-                className="h-4.5 px-1.5 text-[0.65rem]"
+                className={cn("h-4 px-1.5 text-[0.65rem]", className)}
                 size="xs"
                 variant={action.destructive ? "destructive" : "outline"}
                 disabled={disabled}
