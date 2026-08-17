@@ -45,9 +45,9 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
 
     return (
         <PropertyRow label={action.label} title={action.hint || action.label} interactive>
-            <div className="flex items-center gap-1 min-w-0">
+            <div className="flex items-center min-w-0 h-6 pl-1.5 pr-px rounded border border-input shadow-xs dark:bg-input/30 focus-within:ring-[1px] focus-within:ring-ring focus-within:border-transparent">
                 <Input
-                    className="h-6 px-1.5 text-[0.65rem] flex-1"
+                    className="h-full flex-1 border-0 bg-transparent shadow-none dark:bg-transparent px-0 text-[0.65rem] focus-visible:ring-0"
                     type="text"
                     inputMode={action.kind === "setNumber" ? "decimal" : undefined}
                     placeholder={action.placeholder}
@@ -63,7 +63,7 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
                 />
 
                 <Button
-                    className="shrink-0"
+                    className="ml-1.5 size-5 rounded p-0 active:scale-100"
                     size="xs"
                     variant="outline"
                     onClick={() => void reload({ force: true })}
@@ -75,6 +75,7 @@ function AccSetValueRow({ kind, action, busy, disabled }: { kind: AccApiKind; ac
                 </Button>
 
                 <Button
+                    className="ml-0.5 h-5 px-1.5 rounded text-[0.65rem] active:scale-100"
                     size="xs"
                     variant="outline"
                     onClick={() => void execute({ kind, actionId: action.id, value })}
