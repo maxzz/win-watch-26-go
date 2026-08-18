@@ -2,7 +2,8 @@ import { useSetAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
+import { Button } from "@renderer/components/ui/shadcn/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
 import { Label } from "@renderer/components/ui/shadcn/label";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
 
@@ -27,16 +28,13 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="pb-4 grid gap-1">
+                <div className="grid gap-1">
 
                     <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Window</div>
                     <WindowLifecycleOptions />
 
-                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
-
-                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">There are no options available yet. More to come soon.</div>
-
-                    {/* <OptionCheckbox
+                    {/* <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
+                    <OptionCheckbox
                         checked={settings.winlist_ExcludeUs}
                         onCheckedChange={(checked) => void setExcludeOwnAppWindows(checked)}
                         label="Exclude windows of our application"
@@ -49,8 +47,15 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                         title="Sort acquired windows alphabetically by process name"
                     /> */}
 
-
                 </div>
+
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button type="button" variant="outline" size="xs">
+                            Close
+                        </Button>
+                    </DialogClose>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );
