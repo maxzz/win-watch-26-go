@@ -3,11 +3,11 @@ import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { Button } from "@renderer/components/ui/shadcn/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
 import { Label } from "@renderer/components/ui/shadcn/label";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
 
-import { WindowLifecycleOptions } from "@renderer/components/window-lifecycle";
+import { ControlTheme, WindowLifecycleOptions } from "@renderer/components/window-lifecycle";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
@@ -17,9 +17,9 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-90!">
+            <DialogContent className="p-0! max-w-90! gap-0!">
 
-                <DialogHeader>
+                <DialogHeader className="px-4 py-3 text-left border-b gap-0">
                     <DialogTitle>
                         Options
                     </DialogTitle>
@@ -28,10 +28,11 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-1">
+                <div className="px-4 py-4 text-xs font-normal flex flex-col gap-1.5">
 
-                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Window</div>
+                    <div className="text-xs font-semibold border-b border-border pb-1">Window</div>
                     <WindowLifecycleOptions />
+                    <ControlTheme />
 
                     {/* <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
                     <OptionCheckbox
@@ -49,12 +50,10 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
 
                 </div>
 
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button type="button" variant="outline" size="xs">
-                            Close
-                        </Button>
-                    </DialogClose>
+                <DialogFooter className="m-0 px-4 pb-3 pt-2 flex justify-center!">
+                    <Button type="button" variant="outline" className="min-w-16 font-condensed font-normal" onClick={() => onOpenChange(false)}>
+                        Close
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

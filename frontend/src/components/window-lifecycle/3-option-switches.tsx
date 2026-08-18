@@ -1,8 +1,12 @@
 import { type ComponentProps } from "react";
 import { useAtom, type WritableAtom } from "jotai";
+import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils";
+import { type ThemeMode } from "@renderer/utils/theme-apply";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { Checkbox } from "@renderer/components/ui/shadcn/checkbox";
 import { Label } from "@renderer/components/ui/shadcn/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@renderer/components/ui/shadcn/select";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
 import {
     settingsQuitOnCloseAtom,
@@ -23,11 +27,44 @@ export function WindowLifecycleOptions() {
                 valueAtom={settingsShowInTaskbarAtom}
             />
             <ControlCheckbox label="Quit the application when the window close button is clicked" valueAtom={settingsQuitOnCloseAtom} />
-            <ControlCheckbox
-                label="Show theme toggle button in header"
+        </div>
+    );
+}
+
+export function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
+    const { ui_theme: theme } = useSnapshot(appSettings);
+    const [showThemeToggle, setShowThemeToggle] = useAtom(settingsShowThemeToggleAtom);
+
+    return (
+        <div className={classNames("flex items-center gap-2", className)} {...rest}>
+            <Label className="font-normal" htmlFor="settings-theme">
+                Theme
+            </Label>
+
+            <Select value={theme} onValueChange={(value) => { appSettings.ui_theme = value as ThemeMode; }}>
+                <SelectTrigger className="h-6!" id="settings-theme">
+                    <SelectValue placeholder="Select theme" />
+                </SelectTrigger>
+
+                <SelectContent>
+                    <SelectItem className="font-condensed font-normal" value="light">Light</SelectItem>
+                    <SelectItem className="font-condensed font-normal" value="dark">Dark</SelectItem>
+                    <SelectItem className="font-condensed font-normal" value="system">System</SelectItem>
+                </SelectContent>
+            </Select>
+
+            <Label
+                className="font-normal flex items-center gap-1.5 cursor-pointer"
+                htmlFor="settings-show-theme-toggle"
                 title="Show the theme toggle button in the application header"
-                valueAtom={settingsShowThemeToggleAtom}
-            />
+            >
+                <Checkbox
+                    id="settings-show-theme-toggle"
+                    checked={showThemeToggle}
+                    onCheckedChange={(v) => setShowThemeToggle(v === true)}
+                />
+                Show theme toggle button in header
+            </Label>
         </div>
     );
 }
