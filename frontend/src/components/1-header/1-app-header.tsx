@@ -10,8 +10,11 @@ import { TopMenu } from "./1-top-menu";
 import { ButtonStayOnTop } from "./2-1-btn-stay-on-top";
 import { ButtonThemeToggle } from "./3-5-btn-theme-toggle";
 import { IconSliders } from "../ui/icons/normal";
+import { BadgeSelfIntegrity, ButtonExit } from "@renderer/components/window-lifecycle";
 
 export function AppHeader({ className }: { className?: string; }) {
+    const { ui_showThemeToggle: showThemeToggle } = useSnapshot(appSettings);
+
     return (
         <div className={classNames("px-3 py-1 border-b bg-muted/30 flex items-center justify-between", className)}>
             <div className="flex items-center gap-4">
@@ -22,10 +25,12 @@ export function AppHeader({ className }: { className?: string; }) {
                     </span>
                 )}
             </div>
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-1">
                 <ButtonStayOnTop />
                 <ButtonOpenOptionsDialog />
-                <ButtonThemeToggle />
+                {showThemeToggle && <ButtonThemeToggle />}
+                <ButtonExit />
+                <BadgeSelfIntegrity />
                 {/* <Button_TogglePropertiesPosition /> */}
             </div>
         </div>

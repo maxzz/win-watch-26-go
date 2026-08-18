@@ -18,7 +18,8 @@ const (
 
 // Settings is the persisted host-level state. It keeps the window geometry
 // (restored on the next launch) together with whether the WebView2 developer
-// tools were left open when the user last toggled them.
+// tools were left open when the user last toggled them, plus host-lifecycle
+// flags (elevation, close-to-tray, taskbar button).
 type Settings struct {
 	X         int     `json:"x"`
 	Y         int     `json:"y"`
@@ -26,6 +27,12 @@ type Settings struct {
 	Height    int     `json:"height"`
 	DevTools  bool    `json:"devTools"`
 	ZoomLevel float64 `json:"zoomLevel"`
+
+	RunElevated bool `json:"runElevated"`
+	QuitOnClose bool `json:"quitOnClose"`
+	// ShowInTaskbar is a pointer so older init.json files (field absent) keep
+	// the default of true. A non-nil false hides the taskbar button.
+	ShowInTaskbar *bool `json:"showInTaskbar,omitempty"`
 }
 
 // BoundsValid reports whether the saved geometry is usable.
@@ -117,4 +124,57 @@ func (s *Store) SetDevTools(enabled bool) {
 	v, _ := s.Load()
 	v.DevTools = enabled
 	s.Save(v)
+}
+
+func (s *Store) update(fn func(*Settings)) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	v, _ := s.Load()
+	fn(&v)
+	if err := os.MkdirAll(filepath.Dir(s.path), 0o755); err != nil {
+		return err
+	}
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(s.path, data, 0o644)
+}
+
+// RunElevated reports the persisted "start / stay elevated" preference.
+func (s *Store) RunElevated() bool {
+	v, _ := s.Load()
+	return v.RunElevated
+}
+
+// SetRunElevated updates only the elevation preference.
+func (s *Store) SetRunElevated(value bool) error {
+	return s.update(func(v *Settings) { v.RunElevated = value })
+}
+
+// QuitOnClose reports whether the window close button should quit the process.
+// When false (default), close hides the window to the tray.
+func (s *Store) QuitOnClose() bool {
+	v, _ := s.Load()
+	return v.QuitOnClose
+}
+
+// SetQuitOnClose updates only the close-button preference.
+func (s *Store) SetQuitOnClose(value bool) error {
+	return s.update(func(v *Settings) { v.QuitOnClose = value })
+}
+
+// ShowInTaskbar reports whether the main window should appear on the taskbar.
+// Default is true when unset or when init.json is missing.
+func (s *Store) ShowInTaskbar() bool {
+	v, ok := s.Load()
+	if !ok || v.ShowInTaskbar == nil {
+		return true
+	}
+	return *v.ShowInTaskbar
+}
+
+// SetShowInTaskbar updates only the taskbar-button preference.
+func (s *Store) SetShowInTaskbar(value bool) error {
+	return s.update(func(v *Settings) { v.ShowInTaskbar = &value })
 }

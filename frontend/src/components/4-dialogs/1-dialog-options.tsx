@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } 
 import { Label } from "@renderer/components/ui/shadcn/label";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
 
+import { WindowLifecycleOptions } from "@renderer/components/window-lifecycle";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
@@ -27,6 +28,9 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                 </DialogHeader>
 
                 <div className="pb-4 grid gap-1">
+
+                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Window</div>
+                    <WindowLifecycleOptions />
 
                     <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
 
