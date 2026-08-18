@@ -9,6 +9,7 @@ import (
 	"github.com/maxzz/win-watch-26/backend/appstate"
 	"github.com/maxzz/win-watch-26/backend/hostlife"
 	"github.com/maxzz/win-watch-26/backend/platform"
+	"github.com/maxzz/win-watch-26/backend/winapp"
 	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
@@ -39,7 +40,10 @@ func (a *App) Startup(ctx context.Context) {
 
 	if s, ok := a.store.Load(); ok && s.BoundsValid() {
 		wruntime.WindowSetSize(ctx, s.Width, s.Height)
-		wruntime.WindowSetPosition(ctx, s.X, s.Y)
+		// WindowGetPosition saves absolute virtual-screen coords; Wails
+		// WindowSetPosition is monitor-relative. Use the traytools probe so
+		// restore does not jump to whichever display Windows initially chose.
+		winapp.SetWindowPositionAbsolute(ctx, s.X, s.Y)
 	}
 
 	a.host.Start()
