@@ -7,6 +7,7 @@ import (
 	wruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/maxzz/win-watch-26/backend/appstate"
+	"github.com/maxzz/win-watch-26/backend/hostlife"
 	"github.com/maxzz/win-watch-26/backend/platform"
 	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
@@ -18,11 +19,12 @@ type App struct {
 	ctx     context.Context
 	service *winwatch.Service
 	store   *appstate.Store
+	host    *hostlife.Controller
 }
 
 // NewApp constructs the application controller.
 func NewApp(service *winwatch.Service, store *appstate.Store) *App {
-	return &App{service: service, store: store}
+	return &App{service: service, store: store, host: hostlife.New(store)}
 }
 
 // Context returns the current Wails runtime context (nil before startup).
@@ -33,25 +35,21 @@ func (a *App) Context() context.Context {
 // Startup is invoked by Wails once the runtime context is available.
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
+	a.host.SetContext(ctx)
 
 	if s, ok := a.store.Load(); ok && s.BoundsValid() {
 		wruntime.WindowSetSize(ctx, s.Width, s.Height)
 		wruntime.WindowSetPosition(ctx, s.X, s.Y)
 	}
+
+	a.host.Start()
 }
 
-// BeforeClose persists window bounds and the actual DevTools visibility.
-// Querying the OS here is the source of truth: it captures the real state no
-// matter how DevTools were closed (the DevTools window's own close button, F12
-// inside it, the native Wails hotkey, etc.), which the frontend toggle cannot
-// observe. Returning false allows the window to close.
-// (Same approach as traytools-26 / to-diag-trace-go.)
+// BeforeClose persists window bounds when the process is actually quitting.
+// When quit-on-close is off, the close button hides the window to the tray
+// (returning true prevents shutdown). Explicit Exit sets quitRequested first.
 func (a *App) BeforeClose(ctx context.Context) bool {
-	w, h := wruntime.WindowGetSize(ctx)
-	x, y := wruntime.WindowGetPosition(ctx)
-	a.store.SaveBounds(x, y, w, h)
-	a.store.SetDevTools(platform.IsDevToolsOpen())
-	return false
+	return a.host.BeforeClose()
 }
 
 // ToggleDevTools lets the Ctrl+Shift+F12 / Ctrl+Shift+I shortcuts also *close*
@@ -81,5 +79,6 @@ func (a *App) GetZoomLevel() float64 {
 
 // Shutdown stops native monitoring on exit.
 func (a *App) Shutdown(ctx context.Context) {
+	a.host.Shutdown()
 	a.service.Shutdown()
 }

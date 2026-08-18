@@ -3,6 +3,7 @@ module github.com/maxzz/win-watch-26
 go 1.26.3
 
 require (
+	github.com/energye/systray v1.0.3
 	github.com/wailsapp/go-webview2 v1.0.22
 	github.com/wailsapp/wails/v2 v2.12.0
 	golang.org/x/sys v0.46.0

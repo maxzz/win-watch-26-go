@@ -24,12 +24,14 @@ const EventActiveWindowChanged = "active-window-changed"
 type Api struct {
 	ctxFn   func() context.Context
 	service *winwatch.Service
+	quitFn  func()
 }
 
 // NewApi creates the bound API around a winwatch service. ctxFn must return the
-// current Wails runtime context (available after startup) or nil.
-func NewApi(service *winwatch.Service, ctxFn func() context.Context) *Api {
-	return &Api{service: service, ctxFn: ctxFn}
+// current Wails runtime context (available after startup) or nil. quitFn is the
+// explicit-exit path (RequestExit) so menu Exit does not hide-to-tray.
+func NewApi(service *winwatch.Service, ctxFn func() context.Context, quitFn func()) *Api {
+	return &Api{service: service, ctxFn: ctxFn, quitFn: quitFn}
 }
 
 func (a *Api) ctx() context.Context {
@@ -121,8 +123,12 @@ func (a *Api) GetFileIcons(pathsJSON string) string {
 	return fileicon.ExtractManyJSON(pathsJSON)
 }
 
-// QuitApp quits the application.
+// QuitApp quits the application via RequestExit so close-to-tray is not used.
 func (a *Api) QuitApp() {
+	if a.quitFn != nil {
+		a.quitFn()
+		return
+	}
 	if ctx := a.ctx(); ctx != nil {
 		wruntime.Quit(ctx)
 	}

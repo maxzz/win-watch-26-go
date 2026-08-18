@@ -26,6 +26,7 @@ export interface AppSettings {
     ui_showReportPanel: boolean;                // Whether to show the report / action log panel
     ui_reportPanelHeight: number;               // Report panel height in pixels
     ui_stayOnTop: boolean;                      // Keep main window above other windows
+    ui_showThemeToggle: boolean;                // Show the theme toggle button in the header
     ui_theme: ThemeMode;                        // The theme: 'light' or 'dark'
     ui_panels_Layout: PanelLayout;              // Panel sizes (percentages) 
     ui_panels_PropPos: PropertiesPanelPosition; // The position of the properties panel: 'bottom' or 'right'
@@ -48,6 +49,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     ui_showReportPanel: false,
     ui_reportPanelHeight: 220,
     ui_stayOnTop: false,
+    ui_showThemeToggle: true,
     ui_theme: "light",
     ui_panels_Layout: {
         "left-panel": 25,

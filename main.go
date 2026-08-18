@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"math"
+	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -12,15 +13,32 @@ import (
 	"github.com/maxzz/win-watch-26/backend"
 	"github.com/maxzz/win-watch-26/backend/appstate"
 	"github.com/maxzz/win-watch-26/backend/bindings"
+	"github.com/maxzz/win-watch-26/backend/hostlife"
 	"github.com/maxzz/win-watch-26/backend/winwatch"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed build/appicon.png
+var icon []byte
+
+//go:embed build/windows/icon.ico
+var iconWindows []byte
+
+func trayIcon() []byte {
+	if runtime.GOOS == "windows" && len(iconWindows) > 0 {
+		return iconWindows
+	}
+	return icon
+}
+
 func main() {
 	service := winwatch.New()
 	store := appstate.NewStore("WinWatch")
+	hostlife.Init(store)
+	hostlife.EnsureSingleInstanceOrExit()
+	hostlife.EnsureElevatedIfRequested()
 
 	width, height := appstate.DefaultWidth, appstate.DefaultHeight
 
@@ -39,7 +57,8 @@ func main() {
 	}
 
 	app := backend.NewApp(service, store)
-	api := bindings.NewApi(service, app.Context)
+	backend.ApplyTrayIcon(app, trayIcon())
+	api := bindings.NewApi(service, app.Context, app.RequestExit)
 
 	winOpts := &windows.Options{
 		WebviewIsTransparent: false,
