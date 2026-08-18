@@ -1,72 +1,57 @@
-"use client"; // 01.27.26
-import * as React from "react";
-import { cn } from "@renderer/utils";
-import { GripVerticalIcon } from "lucide-react";
-import { Group, Panel, Separator } from "react-resizable-panels";
+"use client";
+import { cn } from "@renderer/utils/classnames"; // 05.09.26, 04.06.26
+import * as ResizablePrimitive from "react-resizable-panels";
 
-export function ResizablePanelGroup({ className, ...props }: React.ComponentProps<typeof Group>) {
+export function ResizablePanelGroup({ className, ...rest }: ResizablePrimitive.GroupProps) {
     return (
-        <Group
-            data-slot="resizable-panel-group"
-            className={cn("w-full h-full flex data-[panel-group-direction=vertical]:flex-col group/panel-group", className)}
-            data-panel-group-direction={props.orientation}
-            {...props}
-        />
+        <ResizablePrimitive.Group data-slot="resizable-panel-group" className={cn("size-full aria-[orientation=vertical]:flex-col flex", className)} {...rest} />
     );
 }
 
-export function ResizablePanel({ ...props }: React.ComponentProps<typeof Panel>) {
-    return <Panel data-slot="resizable-panel" {...props} />;
+export function ResizablePanel({ ...rest }: ResizablePrimitive.PanelProps) {
+    return <ResizablePrimitive.Panel data-slot="resizable-panel" {...rest} />;
 }
 
-export function ResizableHandle({ withHandle, className, ...props }: React.ComponentProps<typeof Separator> & { withHandle?: boolean; }) {
+export function ResizableHandle({ withHandle, className, ...rest }: ResizablePrimitive.SeparatorProps & { withHandle?: boolean; }) {
     return (
-        <Separator data-slot="resizable-handle" className={cn(resizableLineClasses, className)} {...props}>
+        <ResizablePrimitive.Separator data-slot="resizable-handle" className={cn(separatorClasses, className)} {...rest}>
+
             {withHandle && (
-                <div className={resizableHandleClasses}>
-                    <GripVerticalIcon className="size-2.5" />
-                </div>
+                <div className="shrink-0 w-1 h-6 bg-border hover:bg-sky-500 group-hover/separator:bg-sky-500 group-hover/separator:transition-all group-hover/separator:duration-700 rounded-lg flex z-10" />
             )}
-        </Separator>
+            
+        </ResizablePrimitive.Separator>
     );
 }
 
-const resizableHandleClasses = "w-3 h-4 bg-border border rounded-xs opacity-0 transition-opacity delay-200 duration-300 group-hover:opacity-100 flex items-center justify-center z-50";
-
-const resizableLineClasses = "\
-group \
+const separatorClasses = "\
+group/separator \
 relative \
-w-0.5 \
-bg-foreground/20 dark:bg-foreground/20 \
-focus-visible:ring-ring \
-outline-none \
-\
-hover:bg-sky-500 \
-transition-all \
+w-px \
+bg-border \
+ring-offset-background \
 \
 after:absolute \
 after:inset-y-0 \
-after:w-1 \
 after:left-1/2 \
+after:w-1 \
 after:-translate-x-1/2 \
 \
-group-data-[panel-group-direction=vertical]/panel-group:pb-0 \
-group-data-[panel-group-direction=vertical]/panel-group:w-full \
-group-data-[panel-group-direction=vertical]/panel-group:h-0.5 \
-group-data-[panel-group-direction=vertical]/panel-group:items-center \
+focus-visible:ring-1 \
+focus-visible:ring-ring \
+focus-visible:outline-hidden \
 \
-group-data-[panel-group-direction=vertical]/panel-group:after:left-0 \
-group-data-[panel-group-direction=vertical]/panel-group:after:w-full \
-group-data-[panel-group-direction=vertical]/panel-group:after:h-1 \
-group-data-[panel-group-direction=vertical]/panel-group:after:translate-x-0 \
-group-data-[panel-group-direction=vertical]/panel-group:after:-translate-y-1/2 \
+hover:bg-sky-500 \
+hover:transition-all \
+hover:duration-700 \
 \
-group-data-[panel-group-direction=vertical]/panel-group:[&>div]:rotate-90 \
+aria-[orientation=horizontal]:h-px \
+aria-[orientation=horizontal]:w-full \
+aria-[orientation=horizontal]:after:left-0 \
+aria-[orientation=horizontal]:after:h-1 \
+aria-[orientation=horizontal]:after:w-full \
+aria-[orientation=horizontal]:after:translate-x-0 \
+aria-[orientation=horizontal]:after:-translate-y-1/2 \
+[&[aria-orientation=horizontal]>div]:rotate-90 \
 \
-flex items-end justify-center";
-
-// \
-// 1focus-visible:ring-1 \
-// 1focus-visible:ring-offset-1 \
-// 1focus-visible:ring-offset-blue-500 \
-// 1focus-visible:outline-hidden \
+flex items-center justify-center";

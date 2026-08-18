@@ -1,51 +1,55 @@
-import * as React from "react"; // 01.04.26
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+"use client";
+import { type ComponentProps } from "react"; // 05.09.26
+import { cn } from "@renderer/utils/classnames";
 import { CheckIcon } from "lucide-react";
+import { Checkbox as CheckboxPrimitive } from "radix-ui";
 
-import { cn } from "@renderer/utils";
-
-export function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+export function Checkbox({ className, ...rest }: ComponentProps<typeof CheckboxPrimitive.Root>) {
     return (
-        <CheckboxPrimitive.Root
-            data-slot="checkbox"
-            className={cn(checkboxClasses, className)}
-            {...props}
-        >
-            <CheckboxPrimitive.Indicator
-                data-slot="checkbox-indicator"
-                className="text-current transition-none grid place-content-center"
-            >
-                <CheckIcon className="size-3" />
+        <CheckboxPrimitive.Root data-slot="checkbox" className={cn(checkboxClasses, className)} {...rest}>
+
+            <CheckboxPrimitive.Indicator data-slot="checkbox-indicator" className="[&>svg]:size-3.5 text-current transition-none grid place-content-center">
+                <CheckIcon />
             </CheckboxPrimitive.Indicator>
+
         </CheckboxPrimitive.Root>
     );
 }
 
 const checkboxClasses = "\
-peer \
-shrink-0 \
-size-4 \
-border-input \
+peer relative shrink-0 size-4 \
+\
+group-has-disabled/field:opacity-50 \
+\
+transition-colors \
+\
 dark:bg-input/30 \
+dark:aria-invalid:border-destructive/50 \
+dark:aria-invalid:ring-destructive/40 \
 \
-data-[state=checked]:bg-primary \
-data-[state=checked]:text-primary-foreground \
-dark:data-[state=checked]:bg-primary \
-data-[state=checked]:border-primary \
+data-checked:border-primary \
+data-checked:bg-primary \
+data-checked:text-primary-foreground \
+dark:data-checked:bg-primary \
 \
-focus-visible:ring-[1px] \
-focus-visible:ring-ring \
 focus-visible:border-ring \
+focus-visible:ring-1 \
+focus-visible:ring-ring/50 \
+\
 disabled:cursor-not-allowed \
 disabled:opacity-50 \
 \
-aria-invalid:ring-destructive/20 \
-dark:aria-invalid:ring-destructive/40 \
 aria-invalid:border-destructive \
+aria-invalid:ring-1 \
+aria-invalid:ring-destructive/20 \
+aria-invalid:aria-checked:border-primary \
 \
-outline-none \
-rounded-sm \
+after:absolute \
+after:-inset-x-3 \
+after:-inset-y-2 \
+\
+rounded \
 border \
-shadow-xs \
-transition-shadow \
-";
+border-input \
+outline-none \
+flex items-center justify-center";

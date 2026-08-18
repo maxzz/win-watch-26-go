@@ -1,6 +1,6 @@
-import { type ComponentProps, type ComponentPropsWithoutRef } from "react"; //01.17.26
-import * as Prim from "@radix-ui/react-scroll-area";
-import { cn } from "@renderer/utils";
+import { forwardRef, type ElementRef, type ComponentPropsWithoutRef, type ComponentProps } from "react"; //01.17.26
+import { ScrollArea as Prim } from "radix-ui"
+import { cn } from "@renderer/utils/classnames";
 
 export type ScrollAreaProps = ComponentProps<typeof Prim.Root> & {
     horizontal?: boolean;           // adds horizontal scrollbar
@@ -12,9 +12,9 @@ export type ScrollAreaProps = ComponentProps<typeof Prim.Root> & {
 };
 
 /**
- * Additional attribute ``data-fixed-width`` is used to prevent ScrollArea width from growing.
+ * Additinal attribute ``data-fixed-width`` is used to prevent ScrollArea width from growing.
  * This is done by removing ``display: table`` from Prim.Viewport first utility div.
- *
+ * 
  * ``[&[data-fixed-width]>div>div]:block!``
  * https://github.com/radix-ui/primitives/blob/main/packages/react/scroll-area/src/ScrollArea.tsx#L177
  * `display: table` ensures our content div will match the size of its children in both
@@ -22,7 +22,7 @@ export type ScrollAreaProps = ComponentProps<typeof Prim.Root> & {
  * recalculate thumb sizes. This doesn't account for children with *percentage*
  * widths that change. We'll wait to see what use-cases consumers come up with there
  * before trying to resolve it.
- *
+ * 
  * const fixedWidthClasses = "[&[data-fixed-width]_[data-radix-scroll-area-content]]:block!";
  */
 const fullHeightClasses = "[&_[data-radix-scroll-area-viewport]>div]:h-full";
@@ -93,6 +93,7 @@ export function ScrollBar({ className, orientation = "vertical", ...rest }: Comp
             {...rest}
         >
             <Prim.ScrollAreaThumb className={cn("relative bg-border rounded-full", orientation === "vertical" && "flex-1")} />
+            
         </Prim.ScrollAreaScrollbar>
     );
 }

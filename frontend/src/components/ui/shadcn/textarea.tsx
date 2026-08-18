@@ -1,41 +1,36 @@
-import * as React from "react"; // 01.03.26
-import { cn } from "@renderer/utils";
+import { type ComponentProps } from "react"; // 07.25.2026
+import { cn } from "@renderer/utils/classnames";
 
-export function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
-    return (
-        <textarea
-            data-slot="textarea"
-            className={cn(textareaClasses, className)}
-            {...props}
-        />
-    );
+export function Textarea({ className, ...rest }: ComponentProps<"textarea">) {
+    return <textarea data-slot="textarea" className={cn(textareaClasses, className)} {...rest} />;
 }
 
 const textareaClasses = "\
-px-3 \
-py-2 \
-w-full \
-min-h-16 \
-text-xs \
-md:text-xs \
-field-sizing-content \
-bg-transparent \
-dark:bg-input/30 \
-placeholder:text-muted-foreground \
-border-input \
-rounded \
-border \
-shadow-xs \
-outline-none \
-transition-[color,box-shadow] \
+px-2.5 py-1.25 w-full min-h-7 field-sizing-content text-xs \
 \
-focus-visible:ring-[1px] \
-focus-visible:ring-ring \
+bg-transparent \
+transition-colors \
+\
+placeholder:text-muted-foreground \
+\
 focus-visible:border-ring \
-disabled:cursor-not-allowed \
-disabled:opacity-50 \
-aria-invalid:ring-destructive/20 \
+focus-visible:ring-1 \
+focus-visible:ring-ring/50 \
+\
+dark:bg-input/30 \
+dark:disabled:bg-input/80 \
+dark:aria-invalid:border-destructive/50 \
 dark:aria-invalid:ring-destructive/40 \
+\
+disabled:cursor-not-allowed \
+disabled:bg-input/50 \
+disabled:opacity-50 \
+\
 aria-invalid:border-destructive \
-flex \
-";
+aria-invalid:ring-1 \
+aria-invalid:ring-destructive/20 \
+\
+rounded \
+border border-input outline-none \
+flex";
+//text-base md:text-sm \

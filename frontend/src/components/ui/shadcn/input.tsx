@@ -1,50 +1,46 @@
-import * as React from "react"; // 01.03.26
-import { cn } from "@renderer/utils";
+import { type ComponentProps } from "react"; // 05.09.26
+import { cn } from "@renderer/utils/classnames";
 
-export function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+export function Input({ className, type, ...props }: ComponentProps<"input">) {
     return (
-        <input
-            type={type}
-            data-slot="input"
-            className={cn(inputClasses, className)}
-            {...props}
-        />
+        <input data-slot="input" className={cn(inputClasses, className)} type={type} {...props} />
     );
 }
 
 const inputClasses = "\
-px-3 py-1 w-full min-w-0 h-8 \
-text-xs \
-md:text-xs \
-placeholder:text-muted-foreground \
-selection:bg-primary \
-selection:text-primary-foreground \
-dark:bg-input/30 \
-bg-transparent \
-border-input \
-border \
-outline-none \
-rounded \
-shadow-xs \
-transition-[color,box-shadow] \
+px-2.5 py-1 w-full min-w-0 h-7 text-xs \
 \
-file:inline-flex \
-file:h-7 \
-file:text-foreground \
-file:bg-transparent \
-file:text-xs \
-file:border-0 \
-file:font-medium \
+bg-transparent \
+transition-colors \
+\
+placeholder:text-muted-foreground \
+\
+focus-visible:border-ring \
+focus-visible:ring-1 \
+focus-visible:ring-ring/50 \
+\
+dark:bg-input/30 \
+dark:disabled:bg-input/80 \
+dark:aria-invalid:border-destructive/50 \
+dark:aria-invalid:ring-destructive/40 \
 \
 disabled:pointer-events-none \
 disabled:cursor-not-allowed \
+disabled:bg-input/50 \
 disabled:opacity-50 \
 \
-focus-visible:ring-[1px] \
-focus-visible:ring-ring \
-focus-visible:border-transparent \
-\
-aria-invalid:ring-destructive/20 \
-dark:aria-invalid:ring-destructive/40 \
 aria-invalid:border-destructive \
-";
+aria-invalid:ring-1 \
+aria-invalid:ring-destructive/20 \
+\
+file:inline-flex \
+file:h-6 \
+file:border-0 \
+file:bg-transparent \
+file:text-xs \
+file:font-medium \
+file:text-foreground \
+\
+rounded \
+outline-none border border-input";
+//md:text-sm \

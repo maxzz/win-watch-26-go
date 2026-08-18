@@ -1,5 +1,5 @@
 import * as React from "react"; // 01.19.26
-import * as TogglePrimitive from "@radix-ui/react-toggle";
+import { Toggle as TogglePrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@renderer/utils";
 
@@ -63,4 +63,3 @@ export function Toggle({ className, variant, size, ...props }: React.ComponentPr
         />
     );
 }
-
