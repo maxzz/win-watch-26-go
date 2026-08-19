@@ -12,8 +12,8 @@ import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@r
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
-    const setExcludeOwnAppWindows = useSetAtom(setExcludeOwnAppWindowsAtom);
-    const setSortWindowsByProcessName = useSetAtom(setSortWindowsByProcessNameAtom);
+    // const setExcludeOwnAppWindows = useSetAtom(setExcludeOwnAppWindowsAtom);
+    // const setSortWindowsByProcessName = useSetAtom(setSortWindowsByProcessNameAtom);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

@@ -17,7 +17,7 @@ export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChang
                 </DialogHeader>
 
 
-                <div className="text-xs grid grid-cols-[auto_1fr] gap-3 1items-center">
+                <div className="text-xs grid grid-cols-[auto_1fr] gap-3">
                     <a
                         className="p-1 bg-sky-50 dark:bg-sky-950 border-sky-500 border rounded shadow shadow-foreground/20 dark:shadow-foreground/30 active:scale-50 transition-all flex items-center justify-center"
                         href="https://github.com/maxzz/win-watch-25"
@@ -25,14 +25,25 @@ export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChang
                         rel="noreferrer"
                         title="Open GitHub Repository"
                     >
-                        <img src={gadgetUrl} alt="logo" className="size-12 object-contain" />
+                        <img className="h-full object-contain" src={gadgetUrl} alt="logo" />
                     </a>
 
-                    <div className="grid gap-1">
-                        <p className="pb-2 font-semibold">UI Automation Monitor</p>
+                    <div className="grid gap-1 grid-rows-[auto_1fr_auto]">
+                        <p className="pb-2 font-semibold">
+                            UI Automation Monitor
+                        </p>
 
-                        <p>Build Date: {envModifiedDate()}</p>
-                        <p>Version: {envBuildVersion()}</p>
+                        <p>
+                            Windows apps do not expose a DOM. Buttons, tabs, and trees live behind
+                            <a className="text-primary underline" href="https://learn.microsoft.com/en-us/windows/win32/winauto/entry-uiauto-win32" target="_blank" rel="noreferrer"> UI Automation </a>
+                            and Win32 — useful for accessibility, test automation, and debugging, and
+                            almost invisible without a dedicated inspector.
+                        </p>
+
+                        <div className="self-center">
+                            <p>Build Date: {envModifiedDate()}</p>
+                            <p>Version: {envBuildVersion()}</p>
+                        </div>
 
                         <p className="text-[.5rem] text-muted-foreground">No Rights Reserved. No Copyright (c) 1986-2026</p>
                     </div>
