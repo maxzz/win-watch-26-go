@@ -18,13 +18,13 @@ export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChang
 
                 <div className="grid grid-cols-[auto_minmax(0,1fr)] grid-rows-[1fr_auto_auto] gap-x-3 gap-y-2 text-xs">
                     <a
-                        className="row-span-3 min-h-0 overflow-hidden p-1 bg-sky-50 dark:bg-sky-950 border-sky-500 border rounded shadow shadow-foreground/20 dark:shadow-foreground/30 active:scale-50 transition-all flex items-center justify-center"
+                        className="row-span-3 relative h-0 min-h-full w-24 overflow-hidden p-1 bg-sky-50 dark:bg-sky-950 border-sky-500 border rounded shadow shadow-foreground/20 dark:shadow-foreground/30 active:scale-50 transition-all"
                         href="https://github.com/maxzz/win-watch-25"
                         target="_blank"
                         rel="noreferrer"
                         title="Open GitHub Repository"
                     >
-                        <img className="h-full w-auto max-w-24 object-contain" src={gadgetUrl} alt="logo" />
+                        <img className="size-full object-contain" src={gadgetUrl} alt="logo" />
                     </a>
 
                     <div>
