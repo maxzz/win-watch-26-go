@@ -1,5 +1,6 @@
 import { envBuildVersion, envModifiedDate } from "@renderer/utils/env-date-formatter";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
+import { Button } from "../ui/shadcn/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
 import gadgetUrl from "@renderer/assets/icons/gadget.svg";
 
 export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
@@ -46,6 +47,13 @@ export function DialogAbout({ open, onOpenChange }: { open: boolean; onOpenChang
 
                     <p className="text-[.5rem] text-muted-foreground">No Rights Reserved. No Copyright (c) 1986-2026</p>
                 </div>
+
+                <DialogFooter className="m-0 -mx-4 -mb-4 px-4 pb-3 pt-2 flex justify-center!">
+                    <Button type="button" variant="outline" className="min-w-16 font-condensed font-normal" onClick={() => onOpenChange(false)}>
+                        Close
+                    </Button>
+                </DialogFooter>
+
             </DialogContent>
         </Dialog>
     );

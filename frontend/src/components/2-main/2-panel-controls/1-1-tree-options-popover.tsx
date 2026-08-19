@@ -20,7 +20,11 @@ export function TreeOptionsPopover() {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent align="end" className="w-auto min-w-56">
+            <PopoverContent
+                align="end"
+                className="w-auto min-w-56"
+                onOpenAutoFocus={(event) => event.preventDefault()}
+            >
                 <div className="mx-auto text-xs font-semibold select-none">
                     Tree options
                 </div>
