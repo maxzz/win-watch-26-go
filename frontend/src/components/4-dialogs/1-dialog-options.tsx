@@ -18,7 +18,7 @@ import {
     settingsStayOnTopAtom,
 } from "@renderer/components/window-lifecycle";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
-import { normalizeDragIcon, type WindowPickerDragIcon } from "@renderer/components/window-picker";
+import { normalizeDragIcon, normalizeOverlayCursor, type WindowPickerDragIcon, type WindowPickerOverlayCursor } from "@renderer/components/window-picker";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
@@ -124,30 +124,61 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
 }
 
 function ControlPickerDragIcon() {
-    const { winpicker_DragIcon: dragIcon } = useSnapshot(appSettings);
+    const { winpicker_DragIcon: dragIcon, winpicker_OverlayCursor: overlayCursor } = useSnapshot(appSettings);
     const value = normalizeDragIcon(dragIcon);
+    const pointer = normalizeOverlayCursor(overlayCursor);
+    const overlay = value === "overlay";
 
     return (
-        <div className="flex items-center gap-2" title="How the target icon is drawn while dragging over other windows">
-            <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
-                Drag icon
-            </Label>
-            <Select
-                value={value}
-                onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}
-            >
-                <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
-                        Transparent window
-                    </SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="cursor" title="Replace the system cursor (HCURSOR); edges may look jagged">
-                        System cursor
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+        <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2" title="How the target icon is drawn while dragging over other windows">
+                <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
+                    Drag icon
+                </Label>
+                <Select
+                    value={value}
+                    onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}
+                >
+                    <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
+                            Transparent window
+                        </SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="cursor" title="Replace the system cursor (HCURSOR); edges may look jagged">
+                            System cursor
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {overlay && (
+                <div
+                    className="flex items-center gap-2"
+                    title="Hide the mouse pointer for the whole pick, or keep it visible on top of the target overlay"
+                >
+                    <Label className="font-normal shrink-0" htmlFor="settings-picker-overlay-cursor">
+                        Mouse cursor
+                    </Label>
+                    <Select
+                        value={pointer}
+                        onValueChange={(next) => { appSettings.winpicker_OverlayCursor = next as WindowPickerOverlayCursor; }}
+                    >
+                        <SelectTrigger className="h-6!" id="settings-picker-overlay-cursor">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem className="font-condensed font-normal" value="hide" title="Hide the pointer everywhere, including over this app">
+                                Hidden
+                            </SelectItem>
+                            <SelectItem className="font-condensed font-normal" value="show" title="Keep the system pointer visible over the overlay and this app">
+                                Visible
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
         </div>
     );
 }

@@ -168,3 +168,9 @@
     @apply font-sans;
     }
 }
+
+/* Window picker (overlay + hidden pointer): beat per-control cursor-pointer / grab. */
+html.winpicker-hide-cursor,
+html.winpicker-hide-cursor * {
+    cursor: none !important;
+}

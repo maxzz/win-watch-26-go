@@ -78,7 +78,16 @@ func TestParseDragIconMode(t *testing.T) {
 	if ParseDragIconMode("overlay") != DragIconLayeredWindow {
 		t.Fatal("overlay should map to layered window")
 	}
+	if ParseDragIconMode("overlay-show") != DragIconLayeredWindowShowCursor {
+		t.Fatal("overlay-show should keep the pointer visible")
+	}
 	if ParseDragIconMode("") != DragIconLayeredWindow {
 		t.Fatal("empty should default to layered window")
+	}
+	if !DragIconLayeredWindow.usesLayeredOverlay() || DragIconLayeredWindow.overlayShowsPointer() {
+		t.Fatal("overlay should hide the pointer")
+	}
+	if !DragIconLayeredWindowShowCursor.usesLayeredOverlay() || !DragIconLayeredWindowShowCursor.overlayShowsPointer() {
+		t.Fatal("overlay-show should use the overlay and show the pointer")
 	}
 }

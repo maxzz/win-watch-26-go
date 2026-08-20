@@ -28,6 +28,7 @@ const (
 	smCxCursor    = 13
 	dibRGBColors  = 0
 	spiSetCursors = 0x0057
+	idcArrow      = 32512
 	idcCross      = 32515
 	biRGB         = 0
 )
@@ -161,6 +162,11 @@ func createCursorFromPNG(pngBytes []byte) uintptr {
 	procDeleteObject.Call(hbmMask)
 	procDeleteObject.Call(hbmColor)
 	return hcursor
+}
+
+func loadArrowCursor() uintptr {
+	shared, _, _ := procLoadCursorW.Call(0, idcArrow)
+	return shared
 }
 
 func loadCrossCursor() uintptr {

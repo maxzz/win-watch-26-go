@@ -43,7 +43,8 @@ func NewSession() *Session {
 }
 
 // Start begins mouse tracking. onEvent receives JSON Event values (move, then
-// one Released=true payload). iconMode selects HCURSOR vs a layered overlay.
+// one Released=true payload). iconMode selects HCURSOR vs a layered overlay
+// (with or without a visible system pointer).
 // Returns false if the hook could not be installed.
 func (s *Session) Start(onEvent func(json string), iconMode DragIconMode) bool {
 	s.mu.Lock()

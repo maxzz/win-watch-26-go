@@ -21,6 +21,8 @@ var (
 	procSelectObject        = gdi32.NewProc("SelectObject")
 	procDeleteDC            = gdi32.NewProc("DeleteDC")
 	procShowCursor          = user32.NewProc("ShowCursor")
+	procSetCursor           = user32.NewProc("SetCursor")
+	procSetClassLongPtrW    = user32.NewProc("SetClassLongPtrW")
 )
 
 const (
@@ -41,6 +43,8 @@ const (
 	acSrcOver  = 0x00
 	acSrcAlpha = 0x01
 	ulwAlpha   = 0x00000002
+
+	wmSetCursor = 0x0020
 )
 
 type overlayPoint struct{ X, Y int32 }
@@ -75,6 +79,15 @@ var (
 )
 
 func overlayWndProc(hwnd, message, wParam, lParam uintptr) uintptr {
+	if message == wmSetCursor {
+		s := activeSession
+		if s != nil && s.iconMode.overlayShowsPointer() {
+			procSetCursor.Call(loadArrowCursor())
+		} else {
+			procSetCursor.Call(0)
+		}
+		return 1
+	}
 	ret, _, _ := procDefWindowProcW.Call(hwnd, message, wParam, lParam)
 	return ret
 }
@@ -92,11 +105,25 @@ func registerOverlayClass() {
 }
 
 func (s *Session) installDragIcon() {
-	if s.iconMode == DragIconLayeredWindow && s.createOverlay() {
-		s.hideSystemCursor()
+	if s.iconMode.usesLayeredOverlay() && s.createOverlay() {
+		s.applyOverlayClassCursor()
+		if !s.iconMode.overlayShowsPointer() {
+			s.hideSystemCursor()
+		}
 		return
 	}
 	s.installCursor()
+}
+
+func (s *Session) applyOverlayClassCursor() {
+	if s.overlayHwnd == 0 {
+		return
+	}
+	var h uintptr
+	if s.iconMode.overlayShowsPointer() {
+		h = loadArrowCursor()
+	}
+	procSetClassLongPtrW.Call(s.overlayHwnd, ^uintptr(11), h) // GCLP_HCURSOR = -12
 }
 
 func (s *Session) restoreDragIcon() {
@@ -232,6 +259,9 @@ func paintOverlayAlpha(hwnd uintptr, img *image.NRGBA, x, y int32) bool {
 func (s *Session) moveOverlay() {
 	if s.overlayHwnd == 0 {
 		return
+	}
+	if !s.iconMode.overlayShowsPointer() {
+		procSetCursor.Call(0)
 	}
 	pt, ok := win32.GetCursorPos()
 	if !ok {
