@@ -22,7 +22,7 @@
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.0",
         "jotai": "^2.20.2",
-        "jotai-effect": "^2.2.3",
+        "jotai-effect": "^2.4.1",
         "jotai-family": "^1.0.1",
         "jotai-valtio": "^0.6.0",
         "lucide-react": "^1.31.0",

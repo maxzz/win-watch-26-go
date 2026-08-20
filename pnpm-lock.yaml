@@ -32,8 +32,8 @@ importers:
         specifier: ^2.20.2
         version: 2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8)
       jotai-effect:
-        specifier: ^2.2.3
-        version: 2.3.1(jotai@2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8))
+        specifier: ^2.4.1
+        version: 2.4.1(jotai@2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8))
       jotai-family:
         specifier: ^1.0.1
         version: 1.0.2(jotai@2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8))
@@ -1489,11 +1489,11 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
-  jotai-effect@2.3.1:
-    resolution: {integrity: sha512-FBBVXDM2podbbxJsZ19+uDv45LxeXoVA5yh6CfkQ35AVCuRHj7Lanlcjiea3b67Q7+/MMGXWf8+GeB73JcbeMg==}
+  jotai-effect@2.4.1:
+    resolution: {integrity: sha512-wptUnVOEeU8SkBA+sKGzXGnR3rbSfXLXrRxcj5QF3ukxH7CUbo5hoO2iMwUzsJSYaZM804ZpPoAxUY9nmksu8w==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
-      jotai: '>=2.20.0'
+      jotai: '>=2.20.0 || >=3.0.0-alpha.0'
 
   jotai-family@1.0.2:
     resolution: {integrity: sha512-U1aTMGxmsmz2Z8gaJD1/ljmMnsmG4/dqrcsfwGbjWV7p6boB9Vy3+75YwUpwPj7GbLNJk9O8rl1VNi8d7+6Rxw==}
@@ -3218,7 +3218,7 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  jotai-effect@2.3.1(jotai@2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8)):
+  jotai-effect@2.4.1(jotai@2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8)):
     dependencies:
       jotai: 2.20.2(@babel/core@7.29.7)(@babel/template@7.29.7)(@types/react@19.2.18)(react@19.2.8)
 
