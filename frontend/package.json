@@ -25,7 +25,7 @@
         "jotai-effect": "^2.4.1",
         "jotai-family": "^1.1.0",
         "jotai-valtio": "^0.6.0",
-        "lucide-react": "^1.31.0",
+        "lucide-react": "^1.33.0",
         "motion": "^12.34.3",
         "pm-manifest-icons": "^1.0.6",
         "radix-ui": "^1.6.7",
