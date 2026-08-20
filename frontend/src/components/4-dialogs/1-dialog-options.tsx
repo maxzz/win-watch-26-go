@@ -1,29 +1,22 @@
 import { type ComponentProps } from "react";
-import { useAtom, useSetAtom, type WritableAtom } from "jotai";
+import { useAtom, type WritableAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
 import { type ThemeMode } from "@renderer/utils/theme-apply";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
+
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { Checkbox } from "@renderer/components/ui/shadcn/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
 import { Label } from "@renderer/components/ui/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@renderer/components/ui/shadcn/select";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
-import {
-    settingsQuitOnCloseAtom,
-    settingsRunElevatedAtom,
-    settingsShowInTaskbarAtom,
-    settingsShowThemeToggleAtom,
-    settingsStayOnTopAtom,
-} from "@renderer/components/window-lifecycle";
-import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
+
+import { settingsQuitOnCloseAtom, settingsRunElevatedAtom, settingsShowInTaskbarAtom, settingsShowThemeToggleAtom, settingsStayOnTopAtom } from "@renderer/components/window-lifecycle";
 import { normalizeDragIcon, normalizeOverlayCursor, type WindowPickerDragIcon } from "@renderer/components/window-picker";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
-    // const setExcludeOwnAppWindows = useSetAtom(setExcludeOwnAppWindowsAtom);
-    // const setSortWindowsByProcessName = useSetAtom(setSortWindowsByProcessNameAtom);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -57,22 +50,7 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">
                         Window picker
                     </div>
-                    <ControlPickerDragIcon />
-
-                    {/* <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
-                    <OptionCheckbox
-                        checked={settings.winlist_ExcludeUs}
-                        onCheckedChange={(checked) => void setExcludeOwnAppWindows(checked)}
-                        label="Exclude windows of our application"
-                        title="Hide this app's top-level windows from the list and prefer the next window in z-order"
-                    />
-                    <OptionCheckbox
-                        checked={settings.winlist_SortWindows}
-                        onCheckedChange={(checked) => void setSortWindowsByProcessName(checked)}
-                        label="Sort windows list by process name"
-                        title="Sort acquired windows alphabetically by process name"
-                    /> */}
-
+                    <ControlWindowPicker />
                 </div>
 
                 <DialogFooter className="m-0 px-4 pb-3 pt-2 flex justify-center!">
@@ -115,7 +93,7 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
     );
 }
 
-function ControlPickerDragIcon() {
+function ControlWindowPicker() {
     const { winpicker_DragIcon, winpicker_OverlayCursor } = useSnapshot(appSettings);
     const value = normalizeDragIcon(winpicker_DragIcon);
     const pointer = normalizeOverlayCursor(winpicker_OverlayCursor);
