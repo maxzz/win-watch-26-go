@@ -50,7 +50,7 @@ interface WinWatchApi {
     revealInExplorer: (path: string) => Promise<void>;
     /** pathsJSON: JSON string array of file paths; returns JSON array of {path, dataUrl, error?}. */
     getFileIcons: (pathsJSON: string) => Promise<string>;
-    startWindowPicker: () => Promise<boolean>;
+    startWindowPicker: (iconMode?: string) => Promise<boolean>;
     stopWindowPicker: () => Promise<boolean>;
     onWindowPickerEvent: (callback: (data: string) => void) => () => void;
     zoomAction: (action: "in" | "out" | "reset") => Promise<number>;

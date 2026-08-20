@@ -123,7 +123,7 @@ export function createWailsTmApi(): WinWatchApi {
         revealInExplorer: (path) => RevealInExplorer(path),
         getFileIcons: (pathsJSON) => GetFileIcons(pathsJSON),
 
-        startWindowPicker: () => StartWindowPicker(),
+        startWindowPicker: (iconMode) => StartWindowPicker(iconMode ?? "overlay"),
         stopWindowPicker: () => StopWindowPicker(),
         onWindowPickerEvent: (callback) => EventsOn("window-picker", (data: string) => callback(data)),
 

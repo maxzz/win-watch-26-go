@@ -4,4 +4,5 @@ export { WindowPickerStatusReadout } from "./2-status-readout";
 export { WindowPickerSync } from "./a-sync";
 export { windowPickerStore, startWindowPicker, stopWindowPicker, subscribeWindowPickerReleased } from "./a-store";
 export { windowPickerBus } from "./a-bridge";
-export type { WindowPickerEvent, WindowPickerPoint, WindowPickerReleasedHandler, WindowPickerState } from "./9-types";
+export type { WindowPickerDragIcon, WindowPickerEvent, WindowPickerPoint, WindowPickerReleasedHandler, WindowPickerState } from "./9-types";
+export { normalizeDragIcon } from "./9-types";

@@ -1,12 +1,12 @@
 import { isBackgroundAvailable } from "@renderer/api/isBackgroundAvailable";
 
 export const windowPickerBus = {
-    start: async (): Promise<boolean> => {
+    start: async (iconMode?: string): Promise<boolean> => {
         if (!isBackgroundAvailable && typeof tmApi.startWindowPicker !== "function") {
             return false;
         }
         try {
-            return await tmApi.startWindowPicker();
+            return await tmApi.startWindowPicker(iconMode);
         } catch (e) {
             console.error("startWindowPicker failed", e);
             return false;

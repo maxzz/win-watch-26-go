@@ -14,11 +14,18 @@ export type WindowPickerEvent = {
     title?: string;
 };
 
+export type WindowPickerDragIcon = "cursor" | "overlay";
+
+export function normalizeDragIcon(value: string | undefined): WindowPickerDragIcon {
+    return value === "cursor" ? "cursor" : "overlay";
+}
+
 export type WindowPickerReleasedHandler = (result: WindowPickerEvent) => void;
 
 export type WindowPickerState = {
     active: boolean;
     released: boolean;
+    iconMode: WindowPickerDragIcon;
     processName: string;
     screen: WindowPickerPoint;
     client: WindowPickerPoint;
@@ -30,6 +37,7 @@ export type WindowPickerState = {
 export const emptyWindowPickerState: WindowPickerState = {
     active: false,
     released: false,
+    iconMode: "overlay",
     processName: "",
     screen: { x: 0, y: 0 },
     client: { x: 0, y: 0 },

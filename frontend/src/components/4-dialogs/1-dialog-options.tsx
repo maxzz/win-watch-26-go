@@ -18,6 +18,7 @@ import {
     settingsStayOnTopAtom,
 } from "@renderer/components/window-lifecycle";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
+import { normalizeDragIcon, type WindowPickerDragIcon } from "@renderer/components/window-picker";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
@@ -52,6 +53,11 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     <ControlCheckbox label="Run this application elevated" valueAtom={settingsRunElevatedAtom} />
                     <ControlCheckbox label="Make the window stay on top of all others" valueAtom={settingsStayOnTopAtom} />
                     <ControlTheme className="mt-1.5" />
+
+                    <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">
+                        Window picker
+                    </div>
+                    <ControlPickerDragIcon />
 
                     {/* <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
                     <OptionCheckbox
@@ -113,6 +119,35 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
                 />
                 Show theme toggle button in header
             </Label>
+        </div>
+    );
+}
+
+function ControlPickerDragIcon() {
+    const { winpicker_DragIcon: dragIcon } = useSnapshot(appSettings);
+    const value = normalizeDragIcon(dragIcon);
+
+    return (
+        <div className="flex items-center gap-2" title="How the target icon is drawn while dragging over other windows">
+            <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
+                Drag icon
+            </Label>
+            <Select
+                value={value}
+                onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}
+            >
+                <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
+                        Transparent window
+                    </SelectItem>
+                    <SelectItem className="font-condensed font-normal" value="cursor" title="Replace the system cursor (HCURSOR); edges may look jagged">
+                        System cursor
+                    </SelectItem>
+                </SelectContent>
+            </Select>
         </div>
     );
 }

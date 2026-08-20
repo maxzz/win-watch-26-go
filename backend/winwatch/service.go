@@ -205,11 +205,11 @@ func (s *Service) ExecuteAccAction(handle, runtimeID, kind, actionID, value stri
 
 // StartWindowPicker begins global mouse tracking for the window finder.
 // onEvent receives JSON winpicker.Event values until the mouse button is released.
-func (s *Service) StartWindowPicker(onEvent func(json string)) bool {
+func (s *Service) StartWindowPicker(iconMode string, onEvent func(json string)) bool {
 	if s.picker == nil {
 		s.picker = winpicker.NewSession()
 	}
-	return s.picker.Start(onEvent)
+	return s.picker.Start(onEvent, winpicker.ParseDragIconMode(iconMode))
 }
 
 // StopWindowPicker cancels an in-progress window-finder drag.
