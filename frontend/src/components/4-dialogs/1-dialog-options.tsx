@@ -107,16 +107,8 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
                 </SelectContent>
             </Select>
 
-            <Label
-                className="font-normal flex items-center gap-1.5 cursor-pointer"
-                htmlFor="settings-show-theme-toggle"
-                title="Show the theme toggle button in the application header"
-            >
-                <Checkbox
-                    id="settings-show-theme-toggle"
-                    checked={showThemeToggle}
-                    onCheckedChange={(v) => setShowThemeToggle(v === true)}
-                />
+            <Label className="font-normal flex items-center gap-1.5 cursor-pointer" title="Show the theme toggle button in the application header">
+                <Checkbox checked={showThemeToggle} onCheckedChange={(v) => setShowThemeToggle(v === true)} />
                 Show theme toggle button in header
             </Label>
         </div>
@@ -135,13 +127,12 @@ function ControlPickerDragIcon() {
                 <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
                     Drag icon
                 </Label>
-                <Select
-                    value={value}
-                    onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}
-                >
+
+                <Select value={value} onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}>
                     <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
                         <SelectValue />
                     </SelectTrigger>
+
                     <SelectContent>
                         <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
                             Transparent window
@@ -154,20 +145,16 @@ function ControlPickerDragIcon() {
             </div>
 
             {overlay && (
-                <div
-                    className="flex items-center gap-2"
-                    title="Hide the mouse pointer for the whole pick, or keep it visible on top of the target overlay"
-                >
+                <div className="flex items-center gap-2" title="Hide the mouse pointer for the whole pick, or keep it visible on top of the target overlay">
                     <Label className="font-normal shrink-0" htmlFor="settings-picker-overlay-cursor">
                         Mouse cursor
                     </Label>
-                    <Select
-                        value={pointer}
-                        onValueChange={(next) => { appSettings.winpicker_OverlayCursor = next as WindowPickerOverlayCursor; }}
-                    >
+
+                    <Select value={pointer} onValueChange={(next) => { appSettings.winpicker_OverlayCursor = next as WindowPickerOverlayCursor; }}>
                         <SelectTrigger className="h-6!" id="settings-picker-overlay-cursor">
                             <SelectValue />
                         </SelectTrigger>
+
                         <SelectContent>
                             <SelectItem className="font-condensed font-normal" value="hide" title="Hide the pointer everywhere, including over this app">
                                 Hidden
