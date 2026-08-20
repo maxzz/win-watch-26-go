@@ -1,7 +1,8 @@
 import { proxy } from "valtio";
 import targetUrl from "@renderer/assets/icons/artboard-52-8.png";
+import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { windowPickerBus } from "./a-bridge";
-import { emptyWindowPickerState, type WindowPickerEvent, type WindowPickerReleasedHandler, type WindowPickerState } from "./9-types";
+import { emptyWindowPickerState, normalizeDragIcon, type WindowPickerDragIcon, type WindowPickerEvent, type WindowPickerReleasedHandler, type WindowPickerState } from "./9-types";
 
 /** Live finder session. High-frequency cursor updates mutate this proxy. */
 export const windowPickerStore = proxy<WindowPickerState>({ ...emptyWindowPickerState });
@@ -15,17 +16,22 @@ export function subscribeWindowPickerReleased(handler: WindowPickerReleasedHandl
     };
 }
 
-function applyDomCursor(active: boolean): void {
-    if (active) {
-        document.documentElement.style.cursor = `url("${targetUrl}") 32 32, crosshair`;
+function applyDomCursor(active: boolean, iconMode: WindowPickerDragIcon = windowPickerStore.iconMode): void {
+    if (!active) {
+        document.documentElement.style.cursor = "";
         return;
     }
-    document.documentElement.style.cursor = "";
+    if (iconMode === "overlay") {
+        document.documentElement.style.cursor = "none";
+        return;
+    }
+    document.documentElement.style.cursor = `url("${targetUrl}") 32 32, crosshair`;
 }
 
 export function resetWindowPickerStore(): void {
     windowPickerStore.active = false;
     windowPickerStore.released = false;
+    windowPickerStore.iconMode = "overlay";
     windowPickerStore.processName = "";
     windowPickerStore.screen.x = 0;
     windowPickerStore.screen.y = 0;
@@ -49,7 +55,7 @@ export function applyWindowPickerEvent(payload: WindowPickerEvent): void {
     windowPickerStore.handle = payload.handle ?? "";
     windowPickerStore.rootHandle = payload.rootHandle ?? "";
     windowPickerStore.title = payload.title ?? "";
-    applyDomCursor(!released);
+    applyDomCursor(!released, windowPickerStore.iconMode);
 
     if (released) {
         releasedListeners.forEach((handler) => handler(payload));
@@ -71,10 +77,11 @@ export async function startWindowPicker(): Promise<boolean> {
     }
     windowPickerStore.active = true;
     windowPickerStore.released = false;
+    windowPickerStore.iconMode = normalizeDragIcon(appSettings.winpicker_DragIcon);
     windowPickerStore.processName = "";
-    applyDomCursor(true);
+    applyDomCursor(true, windowPickerStore.iconMode);
 
-    const ok = await windowPickerBus.start();
+    const ok = await windowPickerBus.start(windowPickerStore.iconMode);
     if (!ok) {
         resetWindowPickerStore();
     }

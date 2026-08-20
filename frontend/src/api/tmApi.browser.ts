@@ -151,7 +151,7 @@ export function createBrowserTmApi(): WinWatchApi {
         revealInExplorer: async () => undefined,
         getFileIcons: async () => "[]",
 
-        startWindowPicker: () => startBrowserWindowPicker(),
+        startWindowPicker: (_iconMode?: string) => startBrowserWindowPicker(),
         stopWindowPicker: () => stopBrowserWindowPicker(),
         onWindowPickerEvent: (callback) => {
             browserPickerListeners.add(callback);

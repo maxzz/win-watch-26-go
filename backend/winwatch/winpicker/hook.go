@@ -62,6 +62,7 @@ func mouseProc(nCode, wParam, lParam uintptr) uintptr {
 		if s != nil {
 			switch uint32(wParam) {
 			case wmMouseMove:
+				s.moveOverlay()
 				if keyDown(vkEscape) {
 					s.complete()
 					return 1

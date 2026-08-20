@@ -26,8 +26,13 @@ type Session struct {
 	stopped       chan struct{}
 	last          Event
 	lastAt        time.Time
+	iconMode      DragIconMode
+	overlayHwnd   uintptr
+	overlayHalfW  int32
+	overlayHalfH  int32
 	cursor        uintptr
 	cursorChanged bool
+	cursorHidden  bool
 }
 
 var activeSession *Session
@@ -38,8 +43,9 @@ func NewSession() *Session {
 }
 
 // Start begins mouse tracking. onEvent receives JSON Event values (move, then
-// one Released=true payload). Returns false if the hook could not be installed.
-func (s *Session) Start(onEvent func(json string)) bool {
+// one Released=true payload). iconMode selects HCURSOR vs a layered overlay.
+// Returns false if the hook could not be installed.
+func (s *Session) Start(onEvent func(json string), iconMode DragIconMode) bool {
 	s.mu.Lock()
 	if s.running {
 		s.callback = onEvent
@@ -49,6 +55,7 @@ func (s *Session) Start(onEvent func(json string)) bool {
 	s.running = true
 	s.completing = false
 	s.callback = onEvent
+	s.iconMode = iconMode
 	s.last = Event{}
 	s.lastAt = time.Time{}
 	s.stopped = make(chan struct{})
@@ -91,7 +98,7 @@ func (s *Session) run(ready chan bool) {
 	s.threadID = uint32(tid)
 	s.mu.Unlock()
 
-	s.installCursor()
+	s.installDragIcon()
 
 	hook, _, _ := procSetWindowsHookExW.Call(
 		whMouseLL,
@@ -113,6 +120,7 @@ func (s *Session) run(ready chan bool) {
 	ready <- true
 
 	s.emit(probeCursor(false))
+	s.moveOverlay()
 	if !keyDown(vkLButton) {
 		s.complete()
 		return
@@ -134,7 +142,7 @@ func (s *Session) finishCleanup() {
 		procUnhookWindowsHookEx.Call(s.hook)
 		s.hook = 0
 	}
-	s.restoreCursors()
+	s.restoreDragIcon()
 
 	s.mu.Lock()
 	s.running = false

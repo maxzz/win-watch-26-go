@@ -39,3 +39,29 @@ func TestEmbeddedTargetPNG(t *testing.T) {
 		t.Fatalf("center of target icon should not be empty, got %+v", center)
 	}
 }
+
+func TestDecodePNGNativePreservesAlpha(t *testing.T) {
+	img, err := decodePNGNative(targetPNG)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := img.RGBAAt(0, 0); got.A != 0 {
+		t.Fatalf("PNG corner should be transparent, got %+v", got)
+	}
+	center := img.RGBAAt(img.Bounds().Dx()/2, img.Bounds().Dy()/2)
+	if center.A == 0 {
+		t.Fatalf("PNG center should not be empty, got %+v", center)
+	}
+}
+
+func TestParseDragIconMode(t *testing.T) {
+	if ParseDragIconMode("cursor") != DragIconSystemCursor {
+		t.Fatal("cursor should map to system cursor")
+	}
+	if ParseDragIconMode("overlay") != DragIconLayeredWindow {
+		t.Fatal("overlay should map to layered window")
+	}
+	if ParseDragIconMode("") != DragIconLayeredWindow {
+		t.Fatal("empty should default to layered window")
+	}
+}
