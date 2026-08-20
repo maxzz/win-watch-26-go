@@ -18,7 +18,7 @@ import {
     settingsStayOnTopAtom,
 } from "@renderer/components/window-lifecycle";
 import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
-import { normalizeDragIcon, normalizeOverlayCursor, type WindowPickerDragIcon, type WindowPickerOverlayCursor } from "@renderer/components/window-picker";
+import { normalizeDragIcon, normalizeOverlayCursor, type WindowPickerDragIcon } from "@renderer/components/window-picker";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
@@ -38,10 +38,10 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="px-4 py-4 text-xs font-normal flex flex-col gap-1.5">
+                <div className="px-4 pt-3 pb-4 text-xs font-normal flex flex-col gap-1.5">
 
                     <div className="text-xs font-semibold border-b border-border pb-1">
-                        Window
+                        Application behavior
                     </div>
 
                     <ControlCheckbox label="Quit the application when the window close button is clicked" valueAtom={settingsQuitOnCloseAtom} />
@@ -90,22 +90,22 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
     const [showThemeToggle, setShowThemeToggle] = useAtom(settingsShowThemeToggleAtom);
 
     return (
-        <div className={classNames("flex items-center gap-2", className)} {...rest}>
-            <Label className="font-normal" htmlFor="settings-theme">
+        <div className={classNames("flex items-center gap-1.5", className)} {...rest}>
+            <Label className="font-normal">
                 Theme
+
+                <Select value={theme} onValueChange={(value) => { appSettings.ui_theme = value as ThemeMode; }}>
+                    <SelectTrigger className="h-6!">
+                        <SelectValue placeholder="Select theme" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        <SelectItem className="font-condensed font-normal" value="light">Light</SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="dark">Dark</SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="system">System</SelectItem>
+                    </SelectContent>
+                </Select>
             </Label>
-
-            <Select value={theme} onValueChange={(value) => { appSettings.ui_theme = value as ThemeMode; }}>
-                <SelectTrigger className="h-6!" id="settings-theme">
-                    <SelectValue placeholder="Select theme" />
-                </SelectTrigger>
-
-                <SelectContent>
-                    <SelectItem className="font-condensed font-normal" value="light">Light</SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="dark">Dark</SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="system">System</SelectItem>
-                </SelectContent>
-            </Select>
 
             <Label className="font-normal flex items-center gap-1.5 cursor-pointer" title="Show the theme toggle button in the application header">
                 <Checkbox checked={showThemeToggle} onCheckedChange={(v) => setShowThemeToggle(v === true)} />
@@ -116,20 +116,19 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
 }
 
 function ControlPickerDragIcon() {
-    const { winpicker_DragIcon: dragIcon, winpicker_OverlayCursor: overlayCursor } = useSnapshot(appSettings);
-    const value = normalizeDragIcon(dragIcon);
-    const pointer = normalizeOverlayCursor(overlayCursor);
+    const { winpicker_DragIcon, winpicker_OverlayCursor } = useSnapshot(appSettings);
+    const value = normalizeDragIcon(winpicker_DragIcon);
+    const pointer = normalizeOverlayCursor(winpicker_OverlayCursor);
     const overlay = value === "overlay";
 
     return (
-        <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2" title="How the target icon is drawn while dragging over other windows">
-                <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
-                    Drag icon
-                </Label>
+        <div className="flex items-center gap-4">
+
+            <Label className="font-normal shrink-0 gap-1.5" title="How the target icon is drawn while dragging over other windows">
+                Drag icon
 
                 <Select value={value} onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}>
-                    <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
+                    <SelectTrigger className="h-6!">
                         <SelectValue />
                     </SelectTrigger>
 
@@ -142,29 +141,13 @@ function ControlPickerDragIcon() {
                         </SelectItem>
                     </SelectContent>
                 </Select>
-            </div>
+            </Label>
 
             {overlay && (
-                <div className="flex items-center gap-2" title="Hide the mouse pointer for the whole pick, or keep it visible on top of the target overlay">
-                    <Label className="font-normal shrink-0" htmlFor="settings-picker-overlay-cursor">
-                        Mouse cursor
-                    </Label>
-
-                    <Select value={pointer} onValueChange={(next) => { appSettings.winpicker_OverlayCursor = next as WindowPickerOverlayCursor; }}>
-                        <SelectTrigger className="h-6!" id="settings-picker-overlay-cursor">
-                            <SelectValue />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                            <SelectItem className="font-condensed font-normal" value="hide" title="Hide the pointer everywhere, including over this app">
-                                Hidden
-                            </SelectItem>
-                            <SelectItem className="font-condensed font-normal" value="show" title="Keep the system pointer visible over the overlay and this app">
-                                Visible
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+                <Label className="font-normal flex items-center gap-1.5 cursor-pointer" title="Keep the system pointer visible over the overlay and this app">
+                    <Checkbox checked={pointer === "show"} onCheckedChange={(v) => { appSettings.winpicker_OverlayCursor = v === true ? "show" : "hide"; }} />
+                    Show cursor
+                </Label>
             )}
         </div>
     );
@@ -172,7 +155,6 @@ function ControlPickerDragIcon() {
 
 function ControlCheckbox({ label, valueAtom, className, ...rest }: ComponentProps<typeof Label> & { label: string; valueAtom: WritableAtom<boolean, [boolean], void | Promise<void>>; }) {
     const [checked, setChecked] = useAtom(valueAtom);
-
     return (
         <Label className={classNames("font-normal flex items-center gap-1.5 cursor-pointer", className)} {...rest}>
             <Checkbox checked={checked} onCheckedChange={(v) => setChecked(v === true)} />
@@ -181,7 +163,7 @@ function ControlCheckbox({ label, valueAtom, className, ...rest }: ComponentProp
     );
 }
 
-function OptionCheckbox({ checked, onCheckedChange, label, disabled, title }: { checked: boolean, onCheckedChange: (checked: boolean) => void, label: React.ReactNode, disabled?: boolean; title?: string; }) {
+function ControlSwitch({ checked, onCheckedChange, label, disabled, title }: { checked: boolean, onCheckedChange: (checked: boolean) => void, label: React.ReactNode, disabled?: boolean; title?: string; }) {
     return (
         <Label
             className={classNames("h-5 text-xs font-normal flex items-center justify-between gap-x-1", disabled && "opacity-50")}
