@@ -1,13 +1,15 @@
 import { proxy } from "valtio";
-import targetUrl from "@renderer/assets/icons/artboard-52-8.png";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
 import { windowPickerBus } from "./a-bridge";
-import { emptyWindowPickerState, normalizeDragIcon, type WindowPickerDragIcon, type WindowPickerEvent, type WindowPickerReleasedHandler, type WindowPickerState } from "./9-types";
+import { emptyWindowPickerState, normalizeDragIcon, normalizeOverlayCursor, windowPickerStartMode, type WindowPickerEvent, type WindowPickerReleasedHandler, type WindowPickerState } from "./9-types";
 
 /** Live finder session. High-frequency cursor updates mutate this proxy. */
 export const windowPickerStore = proxy<WindowPickerState>({ ...emptyWindowPickerState });
 
 const releasedListeners = new Set<WindowPickerReleasedHandler>();
+
+const hideCursorClass = "winpicker-hide-cursor";
+const arrowCursorClass = "winpicker-arrow-cursor";
 
 export function subscribeWindowPickerReleased(handler: WindowPickerReleasedHandler): () => void {
     releasedListeners.add(handler);
@@ -16,22 +18,20 @@ export function subscribeWindowPickerReleased(handler: WindowPickerReleasedHandl
     };
 }
 
-function applyDomCursor(active: boolean, iconMode: WindowPickerDragIcon = windowPickerStore.iconMode): void {
-    if (!active) {
-        document.documentElement.style.cursor = "";
-        return;
-    }
-    if (iconMode === "overlay") {
-        document.documentElement.style.cursor = "none";
-        return;
-    }
-    document.documentElement.style.cursor = `url("${targetUrl}") 32 32, crosshair`;
+function applyDomCursor(active: boolean): void {
+    document.documentElement.style.cursor = "";
+    const overlay = active && windowPickerStore.iconMode === "overlay";
+    const hide = overlay && !windowPickerStore.overlayShowCursor;
+    const arrow = overlay && windowPickerStore.overlayShowCursor;
+    document.documentElement.classList.toggle(hideCursorClass, hide);
+    document.documentElement.classList.toggle(arrowCursorClass, arrow);
 }
 
 export function resetWindowPickerStore(): void {
     windowPickerStore.active = false;
     windowPickerStore.released = false;
     windowPickerStore.iconMode = "overlay";
+    windowPickerStore.overlayShowCursor = false;
     windowPickerStore.processName = "";
     windowPickerStore.screen.x = 0;
     windowPickerStore.screen.y = 0;
@@ -55,7 +55,7 @@ export function applyWindowPickerEvent(payload: WindowPickerEvent): void {
     windowPickerStore.handle = payload.handle ?? "";
     windowPickerStore.rootHandle = payload.rootHandle ?? "";
     windowPickerStore.title = payload.title ?? "";
-    applyDomCursor(!released, windowPickerStore.iconMode);
+    applyDomCursor(!released);
 
     if (released) {
         releasedListeners.forEach((handler) => handler(payload));
@@ -78,10 +78,12 @@ export async function startWindowPicker(): Promise<boolean> {
     windowPickerStore.active = true;
     windowPickerStore.released = false;
     windowPickerStore.iconMode = normalizeDragIcon(appSettings.winpicker_DragIcon);
+    windowPickerStore.overlayShowCursor = windowPickerStore.iconMode === "overlay"
+        && normalizeOverlayCursor(appSettings.winpicker_OverlayCursor) === "show";
     windowPickerStore.processName = "";
-    applyDomCursor(true, windowPickerStore.iconMode);
+    applyDomCursor(true);
 
-    const ok = await windowPickerBus.start(windowPickerStore.iconMode);
+    const ok = await windowPickerBus.start(windowPickerStartMode(appSettings.winpicker_DragIcon, appSettings.winpicker_OverlayCursor));
     if (!ok) {
         resetWindowPickerStore();
     }

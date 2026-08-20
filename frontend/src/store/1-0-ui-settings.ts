@@ -35,6 +35,7 @@ export interface AppSettings {
     ui_panels_UiaOpen: boolean;                 // Whether the UI Automation section is expanded
     ui_panels_MsaaOpen: boolean;                // Whether the MSAA section is expanded
     winpicker_DragIcon: "cursor" | "overlay";   // Finder drag icon: HCURSOR vs layered overlay
+    winpicker_OverlayCursor: "hide" | "show";   // When overlay: hide the pointer or keep it visible
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -64,6 +65,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     ui_panels_UiaOpen: true,
     ui_panels_MsaaOpen: true,
     winpicker_DragIcon: "overlay",
+    winpicker_OverlayCursor: "hide",
 };
 
 // Load settings from localStorage

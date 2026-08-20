@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 @import "./tree-selection.css";
+@import "./window-picker.css";
 
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono"; /* https://fontsource.org/fonts/geist-mono/install */

@@ -14,18 +14,32 @@ const (
 	// mask; partial alpha looks jagged).
 	DragIconSystemCursor DragIconMode = iota
 	// DragIconLayeredWindow follows the pointer with a WS_EX_LAYERED overlay
-	// using UpdateLayeredWindow(ULW_ALPHA) so PNG alpha is preserved.
+	// using UpdateLayeredWindow(ULW_ALPHA) so PNG alpha is preserved. The
+	// system pointer is hidden for the whole pick.
 	DragIconLayeredWindow
+	// DragIconLayeredWindowShowCursor is the same overlay, but the system
+	// pointer stays visible (including when the overlay is under the hotspot).
+	DragIconLayeredWindowShowCursor
 )
 
-// ParseDragIconMode maps the frontend setting ("cursor" | "overlay").
+// ParseDragIconMode maps the frontend setting ("cursor" | "overlay" | "overlay-show").
 func ParseDragIconMode(s string) DragIconMode {
 	switch strings.ToLower(strings.TrimSpace(s)) {
 	case "cursor", "hcursor", "system":
 		return DragIconSystemCursor
+	case "overlay-show", "overlay-visible":
+		return DragIconLayeredWindowShowCursor
 	default:
 		return DragIconLayeredWindow
 	}
+}
+
+func (m DragIconMode) usesLayeredOverlay() bool {
+	return m == DragIconLayeredWindow || m == DragIconLayeredWindowShowCursor
+}
+
+func (m DragIconMode) overlayShowsPointer() bool {
+	return m == DragIconLayeredWindowShowCursor
 }
 
 // Event is the JSON payload emitted while the finder is active and once more

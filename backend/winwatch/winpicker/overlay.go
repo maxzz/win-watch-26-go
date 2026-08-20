@@ -10,17 +10,20 @@ import (
 )
 
 var (
-	procRegisterClassExW    = user32.NewProc("RegisterClassExW")
-	procCreateWindowExW     = user32.NewProc("CreateWindowExW")
-	procDestroyWindow       = user32.NewProc("DestroyWindow")
-	procShowWindow          = user32.NewProc("ShowWindow")
-	procSetWindowPos        = user32.NewProc("SetWindowPos")
-	procDefWindowProcW      = user32.NewProc("DefWindowProcW")
-	procUpdateLayeredWindow = user32.NewProc("UpdateLayeredWindow")
-	procCreateCompatibleDC  = gdi32.NewProc("CreateCompatibleDC")
-	procSelectObject        = gdi32.NewProc("SelectObject")
-	procDeleteDC            = gdi32.NewProc("DeleteDC")
-	procShowCursor          = user32.NewProc("ShowCursor")
+	procRegisterClassExW             = user32.NewProc("RegisterClassExW")
+	procCreateWindowExW              = user32.NewProc("CreateWindowExW")
+	procDestroyWindow                = user32.NewProc("DestroyWindow")
+	procShowWindow                   = user32.NewProc("ShowWindow")
+	procSetWindowPos                 = user32.NewProc("SetWindowPos")
+	procDefWindowProcW               = user32.NewProc("DefWindowProcW")
+	procUpdateLayeredWindow          = user32.NewProc("UpdateLayeredWindow")
+	procCreateCompatibleDC           = gdi32.NewProc("CreateCompatibleDC")
+	procSelectObject                 = gdi32.NewProc("SelectObject")
+	procDeleteDC                     = gdi32.NewProc("DeleteDC")
+	procShowCursor                   = user32.NewProc("ShowCursor")
+	procSetCursor                    = user32.NewProc("SetCursor")
+	procSetClassLongPtrW             = user32.NewProc("SetClassLongPtrW")
+	procSetThreadDpiAwarenessContext = user32.NewProc("SetThreadDpiAwarenessContext")
 )
 
 const (
@@ -41,6 +44,11 @@ const (
 	acSrcOver  = 0x00
 	acSrcAlpha = 0x01
 	ulwAlpha   = 0x00000002
+
+	wmSetCursor = 0x0020
+
+	// DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+	dpiContextPerMonitorV2 = ^uintptr(3)
 )
 
 type overlayPoint struct{ X, Y int32 }
@@ -74,7 +82,23 @@ var (
 	overlayClassOnce sync.Once
 )
 
+func lockPickerThreadDpi() {
+	if procSetThreadDpiAwarenessContext.Find() != nil {
+		return
+	}
+	procSetThreadDpiAwarenessContext.Call(dpiContextPerMonitorV2)
+}
+
 func overlayWndProc(hwnd, message, wParam, lParam uintptr) uintptr {
+	if message == wmSetCursor {
+		s := activeSession
+		if s != nil && s.iconMode.overlayShowsPointer() {
+			procSetCursor.Call(loadArrowCursor())
+		} else {
+			procSetCursor.Call(0)
+		}
+		return 1
+	}
 	ret, _, _ := procDefWindowProcW.Call(hwnd, message, wParam, lParam)
 	return ret
 }
@@ -92,11 +116,25 @@ func registerOverlayClass() {
 }
 
 func (s *Session) installDragIcon() {
-	if s.iconMode == DragIconLayeredWindow && s.createOverlay() {
-		s.hideSystemCursor()
+	if s.iconMode.usesLayeredOverlay() && s.createOverlay() {
+		s.applyOverlayClassCursor()
+		if !s.iconMode.overlayShowsPointer() {
+			s.hideSystemCursor()
+		}
 		return
 	}
 	s.installCursor()
+}
+
+func (s *Session) applyOverlayClassCursor() {
+	if s.overlayHwnd == 0 {
+		return
+	}
+	var h uintptr
+	if s.iconMode.overlayShowsPointer() {
+		h = loadArrowCursor()
+	}
+	procSetClassLongPtrW.Call(s.overlayHwnd, ^uintptr(11), h) // GCLP_HCURSOR = -12
 }
 
 func (s *Session) restoreDragIcon() {
@@ -122,6 +160,7 @@ func (s *Session) showSystemCursor() {
 }
 
 func (s *Session) createOverlay() bool {
+	lockPickerThreadDpi()
 	img, err := decodePNGNative(targetPNG)
 	if err != nil || img == nil {
 		return false
@@ -230,15 +269,34 @@ func paintOverlayAlpha(hwnd uintptr, img *image.NRGBA, x, y int32) bool {
 }
 
 func (s *Session) moveOverlay() {
-	if s.overlayHwnd == 0 {
-		return
-	}
 	pt, ok := win32.GetCursorPos()
 	if !ok {
 		return
 	}
+	s.moveOverlayTo(pt)
+}
+
+func (s *Session) moveOverlayTo(pt win32.Point) {
+	if s.overlayHwnd == 0 {
+		return
+	}
+	if !s.iconMode.overlayShowsPointer() {
+		procSetCursor.Call(0)
+	}
 	x := pt.X - s.overlayHalfW
 	y := pt.Y - s.overlayHalfH
+	ptPos := overlayPoint{X: x, Y: y}
+	// Position-only UpdateLayeredWindow keeps the bitmap in the DWM path
+	// (SetWindowPos on a layered window can trail the hardware cursor).
+	ret, _, _ := procUpdateLayeredWindow.Call(
+		s.overlayHwnd,
+		0,
+		uintptr(unsafe.Pointer(&ptPos)),
+		0, 0, 0, 0, 0, 0,
+	)
+	if ret != 0 {
+		return
+	}
 	procSetWindowPos.Call(
 		s.overlayHwnd,
 		0,

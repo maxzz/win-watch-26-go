@@ -1,29 +1,22 @@
 import { type ComponentProps } from "react";
-import { useAtom, useSetAtom, type WritableAtom } from "jotai";
+import { useAtom, type WritableAtom } from "jotai";
 import { useSnapshot } from "valtio";
 import { classNames } from "@renderer/utils/classnames";
 import { type ThemeMode } from "@renderer/utils/theme-apply";
 import { appSettings } from "@renderer/store/1-0-ui-settings";
+
 import { Button } from "@renderer/components/ui/shadcn/button";
 import { Checkbox } from "@renderer/components/ui/shadcn/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, } from "@renderer/components/ui/shadcn/dialog";
 import { Label } from "@renderer/components/ui/shadcn/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@renderer/components/ui/shadcn/select";
 import { Switch } from "@renderer/components/ui/shadcn/switch";
-import {
-    settingsQuitOnCloseAtom,
-    settingsRunElevatedAtom,
-    settingsShowInTaskbarAtom,
-    settingsShowThemeToggleAtom,
-    settingsStayOnTopAtom,
-} from "@renderer/components/window-lifecycle";
-import { setExcludeOwnAppWindowsAtom, setSortWindowsByProcessNameAtom } from "@renderer/components/2-main/1-panel-windows/state-atoms/2-1-atoms-windows-list";
-import { normalizeDragIcon, type WindowPickerDragIcon } from "@renderer/components/window-picker";
+
+import { settingsQuitOnCloseAtom, settingsRunElevatedAtom, settingsShowInTaskbarAtom, settingsShowThemeToggleAtom, settingsStayOnTopAtom } from "@renderer/components/window-lifecycle";
+import { normalizeDragIcon, normalizeOverlayCursor, type WindowPickerDragIcon } from "@renderer/components/window-picker";
 
 export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void; }) {
     const settings = useSnapshot(appSettings);
-    // const setExcludeOwnAppWindows = useSetAtom(setExcludeOwnAppWindowsAtom);
-    // const setSortWindowsByProcessName = useSetAtom(setSortWindowsByProcessNameAtom);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -38,10 +31,10 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="px-4 py-4 text-xs font-normal flex flex-col gap-1.5">
+                <div className="px-4 pt-3 pb-4 text-xs font-normal flex flex-col gap-1.5">
 
                     <div className="text-xs font-semibold border-b border-border pb-1">
-                        Window
+                        Application behavior
                     </div>
 
                     <ControlCheckbox label="Quit the application when the window close button is clicked" valueAtom={settingsQuitOnCloseAtom} />
@@ -57,22 +50,7 @@ export function DialogOptions({ open, onOpenChange }: { open: boolean; onOpenCha
                     <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">
                         Window picker
                     </div>
-                    <ControlPickerDragIcon />
-
-                    {/* <div className="mt-1.5 text-xs font-semibold border-b border-border pb-1">Windows list</div>
-                    <OptionCheckbox
-                        checked={settings.winlist_ExcludeUs}
-                        onCheckedChange={(checked) => void setExcludeOwnAppWindows(checked)}
-                        label="Exclude windows of our application"
-                        title="Hide this app's top-level windows from the list and prefer the next window in z-order"
-                    />
-                    <OptionCheckbox
-                        checked={settings.winlist_SortWindows}
-                        onCheckedChange={(checked) => void setSortWindowsByProcessName(checked)}
-                        label="Sort windows list by process name"
-                        title="Sort acquired windows alphabetically by process name"
-                    /> */}
-
+                    <ControlWindowPicker />
                 </div>
 
                 <DialogFooter className="m-0 px-4 pb-3 pt-2 flex justify-center!">
@@ -90,71 +68,71 @@ function ControlTheme({ className, ...rest }: ComponentProps<"div">) {
     const [showThemeToggle, setShowThemeToggle] = useAtom(settingsShowThemeToggleAtom);
 
     return (
-        <div className={classNames("flex items-center gap-2", className)} {...rest}>
-            <Label className="font-normal" htmlFor="settings-theme">
+        <div className={classNames("flex items-center gap-1.5", className)} {...rest}>
+            <Label className="font-normal">
                 Theme
+
+                <Select value={theme} onValueChange={(value) => { appSettings.ui_theme = value as ThemeMode; }}>
+                    <SelectTrigger className="h-6!">
+                        <SelectValue placeholder="Select theme" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        <SelectItem className="font-condensed font-normal" value="light">Light</SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="dark">Dark</SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="system">System</SelectItem>
+                    </SelectContent>
+                </Select>
             </Label>
 
-            <Select value={theme} onValueChange={(value) => { appSettings.ui_theme = value as ThemeMode; }}>
-                <SelectTrigger className="h-6!" id="settings-theme">
-                    <SelectValue placeholder="Select theme" />
-                </SelectTrigger>
-
-                <SelectContent>
-                    <SelectItem className="font-condensed font-normal" value="light">Light</SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="dark">Dark</SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="system">System</SelectItem>
-                </SelectContent>
-            </Select>
-
-            <Label
-                className="font-normal flex items-center gap-1.5 cursor-pointer"
-                htmlFor="settings-show-theme-toggle"
-                title="Show the theme toggle button in the application header"
-            >
-                <Checkbox
-                    id="settings-show-theme-toggle"
-                    checked={showThemeToggle}
-                    onCheckedChange={(v) => setShowThemeToggle(v === true)}
-                />
+            <Label className="font-normal flex items-center gap-1.5 cursor-pointer" title="Show the theme toggle button in the application header">
+                <Checkbox checked={showThemeToggle} onCheckedChange={(v) => setShowThemeToggle(v === true)} />
                 Show theme toggle button in header
             </Label>
         </div>
     );
 }
 
-function ControlPickerDragIcon() {
-    const { winpicker_DragIcon: dragIcon } = useSnapshot(appSettings);
-    const value = normalizeDragIcon(dragIcon);
+function ControlWindowPicker() {
+    const { winpicker_DragIcon, winpicker_OverlayCursor } = useSnapshot(appSettings);
+    const value = normalizeDragIcon(winpicker_DragIcon);
+    const pointer = normalizeOverlayCursor(winpicker_OverlayCursor);
+    const overlay = value === "overlay";
 
     return (
-        <div className="flex items-center gap-2" title="How the target icon is drawn while dragging over other windows">
-            <Label className="font-normal shrink-0" htmlFor="settings-picker-drag-icon">
+        <div className="flex items-center gap-4">
+
+            <Label className="font-normal shrink-0 gap-1.5" title="How the target icon is drawn while dragging over other windows">
                 Drag icon
+
+                <Select value={value} onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}>
+                    <SelectTrigger className="h-6!">
+                        <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                        <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
+                            Transparent window
+                        </SelectItem>
+                        <SelectItem className="font-condensed font-normal" value="cursor" title="Replace the system cursor (HCURSOR); edges may look jagged">
+                            System cursor
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </Label>
-            <Select
-                value={value}
-                onValueChange={(next) => { appSettings.winpicker_DragIcon = next as WindowPickerDragIcon; }}
-            >
-                <SelectTrigger className="h-6!" id="settings-picker-drag-icon">
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem className="font-condensed font-normal" value="overlay" title="Layered window with per-pixel PNG alpha">
-                        Transparent window
-                    </SelectItem>
-                    <SelectItem className="font-condensed font-normal" value="cursor" title="Replace the system cursor (HCURSOR); edges may look jagged">
-                        System cursor
-                    </SelectItem>
-                </SelectContent>
-            </Select>
+
+            {overlay && (
+                <Label className="font-normal flex items-center gap-1.5 cursor-pointer" title="Keep the system pointer visible over the overlay and this app">
+                    <Checkbox checked={pointer === "show"} onCheckedChange={(v) => { appSettings.winpicker_OverlayCursor = v === true ? "show" : "hide"; }} />
+                    Show cursor
+                </Label>
+            )}
         </div>
     );
 }
 
 function ControlCheckbox({ label, valueAtom, className, ...rest }: ComponentProps<typeof Label> & { label: string; valueAtom: WritableAtom<boolean, [boolean], void | Promise<void>>; }) {
     const [checked, setChecked] = useAtom(valueAtom);
-
     return (
         <Label className={classNames("font-normal flex items-center gap-1.5 cursor-pointer", className)} {...rest}>
             <Checkbox checked={checked} onCheckedChange={(v) => setChecked(v === true)} />
@@ -163,7 +141,7 @@ function ControlCheckbox({ label, valueAtom, className, ...rest }: ComponentProp
     );
 }
 
-function OptionCheckbox({ checked, onCheckedChange, label, disabled, title }: { checked: boolean, onCheckedChange: (checked: boolean) => void, label: React.ReactNode, disabled?: boolean; title?: string; }) {
+function ControlSwitch({ checked, onCheckedChange, label, disabled, title }: { checked: boolean, onCheckedChange: (checked: boolean) => void, label: React.ReactNode, disabled?: boolean; title?: string; }) {
     return (
         <Label
             className={classNames("h-5 text-xs font-normal flex items-center justify-between gap-x-1", disabled && "opacity-50")}

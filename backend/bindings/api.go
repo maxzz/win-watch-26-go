@@ -126,8 +126,9 @@ func (a *Api) GetFileIcons(pathsJSON string) string {
 	return fileicon.ExtractManyJSON(pathsJSON)
 }
 
-// StartWindowPicker begins a window-finder drag. iconMode is "cursor" (HCURSOR)
-// or "overlay" (layered window). Move/up payloads are emitted as EventWindowPicker.
+// StartWindowPicker begins a window-finder drag. iconMode is "cursor" (HCURSOR),
+// "overlay" (layered window, hide pointer), or "overlay-show" (layered window,
+// keep pointer visible). Move/up payloads are emitted as EventWindowPicker.
 func (a *Api) StartWindowPicker(iconMode string) bool {
 	return a.service.StartWindowPicker(iconMode, func(payload string) {
 		if ctx := a.ctx(); ctx != nil {
