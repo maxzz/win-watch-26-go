@@ -20,16 +20,19 @@ var (
 	psapi    = windows.NewLazySystemDLL("psapi.dll")
 	gdi32    = windows.NewLazySystemDLL("gdi32.dll")
 
-	procEnumWindows             = user32.NewProc("EnumWindows")
-	procIsWindow                = user32.NewProc("IsWindow")
-	procIsWindowVisible         = user32.NewProc("IsWindowVisible")
-	procGetWindowTextW          = user32.NewProc("GetWindowTextW")
-	procGetWindowTextLengthW    = user32.NewProc("GetWindowTextLengthW")
-	procGetClassNameW           = user32.NewProc("GetClassNameW")
+	procEnumWindows              = user32.NewProc("EnumWindows")
+	procIsWindow                 = user32.NewProc("IsWindow")
+	procIsWindowVisible          = user32.NewProc("IsWindowVisible")
+	procGetWindowTextW           = user32.NewProc("GetWindowTextW")
+	procGetWindowTextLengthW     = user32.NewProc("GetWindowTextLengthW")
+	procGetClassNameW            = user32.NewProc("GetClassNameW")
 	procGetWindowThreadProcessID = user32.NewProc("GetWindowThreadProcessId")
-	procGetWindowRect           = user32.NewProc("GetWindowRect")
-	procGetForegroundWindow     = user32.NewProc("GetForegroundWindow")
-	procGetAncestor             = user32.NewProc("GetAncestor")
+	procGetWindowRect            = user32.NewProc("GetWindowRect")
+	procGetForegroundWindow      = user32.NewProc("GetForegroundWindow")
+	procGetAncestor              = user32.NewProc("GetAncestor")
+	procGetCursorPos             = user32.NewProc("GetCursorPos")
+	procWindowFromPoint          = user32.NewProc("WindowFromPoint")
+	procScreenToClient           = user32.NewProc("ScreenToClient")
 
 	procGetModuleBaseNameW = psapi.NewProc("GetModuleBaseNameW")
 
@@ -43,6 +46,12 @@ type Rect struct {
 	Top    int32 `json:"top"`
 	Right  int32 `json:"right"`
 	Bottom int32 `json:"bottom"`
+}
+
+// Point mirrors the Win32 POINT structure (screen or client coordinates).
+type Point struct {
+	X int32 `json:"x"`
+	Y int32 `json:"y"`
 }
 
 // HWND is an opaque window handle value.
@@ -265,6 +274,41 @@ func GetParentWindow(hwnd HWND) HWND {
 func GetModuleHandle() uintptr {
 	ret, _, _ := procGetModuleHandleW.Call(0)
 	return ret
+}
+
+// GetCursorPos returns the cursor position in screen coordinates.
+func GetCursorPos() (Point, bool) {
+	var p Point
+	ret, _, _ := procGetCursorPos.Call(uintptr(unsafe.Pointer(&p)))
+	return p, ret != 0
+}
+
+// WindowFromPoint returns the window that contains the given screen point,
+// or 0 if there is none. POINT is 8 bytes so the x64 ABI passes it by value
+// as a packed uint64 (the same packing golang.org/x/sys/windows uses).
+func WindowFromPoint(x, y int32) HWND {
+	pt := Point{X: x, Y: y}
+	ret, _, _ := procWindowFromPoint.Call(uintptr(*(*uint64)(unsafe.Pointer(&pt))))
+	return HWND(ret)
+}
+
+// ScreenToClient converts a screen point into client coordinates of hwnd.
+func ScreenToClient(hwnd HWND, p Point) (Point, bool) {
+	pt := p
+	ret, _, _ := procScreenToClient.Call(uintptr(hwnd), uintptr(unsafe.Pointer(&pt)))
+	return pt, ret != 0
+}
+
+// GetRootWindow returns the top-level ancestor (GA_ROOT), or hwnd itself.
+func GetRootWindow(hwnd HWND) HWND {
+	if hwnd == 0 {
+		return 0
+	}
+	ret, _, _ := procGetAncestor.Call(uintptr(hwnd), gaRoot)
+	if ret == 0 {
+		return hwnd
+	}
+	return HWND(ret)
 }
 
 // HwndToHexString formats a handle as fixed-width uppercase hex with a 0x

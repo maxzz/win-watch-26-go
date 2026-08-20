@@ -8,6 +8,47 @@ const ZOOM_STORAGE_KEY = "winwatch-browser-zoom-level";
 let currentZoomLevel = 0;
 const zoomListeners = new Set<(level: number) => void>();
 const openOptionsListeners = new Set<() => void>();
+const browserPickerListeners = new Set<(data: string) => void>();
+
+let browserPickerCleanup: (() => void) | null = null;
+
+function emitBrowserPicker(event: MouseEvent, released: boolean): void {
+    const payload = JSON.stringify({
+        released,
+        processName: "browser-preview",
+        screen: { x: event.screenX, y: event.screenY },
+        client: { x: event.clientX, y: event.clientY },
+    });
+    browserPickerListeners.forEach((listener) => listener(payload));
+}
+
+function stopBrowserWindowPicker(): Promise<boolean> {
+    if (browserPickerCleanup) {
+        browserPickerCleanup();
+        browserPickerCleanup = null;
+        return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+}
+
+function startBrowserWindowPicker(): Promise<boolean> {
+    void stopBrowserWindowPicker();
+
+    const onMove = (event: MouseEvent) => emitBrowserPicker(event, false);
+    const onUp = (event: MouseEvent) => {
+        emitBrowserPicker(event, true);
+        void stopBrowserWindowPicker();
+    };
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    browserPickerCleanup = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+        browserPickerCleanup = null;
+    };
+    return Promise.resolve(true);
+}
 
 function readStoredZoomLevel(): number {
     try {
@@ -109,6 +150,13 @@ export function createBrowserTmApi(): WinWatchApi {
         isWindowHandleValid: async () => false,
         revealInExplorer: async () => undefined,
         getFileIcons: async () => "[]",
+
+        startWindowPicker: () => startBrowserWindowPicker(),
+        stopWindowPicker: () => stopBrowserWindowPicker(),
+        onWindowPickerEvent: (callback) => {
+            browserPickerListeners.add(callback);
+            return () => browserPickerListeners.delete(callback);
+        },
 
         zoomAction: (action) => Promise.resolve(handleZoom(action)),
         getZoomLevel: () => Promise.resolve(currentZoomLevel),
