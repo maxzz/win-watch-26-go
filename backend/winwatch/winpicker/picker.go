@@ -92,6 +92,8 @@ func (s *Session) run(ready chan bool) {
 	defer runtime.UnlockOSThread()
 	defer s.finishCleanup()
 
+	lockPickerThreadDpi()
+
 	activeSession = s
 
 	tid, _, _ := procGetCurrentThreadID.Call()

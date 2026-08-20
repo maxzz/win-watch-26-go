@@ -9,6 +9,7 @@ export const windowPickerStore = proxy<WindowPickerState>({ ...emptyWindowPicker
 const releasedListeners = new Set<WindowPickerReleasedHandler>();
 
 const hideCursorClass = "winpicker-hide-cursor";
+const arrowCursorClass = "winpicker-arrow-cursor";
 
 export function subscribeWindowPickerReleased(handler: WindowPickerReleasedHandler): () => void {
     releasedListeners.add(handler);
@@ -19,8 +20,11 @@ export function subscribeWindowPickerReleased(handler: WindowPickerReleasedHandl
 
 function applyDomCursor(active: boolean): void {
     document.documentElement.style.cursor = "";
-    const hide = active && windowPickerStore.iconMode === "overlay" && !windowPickerStore.overlayShowCursor;
+    const overlay = active && windowPickerStore.iconMode === "overlay";
+    const hide = overlay && !windowPickerStore.overlayShowCursor;
+    const arrow = overlay && windowPickerStore.overlayShowCursor;
     document.documentElement.classList.toggle(hideCursorClass, hide);
+    document.documentElement.classList.toggle(arrowCursorClass, arrow);
 }
 
 export function resetWindowPickerStore(): void {

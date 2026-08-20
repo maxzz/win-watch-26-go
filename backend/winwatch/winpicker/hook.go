@@ -3,6 +3,7 @@ package winpicker
 import (
 	"encoding/json"
 	"time"
+	"unsafe"
 
 	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
 	"golang.org/x/sys/windows"
@@ -62,7 +63,7 @@ func mouseProc(nCode, wParam, lParam uintptr) uintptr {
 		if s != nil {
 			switch uint32(wParam) {
 			case wmMouseMove:
-				s.moveOverlay()
+				s.moveOverlayTo(*(*win32.Point)(unsafe.Pointer(lParam)))
 				if keyDown(vkEscape) {
 					s.complete()
 					return 1

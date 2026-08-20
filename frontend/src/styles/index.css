@@ -169,8 +169,13 @@
     }
 }
 
-/* Window picker (overlay + hidden pointer): beat per-control cursor-pointer / grab. */
+/* Window picker overlay: force a single pointer style over the WebView. */
 html.winpicker-hide-cursor,
 html.winpicker-hide-cursor * {
     cursor: none !important;
+}
+
+html.winpicker-arrow-cursor,
+html.winpicker-arrow-cursor * {
+    cursor: default !important;
 }
