@@ -15,6 +15,7 @@ import (
 	"github.com/maxzz/win-watch-26/backend/winwatch/uia"
 	"github.com/maxzz/win-watch-26/backend/winwatch/win32"
 	"github.com/maxzz/win-watch-26/backend/winwatch/windowdetail"
+	"github.com/maxzz/win-watch-26/backend/winwatch/winpicker"
 )
 
 // Service is the entry point to the native functionality.
@@ -22,6 +23,7 @@ type Service struct {
 	monitor     *win32.Monitor
 	highlighter *win32.Highlighter
 	automation  *uia.Automation
+	picker      *winpicker.Session
 
 	hlOnce sync.Once
 }
@@ -32,6 +34,7 @@ func New() *Service {
 	return &Service{
 		monitor:    win32.NewMonitor(),
 		automation: uia.New(),
+		picker:     winpicker.NewSession(),
 	}
 }
 
@@ -200,7 +203,25 @@ func (s *Service) ExecuteAccAction(handle, runtimeID, kind, actionID, value stri
 	return string(data)
 }
 
-// Shutdown stops background activity (monitoring) on app exit.
+// StartWindowPicker begins global mouse tracking for the window finder.
+// onEvent receives JSON winpicker.Event values until the mouse button is released.
+func (s *Service) StartWindowPicker(onEvent func(json string)) bool {
+	if s.picker == nil {
+		s.picker = winpicker.NewSession()
+	}
+	return s.picker.Start(onEvent)
+}
+
+// StopWindowPicker cancels an in-progress window-finder drag.
+func (s *Service) StopWindowPicker() bool {
+	if s.picker == nil {
+		return false
+	}
+	return s.picker.Stop()
+}
+
+// Shutdown stops background activity (monitoring, finder hook) on app exit.
 func (s *Service) Shutdown() {
 	s.monitor.Stop()
+	s.StopWindowPicker()
 }

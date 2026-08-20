@@ -17,6 +17,8 @@ import {
     RevealInExplorer,
     GetFileIcons,
     QuitApp,
+    StartWindowPicker,
+    StopWindowPicker,
 } from "../../wailsjs/go/bindings/Api";
 import { ToggleDevTools, SetZoomLevel, GetZoomLevel } from "../../wailsjs/go/backend/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
@@ -120,6 +122,10 @@ export function createWailsTmApi(): WinWatchApi {
         isWindowHandleValid: (handle) => IsWindowHandleValid(handle),
         revealInExplorer: (path) => RevealInExplorer(path),
         getFileIcons: (pathsJSON) => GetFileIcons(pathsJSON),
+
+        startWindowPicker: () => StartWindowPicker(),
+        stopWindowPicker: () => StopWindowPicker(),
+        onWindowPickerEvent: (callback) => EventsOn("window-picker", (data: string) => callback(data)),
 
         zoomAction: (action) => Promise.resolve(handleZoom(action)),
         getZoomLevel: () => Promise.resolve(currentZoomLevel),

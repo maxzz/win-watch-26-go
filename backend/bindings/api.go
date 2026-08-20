@@ -18,6 +18,9 @@ import (
 // EventActiveWindowChanged is the event name the frontend subscribes to.
 const EventActiveWindowChanged = "active-window-changed"
 
+// EventWindowPicker is streamed while the window-finder drag is active.
+const EventWindowPicker = "window-picker"
+
 // Api is the struct bound into the frontend by Wails. The Wails runtime
 // context is obtained lazily through ctxFn so that no context-setter method is
 // exported to the frontend.
@@ -121,6 +124,21 @@ func (a *Api) RevealInExplorer(path string) error {
 // array of {path, dataUrl, error?} entries (PNG data URLs with transparency).
 func (a *Api) GetFileIcons(pathsJSON string) string {
 	return fileicon.ExtractManyJSON(pathsJSON)
+}
+
+// StartWindowPicker begins a window-finder drag. Move/up payloads are emitted
+// as EventWindowPicker JSON strings; the UI is not blocked.
+func (a *Api) StartWindowPicker() bool {
+	return a.service.StartWindowPicker(func(payload string) {
+		if ctx := a.ctx(); ctx != nil {
+			wruntime.EventsEmit(ctx, EventWindowPicker, payload)
+		}
+	})
+}
+
+// StopWindowPicker cancels an in-progress window-finder drag.
+func (a *Api) StopWindowPicker() bool {
+	return a.service.StopWindowPicker()
 }
 
 // QuitApp quits the application via RequestExit so close-to-tray is not used.
