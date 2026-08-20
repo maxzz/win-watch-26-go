@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 @import "./tree-selection.css";
+@import "./window-picker.css";
 
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono"; /* https://fontsource.org/fonts/geist-mono/install */
@@ -167,15 +168,4 @@
   html {
     @apply font-sans;
     }
-}
-
-/* Window picker overlay: force a single pointer style over the WebView. */
-html.winpicker-hide-cursor,
-html.winpicker-hide-cursor * {
-    cursor: none !important;
-}
-
-html.winpicker-arrow-cursor,
-html.winpicker-arrow-cursor * {
-    cursor: default !important;
 }
