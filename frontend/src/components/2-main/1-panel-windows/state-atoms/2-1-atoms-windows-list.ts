@@ -37,8 +37,7 @@ export const ensureWindowInListAtom = atom(
     null,
     (get, set, window: Partial<WindowInfo> & { handle: string; }): void => {
         const current = get(windowInfosAtom);
-        const alreadyExists = current.some((w) => areWindowHandlesEqual(w.handle, window.handle));
-        if (alreadyExists) {
+        if (findWindowInfoByHandle(current, window.handle)) {
             return;
         }
 
@@ -53,6 +52,27 @@ export const ensureWindowInListAtom = atom(
             children: window.children,
         };
         set(windowInfosAtom, getWindowInfosWithAppliedSort([synthetic, ...current]));
+    }
+);
+
+/** Refresh (then insert if still missing) so a picked hwnd can be selected as a list row. */
+export const ensurePickedWindowInListAtom = atom(
+    null,
+    async (get, set, picked: { handle: string; title?: string; processName?: string; }): Promise<string | null> => {
+        const existing = findWindowInfoByHandle(get(windowInfosAtom), picked.handle);
+        if (existing) {
+            return existing.handle;
+        }
+
+        await set(doRefreshWindowInfosAtom);
+
+        const refreshed = findWindowInfoByHandle(get(windowInfosAtom), picked.handle);
+        if (refreshed) {
+            return refreshed.handle;
+        }
+
+        set(ensureWindowInListAtom, picked);
+        return findWindowInfoByHandle(get(windowInfosAtom), picked.handle)?.handle ?? picked.handle;
     }
 );
 
@@ -181,6 +201,21 @@ export const applyActiveWindowChangedAtom = atom(
 );
 
 //#region sort windows list
+
+function findWindowInfoByHandle(windows: WindowInfo[], handle: string): WindowInfo | undefined {
+    for (const windowInfo of windows) {
+        if (areWindowHandlesEqual(windowInfo.handle, handle)) {
+            return windowInfo;
+        }
+        if (windowInfo.children?.length) {
+            const nested = findWindowInfoByHandle(windowInfo.children, handle);
+            if (nested) {
+                return nested;
+            }
+        }
+    }
+    return undefined;
+}
 
 function getWindowInfosWithAppliedSort(windowInfos: WindowInfo[]): WindowInfo[] {
     if (!appSettings.winlist_SortWindows) {
