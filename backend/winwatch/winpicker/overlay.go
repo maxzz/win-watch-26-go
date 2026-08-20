@@ -21,7 +21,6 @@ var (
 	procSelectObject        = gdi32.NewProc("SelectObject")
 	procDeleteDC            = gdi32.NewProc("DeleteDC")
 	procShowCursor          = user32.NewProc("ShowCursor")
-	procGetDpiForSystem     = user32.NewProc("GetDpiForSystem")
 )
 
 const (
@@ -92,24 +91,6 @@ func registerOverlayClass() {
 	})
 }
 
-func overlayPixelSize(native int) int {
-	if native < 1 {
-		native = 48
-	}
-	if err := procGetDpiForSystem.Find(); err != nil {
-		return native
-	}
-	dpi, _, _ := procGetDpiForSystem.Call()
-	if dpi == 0 {
-		return native
-	}
-	scaled := native * int(dpi) / 96
-	if scaled < native {
-		return native
-	}
-	return scaled
-}
-
 func (s *Session) installDragIcon() {
 	if s.iconMode == DragIconLayeredWindow && s.createOverlay() {
 		s.hideSystemCursor()
@@ -145,18 +126,18 @@ func (s *Session) createOverlay() bool {
 	if err != nil || img == nil {
 		return false
 	}
-	native := img.Bounds().Dx()
-	size := overlayPixelSize(native)
-	if size != native {
-		img = scaleRGBA(img, size)
+	width, height := img.Bounds().Dx(), img.Bounds().Dy()
+	if width < 1 || height < 1 {
+		return false
 	}
 
 	registerOverlayClass()
 
 	pt, _ := win32.GetCursorPos()
-	half := int32(size / 2)
-	x := pt.X - half
-	y := pt.Y - half
+	halfW := int32(width / 2)
+	halfH := int32(height / 2)
+	x := pt.X - halfW
+	y := pt.Y - halfH
 
 	hwnd, _, _ := procCreateWindowExW.Call(
 		wsExTopmost|wsExLayered|wsExToolWindow|wsExNoActivate|wsExTransp,
@@ -165,8 +146,8 @@ func (s *Session) createOverlay() bool {
 		wsPopup,
 		uintptr(uint32(x)),
 		uintptr(uint32(y)),
-		uintptr(size),
-		uintptr(size),
+		uintptr(width),
+		uintptr(height),
 		0, 0, win32.GetModuleHandle(), 0,
 	)
 	if hwnd == 0 {
@@ -180,13 +161,13 @@ func (s *Session) createOverlay() bool {
 
 	procShowWindow.Call(hwnd, swShowNA)
 	s.overlayHwnd = hwnd
-	s.overlayHalfW = half
-	s.overlayHalfH = half
+	s.overlayHalfW = halfW
+	s.overlayHalfH = halfH
 	return true
 }
 
-func paintOverlayAlpha(hwnd uintptr, img *image.RGBA, x, y int32) bool {
-	size := img.Bounds().Dx()
+func paintOverlayAlpha(hwnd uintptr, img *image.NRGBA, x, y int32) bool {
+	width, height, bgra := nrgbaToPremulBGRA(img)
 	hdcScreen, _, _ := procGetDC.Call(0)
 	if hdcScreen == 0 {
 		return false
@@ -201,12 +182,12 @@ func paintOverlayAlpha(hwnd uintptr, img *image.RGBA, x, y int32) bool {
 
 	header := bitmapInfoHeader{
 		Size:        uint32(unsafe.Sizeof(bitmapInfoHeader{})),
-		Width:       int32(size),
-		Height:      -int32(size),
+		Width:       int32(width),
+		Height:      -int32(height),
 		Planes:      1,
 		BitCount:    32,
 		Compression: biRGB,
-		SizeImage:   uint32(size * size * 4),
+		SizeImage:   uint32(len(bgra)),
 	}
 
 	var bits unsafe.Pointer
@@ -222,22 +203,7 @@ func paintOverlayAlpha(hwnd uintptr, img *image.RGBA, x, y int32) bool {
 	}
 	defer procDeleteObject.Call(hbm)
 
-	dst := unsafe.Slice((*byte)(bits), size*size*4)
-	src := img.Pix
-	for row := 0; row < size; row++ {
-		srcOff := row * img.Stride
-		dstOff := row * size * 4
-		for col := 0; col < size; col++ {
-			si := srcOff + col*4
-			di := dstOff + col*4
-			a := uint32(src[si+3])
-			// ULW_ALPHA requires premultiplied BGRA.
-			dst[di+0] = byte(uint32(src[si+2]) * a / 255)
-			dst[di+1] = byte(uint32(src[si+1]) * a / 255)
-			dst[di+2] = byte(uint32(src[si+0]) * a / 255)
-			dst[di+3] = src[si+3]
-		}
-	}
+	copy(unsafe.Slice((*byte)(bits), len(bgra)), bgra)
 
 	old, _, _ := procSelectObject.Call(hdcMem, hbm)
 	blend := blendFunction{
@@ -246,7 +212,7 @@ func paintOverlayAlpha(hwnd uintptr, img *image.RGBA, x, y int32) bool {
 		AlphaFormat:         acSrcAlpha,
 	}
 	ptPos := overlayPoint{X: x, Y: y}
-	sz := overlaySize{Cx: int32(size), Cy: int32(size)}
+	sz := overlaySize{Cx: int32(width), Cy: int32(height)}
 	ptSrc := overlayPoint{}
 	ret, _, _ := procUpdateLayeredWindow.Call(
 		hwnd,

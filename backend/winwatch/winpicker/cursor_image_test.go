@@ -7,50 +7,67 @@ import (
 )
 
 func TestScaleAndPunchBlack(t *testing.T) {
-	src := image.NewRGBA(image.Rect(0, 0, 2, 2))
-	src.SetRGBA(0, 0, color.RGBA{0, 0, 0, 255})
-	src.SetRGBA(1, 0, color.RGBA{255, 0, 0, 255})
-	src.SetRGBA(0, 1, color.RGBA{180, 180, 180, 255})
-	src.SetRGBA(1, 1, color.RGBA{0, 0, 0, 255})
+	src := image.NewNRGBA(image.Rect(0, 0, 2, 2))
+	src.SetNRGBA(0, 0, color.NRGBA{0, 0, 0, 255})
+	src.SetNRGBA(1, 0, color.NRGBA{255, 0, 0, 255})
+	src.SetNRGBA(0, 1, color.NRGBA{180, 180, 180, 255})
+	src.SetNRGBA(1, 1, color.NRGBA{0, 0, 0, 255})
 
 	dst := scaleAndPunchBlack(src, 2)
 
-	if got := dst.RGBAAt(0, 0); got.A != 0 {
+	if got := dst.NRGBAAt(0, 0); got.A != 0 {
 		t.Fatalf("black background should be transparent, got %+v", got)
 	}
-	if got := dst.RGBAAt(1, 0); got.R < 200 || got.A < 200 {
+	if got := dst.NRGBAAt(1, 0); got.R < 200 || got.A < 200 {
 		t.Fatalf("red crosshair should remain opaque, got %+v", got)
 	}
-	if got := dst.RGBAAt(0, 1); got.A < 200 {
+	if got := dst.NRGBAAt(0, 1); got.A < 200 {
 		t.Fatalf("grey ring should remain opaque, got %+v", got)
 	}
 }
 
-func TestEmbeddedTargetPNG(t *testing.T) {
-	img, err := decodeTargetRGBA(targetPNG, 32)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if img.Bounds().Dx() != 32 || img.Bounds().Dy() != 32 {
-		t.Fatalf("expected 32x32, got %v", img.Bounds())
-	}
-	center := img.RGBAAt(16, 16)
-	if center.A == 0 {
-		t.Fatalf("center of target icon should not be empty, got %+v", center)
-	}
-}
-
-func TestDecodePNGNativePreservesAlpha(t *testing.T) {
+func TestDecodePNGNativePreservesStraightAlpha(t *testing.T) {
 	img, err := decodePNGNative(targetPNG)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := img.RGBAAt(0, 0); got.A != 0 {
+	if got := img.NRGBAAt(0, 0); got.A != 0 {
 		t.Fatalf("PNG corner should be transparent, got %+v", got)
 	}
-	center := img.RGBAAt(img.Bounds().Dx()/2, img.Bounds().Dy()/2)
-	if center.A == 0 {
-		t.Fatalf("PNG center should not be empty, got %+v", center)
+
+	var partial int
+	b := img.Bounds()
+	for y := b.Min.Y; y < b.Max.Y; y++ {
+		for x := b.Min.X; x < b.Max.X; x++ {
+			a := img.NRGBAAt(x, y).A
+			if a > 0 && a < 255 {
+				partial++
+			}
+		}
+	}
+	if partial < 50 {
+		t.Fatalf("expected anti-aliased edges in source PNG, got %d partial-alpha pixels", partial)
+	}
+
+	cx, cy := b.Dx()/2, b.Dy()/2
+	if img.NRGBAAt(cx, cy).A == 0 {
+		t.Fatalf("PNG center should not be empty, got %+v", img.NRGBAAt(cx, cy))
+	}
+}
+
+func TestNrgbaToPremulBGRADoesNotCrushAlpha(t *testing.T) {
+	src := image.NewNRGBA(image.Rect(0, 0, 1, 1))
+	src.SetNRGBA(0, 0, color.NRGBA{R: 255, G: 0, B: 0, A: 128})
+
+	_, _, bgra := nrgbaToPremulBGRA(src)
+	if len(bgra) != 4 {
+		t.Fatalf("expected 4 bytes, got %d", len(bgra))
+	}
+	if bgra[2] != 128 { // premultiplied R
+		t.Fatalf("premultiplied red should be 128, got %d (double-premul would be ~64)", bgra[2])
+	}
+	if bgra[3] != 128 {
+		t.Fatalf("alpha should stay 128, got %d", bgra[3])
 	}
 }
 

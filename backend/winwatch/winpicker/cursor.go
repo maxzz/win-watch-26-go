@@ -86,7 +86,7 @@ func cursorPixelSize() int {
 
 func createCursorFromPNG(pngBytes []byte) uintptr {
 	size := cursorPixelSize()
-	img, err := decodeTargetRGBA(pngBytes, size)
+	img, err := decodeTargetNRGBA(pngBytes, size)
 	if err != nil || img == nil {
 		return 0
 	}
