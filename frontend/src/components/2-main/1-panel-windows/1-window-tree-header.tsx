@@ -16,7 +16,7 @@ import { WindowPickerControl, type WindowPickerEvent } from "@renderer/component
 export function WindowTreeHeader() {
     return (
         <div className="shrink-0 px-2 pr-0 h-7 bg-muted/20 border-b flex justify-between items-center select-none">
-            <div className="min-w-0 flex-1 flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
                 <span className="text-xs font-semibold">
                     Top Windows
                 </span>

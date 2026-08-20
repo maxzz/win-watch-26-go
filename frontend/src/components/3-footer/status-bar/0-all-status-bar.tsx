@@ -7,17 +7,21 @@ import { Button } from "@renderer/components/ui/shadcn/button";
 import { IconStopCircle, SymbolCross, SymbolInfo, SymbolWarning } from "@renderer/components/ui/icons";
 import { type StatusNotice, type StatusNoticeType } from "./9-types";
 import { clearStatusNotice, statusBarStore } from "./c-store-status";
+import { WindowPickerStatusReadout, windowPickerStore } from "@renderer/components/window-picker";
 
 export function AppStatusBar() {
     const { current } = useSnapshot(statusBarStore);
+    const { active: pickerActive } = useSnapshot(windowPickerStore);
 
     return (
         <div className="shrink-0 h-7 text-[.65rem] bg-muted/20 border-t border-foreground/20 flex items-center">
             <div className="relative flex-1 min-w-0 h-full overflow-hidden">
                 <AnimatePresence initial={false} mode="popLayout">
-                    {current
-                        ? <StatusNoticeRow key={current.id} notice={current} />
-                        : <ReadyRow key="ready" />
+                    {pickerActive
+                        ? <WindowPickerStatusReadout key="window-picker" />
+                        : current
+                            ? <StatusNoticeRow key={current.id} notice={current} />
+                            : <ReadyRow key="ready" />
                     }
                 </AnimatePresence>
             </div>
